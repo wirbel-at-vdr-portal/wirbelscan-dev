@@ -29,8 +29,6 @@ struct __sat_transponder {
   uint8_t                         modulation_type;
   uint8_t                         stream_id;
 };
-#define SAT_TRANSPONDER_COUNT(x) (sizeof(x)/sizeof(struct __sat_transponder))
-
 
 struct cSat {
   const char*                     short_name;
@@ -43,6 +41,8 @@ struct cSat {
   int                             rotor_position;     // Note: *not* const
   const char*                     source_id;          // VDR sources.conf
 };
-#define SAT_COUNT(x) (sizeof(x)/sizeof(struct cSat))
 
 extern struct cSat sat_list[];
+
+#define SAT_COUNT(x)             (sizeof(x)/sizeof(struct cSat))
+#define SAT_TRANSPONDER_COUNT(x) (sizeof(x)/sizeof(struct __sat_transponder))
