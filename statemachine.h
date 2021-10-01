@@ -46,5 +46,5 @@ protected:
 public:
   cStateMachine(cDevice* Dev, TChannel* InitialTransponder, bool UseNit, void* Parent);
   virtual ~cStateMachine(void);
-  void DoStop() { stop = true; };
+  void DoStop(void) { stop = true; };
 };
