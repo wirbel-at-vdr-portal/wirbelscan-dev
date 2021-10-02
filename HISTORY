@@ -324,4 +324,8 @@ VDR Plugin 'wirbelscan' Revision History
   - add ThreadBase.h from easyvdr and series plugin.
   - change cStateMachine's base class to ThreadBase, to get rid of VDR's class cThread
   - change cScanReceiver's base class to ThreadBase, to get rid of VDR's class cThread
-
+* scanner.{h,cpp}
+  - replace BCD2INT() by BCDtoDecimal()
+  - remove vdr/tools.h
+* scanfilter.{h,cpp}
+  - replace TThread by ThreadBase

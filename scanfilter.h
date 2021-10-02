@@ -8,6 +8,7 @@
 #include <pthread.h>      // pthread_t
 #include <vdr/thread.h>   // cCondWait
 #include <vdr/sections.h> // cSectionSyncer
+#include "ThreadBase.h"   // ThreadBase
 #include "tlist.h"        // TList<T>
 #include "common.h"       // TPid
 
@@ -17,7 +18,6 @@
  ******************************************************************************/
 class cDevice;
 class TChannel;
-class TThread;
 extern int nextTransponders;
 
 bool known_transponder(TChannel* newChannel, bool auto_allowed, TChannels* list = nullptr);
@@ -37,25 +37,6 @@ public:
    bool IsUniqueTransponder(const TChannel* NewTransponder);
    TChannel* GetByParams(const TChannel* NewTransponder);
    TChannel* NextTransponder(void);
-};
-
-
-/*******************************************************************************
- * class TThread
- ******************************************************************************/
-class TThread {
-private:
-  bool running;
-  pthread_t thread;
-  static void* start_routine(TThread* Thread);
-protected:
-  virtual void Action(void) = 0;
-public:
-  TThread(void);
-  virtual ~TThread();
-  bool Start(void);
-  bool Running(void) { return running; }
-  void Cancel(int WaitSeconds = 0);
 };
 
 
@@ -138,7 +119,7 @@ struct TSdtData {
 /*******************************************************************************
  * class cPatScanner
  ******************************************************************************/
-class cPatScanner : public TThread {
+class cPatScanner : public ThreadBase {
 private:
   cDevice* device;
   struct TPatData& PatData;
@@ -163,7 +144,7 @@ public:
 /*******************************************************************************
  * class cPmtScanner
  ******************************************************************************/
-class cPmtScanner : public TThread {
+class cPmtScanner : public ThreadBase {
 private:
   cDevice* device;
   TPmtData* data;
@@ -185,7 +166,7 @@ public:
 /*******************************************************************************
  * class cNitScanner
  ******************************************************************************/
-class cNitScanner : public TThread {
+class cNitScanner : public ThreadBase {
 private:
   bool active;
   cDevice* device;
@@ -214,7 +195,7 @@ public:
 /*******************************************************************************
  * class cSdtScanner
  ******************************************************************************/
-class cSdtScanner : public TThread {
+class cSdtScanner : public ThreadBase {
 private:
   bool active;
   cDevice* device;
