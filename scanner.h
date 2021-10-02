@@ -3,14 +3,14 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #pragma once
-#include <vdr/thread.h> // cThread
+#include "ThreadBase.h" // ThreadBase
 
 class cDevice;
 class cDvbDevice;
 class TChannel;
 class cStateMachine;
 
-class cScanner : public cThread {
+class cScanner : public ThreadBase {
 private:
   bool       shouldstop;
   bool       single;
@@ -31,6 +31,7 @@ public:
   virtual ~cScanner(void);
   virtual void SetShouldstop(bool On);
   virtual bool ActionAllowed(void);
+  bool Active(void);
   int Status(void)  { return status; };
   int DvbType(void) { return type; };
   int InitialTransponders(void)  { return initialTransponders; };

@@ -166,6 +166,10 @@ bool cScanner::ActionAllowed(void) {
   return Running() and not shouldstop;
 }
 
+bool cScanner::Active(void) {
+  return Running();
+}
+
 void cScanner::Progress(void) {
   extern TChannels ScannedTransponders;
   extern TChannels NewTransponders;
@@ -977,7 +981,7 @@ stop:
   //Channels.ReNumber();
   SetShouldstop(true);
   dlog(3, "leaving scanner");
-  Cancel(0);
+  Cancel();
   Scanner = nullptr;
 }
 
