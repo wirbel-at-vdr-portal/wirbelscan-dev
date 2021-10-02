@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <string>
+#include <cmath>               // round()
 #include <vdr/device.h>        // cDevice
 #include <libsi/section.h>
 #include <libsi/descriptor.h>
@@ -644,9 +645,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
            for(SI::Loop::Iterator it3; fld->frequencies.hasNext(it3);) {
               uint32_t f = fld->frequencies.getNext(it3);
               switch(ct) {
-                 case 1: f = BCDtoDecimal(f) / 100;
+                 case 1: f = round(BCDtoDecimal(f) / 100.0);
                     break;                                  //satellite
-                 case 2: f = BCDtoDecimal(f) / 10;
+                 case 2: f = round(BCDtoDecimal(f) / 10.0);
                     break;                                  //cable
                  case 3: f *= 10;
                     break;                                  //terrestrial
@@ -729,7 +730,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  if      (sd->getRollOff() == 1) RollOff = 25;
                  else if (sd->getRollOff() == 2) RollOff = 20;
                  }
-              uint32_t Frequency = BCDtoDecimal(sd->getFrequency()) / 100;
+              uint32_t Frequency = round(BCDtoDecimal(sd->getFrequency()) / 100.0);
               char Polarization = 'H';
               if      (sd->getPolarization() == 1) Polarization = 'V';
               else if (sd->getPolarization() == 2) Polarization = 'L';
@@ -749,7 +750,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case 15: CodeRate = 0;   break;
                  default: CodeRate = 999;
                  }
-              uint32_t SymbolRate = BCDtoDecimal(sd->getSymbolRate()) / 10;
+              uint32_t SymbolRate = round(BCDtoDecimal(sd->getSymbolRate()) / 10.0);
 
               TChannel* transponder = new TChannel;
               transponder->NID = nit.getNetworkId();
@@ -808,7 +809,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
               SI::CableDeliverySystemDescriptor* sd = (SI::CableDeliverySystemDescriptor*) d;
 
-              uint32_t Frequency = BCDtoDecimal(sd->getFrequency()) / 10;
+              uint32_t Frequency = round(BCDtoDecimal(sd->getFrequency()) / 10.0);
               int CodeRate;
               switch(sd->getFecInner()) {
                  case 1 : CodeRate = 12;  break;
@@ -833,7 +834,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  default: Modulation = 999;
                  }
               TChannel* transponder = new TChannel;
-              uint32_t SymbolRate = BCDtoDecimal(sd->getSymbolRate()) / 10;
+              uint32_t SymbolRate = round(BCDtoDecimal(sd->getSymbolRate()) / 10.0);
               transponder->NID = nit.getNetworkId();
               transponder->ONID = ts.getOriginalNetworkId();
               transponder->TID = ts.getTransportStreamId();
