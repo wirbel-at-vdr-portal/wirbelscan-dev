@@ -304,3 +304,24 @@ VDR Plugin 'wirbelscan' Revision History
 -------------------------------------------------------------------------------
 * common.c:
   - hexdump to stderr instead of stdout
+
+2021-10-xx
+-------------------------------------------------------------------------------
+* review whole plugin after many years in service:
+  - update contact address and homepage, which have been not updated on a few files.
+  - build system: change from VDR style *.c file names to *.cpp
+  - build system: sort includes to be bare minimum
+  - build system: prefer c++ includes to c includes (stdint.h -> cstdint)
+  - review code formatting and indentation
+  - replace NULL by c++ style nullptr
+  - replace any unistd or BSD-style integers by standard integers
+* remove dvb_wrapper.{h,c} and move remains to common.{h,cpp}
+* wirbelscan_services.h
+  - remove deprecated entry Satsystem.
+* tlist.h:
+  - replace VDR's cMutex by std::lock_guard<std::mutex>
+* statemachine.{h,cpp}
+  - add ThreadBase.h from easyvdr and series plugin.
+  - change cStateMachine's base class to ThreadBase, to get rid of VDR's class cThread
+  - change cScanReceiver's base class to ThreadBase, to get rid of VDR's class cThread
+

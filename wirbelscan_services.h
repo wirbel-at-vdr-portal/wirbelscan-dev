@@ -36,15 +36,15 @@ namespace WIRBELSCAN_SERVICE {
  */
 
 typedef struct {
-  const char * PluginVersion;                    // plugin version
-  const char * CommandVersion;                   // commands service version
-  const char * StatusVersion;                    // status service version
-  const char * SetupVersion;                     // get/put setup service version
-  const char * CountryVersion;                   // country ID list version
-  const char * SatVersion;                       // satellite ID list version
-  const char * UserVersion;                      // user transponder api version, 0.0.5-pre12b or higher.
-  const char * reserved2;                        // reserved, dont use.
-  const char * reserved3;                        // reserved, dont use.
+  const char* PluginVersion;                     // plugin version
+  const char* CommandVersion;                    // commands service version
+  const char* StatusVersion;                     // status service version
+  const char* SetupVersion;                      // get/put setup service version
+  const char* CountryVersion;                    // country ID list version
+  const char* SatVersion;                        // satellite ID list version
+  const char* UserVersion;                       // user transponder api version, 0.0.5-pre12b or higher.
+  const char* reserved2;                         // reserved, dont use.
+  const char* reserved3;                         // reserved, dont use.
 } cWirbelscanInfo;
 
 /* --- wirbelscan_DoCmd ------------------------------------------------------
@@ -126,7 +126,7 @@ typedef struct {
 typedef struct {
   uint32_t size;
   uint32_t count;
-  SListItem * buffer;
+  SListItem* buffer;
 } cPreAllocBuffer;
 
 /* --- wirbelscan_GetUser, wirbelscan_SetUser --------------------------------

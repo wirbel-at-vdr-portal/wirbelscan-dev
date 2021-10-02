@@ -14,11 +14,15 @@ CXX = @g++
           
 PWD = $(shell pwd)
 PLUGIN = $(shell basename $(PWD) | cut -d- -f1)
-OBJS = $(shell ls *.c | sed -e 's/\.c/\.o/g')
+CPPSRC = $(wildcard *.cpp)
+OBJS   = $(CPPSRC:%.cpp=%.o)
+#OBJS  = $(shell ls *.cpp | sed -e 's/\.cpp/\.o/g')
 
+DISTFILES = $(CPPSRC) $(wildcard *.h) $(wildcard *.dat) po
+DISTFILES+= build COPYING HISTORY Makefile README TODO SERVICES.html
 
 ### The version number of this plugin (taken from the main source file):
-VERSION = $(shell grep 'static const char \*WIRBELSCAN_VERSION *=' $(PLUGIN).c | awk '{ print $$6 }' | sed -e 's/[";]//g')
+VERSION = $(shell grep 'static const char \*WIRBELSCAN_VERSION *=' $(PLUGIN).cpp | awk '{ print $$6 }' | sed -e 's/[";]//g')
 
 
 ### The directory environment:
@@ -53,8 +57,6 @@ INCLUDES +=
 
 DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
 
-### The object files (add further files here):
-#OBJS = $(shell ls *.c | sed -e 's/\.c/\.o/g')
 
 ### The main target:
 all: $(SOFILE) i18n
@@ -96,7 +98,7 @@ endif
 MAKEDEP = $(CXX) -MM -MG
 DEPFILE = .dependencies
 $(DEPFILE): Makefile
-	@$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(INCLUDES) $(OBJS:%.o=%.c) > $@
+	@$(MAKEDEP) $(CXXFLAGS) $(DEFINES) $(INCLUDES) $(CPPSRC) > $@
 
 -include $(DEPFILE)
 
@@ -111,7 +113,7 @@ I18Npot   = $(PODIR)/$(PLUGIN).pot
 %.mo: %.po
 	@msgfmt -c -o $@ $<
 
-$(I18Npot): $(wildcard *.c)
+$(I18Npot): $(wildcard *.cpp)
 	@xgettext -C -cTRANSLATORS --no-wrap --no-location -k -ktr -ktrNOOP --package-name=vdr-$(PLUGIN) --package-version=$(VERSION) --msgid-bugs-address='<see README>' -o $@ `ls $^`
 
 %.po: $(I18Npot)
@@ -142,7 +144,7 @@ install: install-lib install-i18n
 dist: $(I18Npo) clean
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@mkdir $(TMPDIR)/$(ARCHIVE)
-	@cp -a * $(TMPDIR)/$(ARCHIVE)
+	@cp -a $(DISTFILES) $(TMPDIR)/$(ARCHIVE)
 	@tar czf $(PACKAGE).tgz -C $(TMPDIR) $(ARCHIVE)
 	@-rm -rf $(TMPDIR)/$(ARCHIVE)
 	@echo Distribution package created as $(PACKAGE).tgz

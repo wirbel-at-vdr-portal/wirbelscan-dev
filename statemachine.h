@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #pragma once
+#include "ThreadBase.h"
 
 /*******************************************************************************
  * forward decls
@@ -15,7 +16,7 @@ class TChannel;
 /*******************************************************************************
  * class cStateMachine
  ******************************************************************************/
-class cStateMachine : public cThread {
+class cStateMachine : public ThreadBase {
 private:
   enum eState {
      eStart = 0,       // init, add next_from_list to NewTransponders      (NextTransponder)
@@ -46,5 +47,6 @@ protected:
 public:
   cStateMachine(cDevice* Dev, TChannel* InitialTransponder, bool UseNit, void* Parent);
   virtual ~cStateMachine(void);
-  void DoStop(void) { stop = true; };
+  void DoStop(void);
+  bool Active(void);
 };
