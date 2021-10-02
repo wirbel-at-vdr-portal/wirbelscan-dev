@@ -329,3 +329,5 @@ VDR Plugin 'wirbelscan' Revision History
   - remove vdr/tools.h
 * scanfilter.{h,cpp}
   - replace TThread by ThreadBase
+  - remove pthread.h
+  - replace BCD2INT() by BCDtoDecimal()

@@ -5,7 +5,6 @@
 #pragma once
 #include <string>
 #include <cstdint>        // uint{8.16,32}_t
-#include <pthread.h>      // pthread_t
 #include <vdr/thread.h>   // cCondWait
 #include <vdr/sections.h> // cSectionSyncer
 #include "ThreadBase.h"   // ThreadBase
