@@ -644,9 +644,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
            for(SI::Loop::Iterator it3; fld->frequencies.hasNext(it3);) {
               uint32_t f = fld->frequencies.getNext(it3);
               switch(ct) {
-                 case 1: f = BCD2INT(f) / 100;
+                 case 1: f = BCDtoDecimal(f) / 100;
                     break;                                  //satellite
-                 case 2: f = BCD2INT(f) / 10;
+                 case 2: f = BCDtoDecimal(f) / 10;
                     break;                                  //cable
                  case 3: f *= 10;
                     break;                                  //terrestrial
@@ -706,7 +706,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               if (type != SCAN_SATELLITE)
                  continue;
               SI::SatelliteDeliverySystemDescriptor * sd = (SI::SatelliteDeliverySystemDescriptor *) d;
-              int Source  = cSource::FromData(cSource::stSat, BCD2INT(sd->getOrbitalPosition()), sd->getWestEastFlag());
+              int Source  = cSource::FromData(cSource::stSat, BCDtoDecimal(sd->getOrbitalPosition()), sd->getWestEastFlag());
               int RollOff = 35;
               int Modulation = 2;
               int System = 0;
@@ -714,10 +714,10 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
               // orbital = 192 (C0), Source = 1392509120 (530000C0)
               
-              if ((west_flag != west) or ( abs(BCD2INT(sd->getOrbitalPosition()) - orbital) > 2 )) {
+              if ((west_flag != west) or ( abs(BCDtoDecimal(sd->getOrbitalPosition()) - orbital) > 2 )) {
                  dlog(4, "SatelliteDeliverySystemDescriptor - expected: %.1f%c - got %.1f%c. Skipping transportStreamDescriptor.",
                           orbital/10.0, west?'W':'E',
-                          BCD2INT(sd->getOrbitalPosition())/10.0, west_flag?'W':'E');
+                          BCDtoDecimal(sd->getOrbitalPosition())/10.0, west_flag?'W':'E');
                  continue;
                  }
 
@@ -729,7 +729,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  if      (sd->getRollOff() == 1) RollOff = 25;
                  else if (sd->getRollOff() == 2) RollOff = 20;
                  }
-              uint32_t Frequency = BCD2INT(sd->getFrequency()) / 100;
+              uint32_t Frequency = BCDtoDecimal(sd->getFrequency()) / 100;
               char Polarization = 'H';
               if      (sd->getPolarization() == 1) Polarization = 'V';
               else if (sd->getPolarization() == 2) Polarization = 'L';
@@ -749,7 +749,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case 15: CodeRate = 0;   break;
                  default: CodeRate = 999;
                  }
-              uint32_t SymbolRate = BCD2INT(sd->getSymbolRate()) / 10;
+              uint32_t SymbolRate = BCDtoDecimal(sd->getSymbolRate()) / 10;
 
               TChannel* transponder = new TChannel;
               transponder->NID = nit.getNetworkId();
@@ -764,7 +764,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               transponder->Modulation = Modulation;
               transponder->DelSys = System;
               transponder->Rolloff = RollOff;
-              transponder->OrbitalPos = BCD2INT(sd->getOrbitalPosition());
+              transponder->OrbitalPos = BCDtoDecimal(sd->getOrbitalPosition());
               if (!sd->getWestEastFlag())
                  transponder->OrbitalPos *= -1;
 
@@ -808,7 +808,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
               SI::CableDeliverySystemDescriptor* sd = (SI::CableDeliverySystemDescriptor*) d;
 
-              uint32_t Frequency = BCD2INT(sd->getFrequency()) / 10;
+              uint32_t Frequency = BCDtoDecimal(sd->getFrequency()) / 10;
               int CodeRate;
               switch(sd->getFecInner()) {
                  case 1 : CodeRate = 12;  break;
@@ -833,7 +833,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  default: Modulation = 999;
                  }
               TChannel* transponder = new TChannel;
-              uint32_t SymbolRate = BCD2INT(sd->getSymbolRate()) / 10;
+              uint32_t SymbolRate = BCDtoDecimal(sd->getSymbolRate()) / 10;
               transponder->NID = nit.getNetworkId();
               transponder->ONID = ts.getOriginalNetworkId();
               transponder->TID = ts.getTransportStreamId();
