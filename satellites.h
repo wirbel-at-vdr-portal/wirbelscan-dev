@@ -43,6 +43,3 @@ struct cSat {
 };
 
 extern struct cSat sat_list[];
-
-#define SAT_COUNT(x)             (sizeof(x)/sizeof(struct cSat))
-#define SAT_TRANSPONDER_COUNT(x) (sizeof(x)/sizeof(struct __sat_transponder))

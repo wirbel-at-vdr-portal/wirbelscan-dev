@@ -331,3 +331,6 @@ VDR Plugin 'wirbelscan' Revision History
   - replace TThread by ThreadBase
   - remove pthread.h
   - replace BCD2INT() by BCDtoDecimal()
+* satellites.{h,cpp}
+  - move SAT_TRANSPONDER_COUNT and SAT_COUNT to cpp src
+  - adapt to newer dat version
