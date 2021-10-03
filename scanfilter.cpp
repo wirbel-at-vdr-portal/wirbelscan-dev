@@ -185,6 +185,8 @@ bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bo
            //   }
            if (different(a->Modulation, b->Modulation, auto_allowed, 999))
               return true;
+           if (a->StreamId != b->StreamId)
+              return true;
            }
         return false;
         }
