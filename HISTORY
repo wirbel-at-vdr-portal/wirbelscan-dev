@@ -328,14 +328,22 @@ VDR Plugin 'wirbelscan' Revision History
   - replace TThread by ThreadBase
   - replace BCD2INT() by BCDtoDecimal()
   - remove vdr/tools.h
+  - simplify satellites.dat lookup
 * scanfilter.{h,cpp}
   - replace TThread by ThreadBase
   - remove pthread.h
   - replace BCD2INT() by BCDtoDecimal()
   - fix rounding of frequencies
+  - is_different_transponder_deep_scan(): disable rolloff comparison
+  - is_different_transponder_deep_scan(): prefer lambda instead of C Macro.
 * satellites.{h,cpp}
   - move SAT_TRANSPONDER_COUNT and SAT_COUNT to cpp src
   - adapt to newer dat version
 * countries.{h,cpp}
   - remove COUNTRY_COUNT
   - convert get_user_country() to c++ style
+* common.{h,cpp}
+  - remove FREENULL macro.
+  - remove struct satellite_transponder
+  - remove struct tuning_parameters
+  - add BCDtoDecimal template

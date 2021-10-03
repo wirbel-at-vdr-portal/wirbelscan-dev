@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <string>
+#include <iostream>
 #include <cmath>               // round()
 #include <vdr/device.h>        // cDevice
 #include <libsi/section.h>
@@ -111,7 +112,11 @@ bool is_nearly_same_frequency(const TChannel* chan_a, const TChannel* chan_b, un
 }
 
 bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bool auto_allowed) {
-#define IS_DIFFERENT(A, B, _ALLOW_AUTO_, _AUTO_)    ((A != B) && (!_ALLOW_AUTO_ || (_ALLOW_AUTO_ && (A != _AUTO_) && (B != _AUTO_))))
+  auto different = [](int a, int b, bool relaxed, int defValue) -> bool {
+     if ((a == defValue) or (b == defValue))
+        if (relaxed) return false;
+     return a != b;
+     };
 
   if (a->Source != b->Source)
      return true;
@@ -130,53 +135,57 @@ bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bo
 
   switch(asource) {
      case 'T': {
-        if (IS_DIFFERENT(a->Modulation, b->Modulation, auto_allowed, 999))
+        if (different(a->Modulation, b->Modulation, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->Bandwidth, b->Bandwidth, auto_allowed, 8))
+        if (different(a->Bandwidth, b->Bandwidth, auto_allowed, 8))
            return true;
-        if (IS_DIFFERENT(a->FEC, b->FEC, auto_allowed, 999))
+        if (different(a->FEC, b->FEC, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->Hierarchy, b->Hierarchy, auto_allowed, 999))
+        if (different(a->Hierarchy, b->Hierarchy, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->FEC_low, b->FEC_low, auto_allowed, 999))
+        if (different(a->FEC_low, b->FEC_low, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->Transmission, b->Transmission, auto_allowed, 999))
+        if (different(a->Transmission, b->Transmission, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->Guard, b->Guard, auto_allowed, 999))
+        if (different(a->Guard, b->Guard, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->DelSys, b->DelSys, false, 0))
+        if (different(a->DelSys, b->DelSys, false, 0))
            return true;
         return false;
         }
      case 'A': {
-        if (IS_DIFFERENT(a->Modulation, b->Modulation, auto_allowed, 999))
+        if (different(a->Modulation, b->Modulation, auto_allowed, 999))
            return true;
         return false;
         }
      case 'C': {
-        if (IS_DIFFERENT(a->Modulation, b->Modulation, auto_allowed, 999))
+        if (different(a->Modulation, b->Modulation, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->Symbolrate, b->Symbolrate, false, 6900))
+        if (different(a->Symbolrate, b->Symbolrate, false, 6900))
            return true;
-        if (IS_DIFFERENT(a->FEC, b->FEC, auto_allowed, 999))
+        if (different(a->FEC, b->FEC, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->DelSys, b->DelSys, false, 0))
+        if (different(a->DelSys, b->DelSys, false, 0))
            return true;
         return false;
         }
      case 'S': {
-        if (IS_DIFFERENT(a->Symbolrate, b->Symbolrate, false, 27500))
+        if (different(a->Symbolrate, b->Symbolrate, false, -1))
            return true;
-        if (IS_DIFFERENT(a->Polarization, b->Polarization, false, 0))
+        if (different(a->Polarization, b->Polarization, false, 0))
            return true;
-        if (IS_DIFFERENT(a->FEC, b->FEC, auto_allowed, 999))
+        if (different(a->FEC, b->FEC, auto_allowed, 999))
            return true;
-        if (IS_DIFFERENT(a->DelSys, b->DelSys, false, 0))
+        if (different(a->DelSys, b->DelSys, false, 0))
            return true;
-        if (IS_DIFFERENT(a->Rolloff, b->Rolloff, auto_allowed, 999))
-           return true;
-        if (IS_DIFFERENT(a->Modulation, b->Modulation, auto_allowed, 999))
-           return true;
+        if (a->DelSys == 1) {
+           //if (different(a->Rolloff, b->Rolloff, auto_allowed, 999)) {
+           //   std::cout << "a->Rolloff = " << std::to_string(a->Rolloff) << ", b->Rolloff = " << std::to_string(b->Rolloff) << std::endl;
+           //   return true;
+           //   }
+           if (different(a->Modulation, b->Modulation, auto_allowed, 999))
+              return true;
+           }
         return false;
         }
      default:

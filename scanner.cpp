@@ -809,27 +809,28 @@ void cScanner::Action(void) {
                    }
                 break;
              case SCAN_SATELLITE:
-
                 {
-                aChannel->Source = sat_list[this_channellist].source_id;
-                aChannel->Frequency = sat_list[this_channellist].items[channel].intermediate_frequency;
-                aChannel->Symbolrate = sat_list[this_channellist].items[channel].symbol_rate;
+                auto& sat = sat_list[this_channellist];
+                auto& tp = sat.items[channel];
+                aChannel->Source = sat.source_id;
+                aChannel->Frequency  = tp.intermediate_frequency;
+                aChannel->Symbolrate = tp.symbol_rate;
+                aChannel->DelSys     = tp.modulation_system == 6 ? 1:0;
+                aChannel->StreamId   = tp.stream_id;
 
                 char p[] = {'H','V','L','R'};
-                aChannel->Polarization = p[sat_list[this_channellist].items[channel].polarization];
+                aChannel->Polarization = p[tp.polarization];
 
                 int f[] = {0,12,23,34,45,56,67,78,89,999,35,910};
-                aChannel->FEC = f[sat_list[this_channellist].items[channel].fec_inner];
+                aChannel->FEC = f[tp.fec_inner];
 
                 int m[] = {2,16,32,64,128,256,999,10,11,5,6,7,12,0};
-                aChannel->Modulation = m[sat_list[this_channellist].items[channel].modulation_type];
+                aChannel->Modulation = m[tp.modulation_type];
 
                 int r[] = {35,20,25,999};
-                aChannel->Rolloff = r[sat_list[this_channellist].items[channel].rolloff];
+                aChannel->Rolloff = r[tp.rolloff];
 
-                aChannel->DelSys = sat_list[this_channellist].items[channel].modulation_system == 6;
                 aChannel->Pilot = 999;
-                aChannel->StreamId = 0;
                 aChannel->NID = 0;
                 aChannel->TID = 0;
                 aChannel->SID = 0;
