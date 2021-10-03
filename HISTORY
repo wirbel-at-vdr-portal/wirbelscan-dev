@@ -336,3 +336,6 @@ VDR Plugin 'wirbelscan' Revision History
 * satellites.{h,cpp}
   - move SAT_TRANSPONDER_COUNT and SAT_COUNT to cpp src
   - adapt to newer dat version
+* countries.{h,cpp}
+  - remove COUNTRY_COUNT
+  - convert get_user_country() to c++ style
