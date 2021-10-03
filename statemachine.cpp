@@ -332,11 +332,12 @@ void cStateMachine::Action(void) {
               SdtScanner = new cSdtScanner(dev, SdtData);
               }
            else {
-              if (!NitScanner->Active() and !SdtScanner->Active())
+              if (!NitScanner->Active() and !SdtScanner->Active()) {
                  if (stop)
                     newState = eDetachReceiver;
                  else
                     newState = eAddChannels;
+                 }
               if (time(0) != tm) {
                  if (MenuScanning)
                     MenuScanning->SetProgress(lProgress);
