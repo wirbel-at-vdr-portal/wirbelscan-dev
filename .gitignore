@@ -36,4 +36,4 @@
 
 # not part of package.
 README.md
-
+*.pot
