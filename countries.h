@@ -29,10 +29,9 @@ typedef struct cCountry {
 } _country;
 
 extern struct cCountry country_list[];
-size_t country_count(void);
-#define COUNTRY_COUNT(x) (sizeof(x)/sizeof(struct cCountry))
-void print_countries(void);
 
+size_t country_count(void);
+void print_countries(void);
 int choose_country(std::string country,
                    int& atsc,
                    int& dvb_cable,
