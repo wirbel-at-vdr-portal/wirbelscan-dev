@@ -12,6 +12,8 @@
 #include <sys/ioctl.h>          // ioctl()
 #include "common.h"             // 
 #include "menusetup.h"          // MenuScanning
+#include "satellites.h"         // txt_to_satellite()
+#include "countries.h"          // txt_to_country()
 
 /*******************************************************************************
  *  Generic functions which will be used in the whole plugin.
@@ -19,9 +21,10 @@
 
 
 
-
-// plugin setup data
-cMySetup::cMySetup() {
+/*******************************************************************************
+ * class cMySetup, plugin setup data
+ ******************************************************************************/
+cMySetup::cMySetup(void) {
   verbosity       = 3;              /* default to messages           */
   DVB_Type        = SCAN_TERRESTRIAL;
   DVBT_Inversion  = 0;              /* auto/off                      */
@@ -29,8 +32,8 @@ cMySetup::cMySetup() {
   DVBC_Symbolrate = 0;              /* default to AUTO               */
   DVBC_QAM        = 0;              /* default to AUTO               */
   DVBC_Network_PID= 0x10;           /* as 300486                     */
-  CountryIndex    = 82;             /* default to Germany            */
-  SatIndex        = 67;             /* default to Astra 19.2         */
+  CountryIndex    = txt_to_country("DE");
+  SatIndex        = txt_to_satellite("S19E2");
   enable_s2       = 1;
   ATSC_type       = 0;              /* VSB                           */
   logFile         = STDOUT;         /* log errors/messages to stdout */
@@ -163,10 +166,8 @@ void hexdump(const char* intro, const unsigned char* buf, int len) {
 }
 
 
-int IOCTL(int fd, int cmd, void* data) {
-  int retry;
-    
-  for(retry=10; retry>=0;) {
+int IOCTL(int fd, int cmd, void* data) {  
+  for(int retry=10; retry>=0;) {
      if (ioctl(fd, cmd, data) != 0) {
         /* :-( */
         if (retry) {
@@ -184,7 +185,7 @@ int IOCTL(int fd, int cmd, void* data) {
 
 #include <sys/stat.h> 
 bool FileExists(const char* aFile) {
-  struct stat Stat; 
+  struct stat Stat;
 
   if (! stat(aFile,&Stat))
      return true; 
@@ -850,11 +851,10 @@ void mSleep(size_t ms) {
 }
 
 cDvbDevice* GetDvbDevice(cDevice* d) {
-  if (d == nullptr)
-     return nullptr;
-
   #ifdef __DYNAMIC_DEVICE_PROBE
      /* vdr/device.h was patched for dynamite plugin */
+     if (d == nullptr)
+        return nullptr;
      if (d->HasSubDevice())
         return dynamic_cast<cDvbDevice*>(d->SubDevice());
   #endif
