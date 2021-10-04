@@ -32,7 +32,7 @@ cMySetup::cMySetup(void) {
   DVBC_Symbolrate = 0;              /* default to AUTO               */
   DVBC_QAM        = 0;              /* default to AUTO               */
   DVBC_Network_PID= 0x10;           /* as 300486                     */
-  CountryIndex    = txt_to_country("DE");
+  CountryIndex    = COUNTRY::txt_to_country("DE");
   SatIndex        = txt_to_satellite("S19E2");
   enable_s2       = 1;
   ATSC_type       = 0;              /* VSB                           */
@@ -171,7 +171,7 @@ int IOCTL(int fd, int cmd, void* data) {
      if (ioctl(fd, cmd, data) != 0) {
         /* :-( */
         if (retry) {
-           usleep(10000); /* 10msec */
+           mSleep(10); /* 10msec */
            retry--;
            continue;
            }

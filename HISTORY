@@ -315,6 +315,7 @@ VDR Plugin 'wirbelscan' Revision History
   - review code formatting and indentation
   - replace NULL by c++ style nullptr
   - replace any unistd or BSD-style integers by standard integers
+  - replace any *sleep functions by mSleep(), which uses C++11
 * remove dvb_wrapper.{h,c} and move remains to common.{h,cpp}
 * wirbelscan_services.h
   - remove deprecated entry Satsystem.

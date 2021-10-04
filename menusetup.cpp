@@ -528,7 +528,7 @@ bool cMenuScanning::StartScan(void) {
   if (!wSetup.systems[type]) {
      dlog(0, "Skipping scan: CANNOT SCAN - No device!");
      Skins.Message(mtInfo, tr("CANNOT SCAN - No device!"));
-     sleep(6);
+     mSleep(6000);
      return false;
      }
 
