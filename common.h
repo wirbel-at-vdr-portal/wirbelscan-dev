@@ -3,19 +3,15 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #pragma once
-
 #include <string>
 #include <linux/types.h>
 #include <sys/ioctl.h>
 #include <vdr/diseqc.h>
 #include "tlist.h"
 
-
 #define SCAN_TERRESTRIAL        0 /* DVB-T/T2                */
 #define SCAN_CABLE              1 /* DVB-C                   */
 #define SCAN_SATELLITE          2 /* DVB-S/S2                */
-/*      SCAN_RESERVE1           3 // was: pvrinput           */
-/*      SCAN_RESERVE2           4 // was: pvrinput(fm radio) */
 #define SCAN_TERRCABLE_ATSC     5 /* ATSC VSB and/or QAM     */
 #define SCAN_NO_DEVICE          6
 #define SCAN_TRANSPONDER        999
@@ -24,7 +20,6 @@
 #define SCAN_RADIO     ( 1 << 1 )
 #define SCAN_FTA       ( 1 << 2 )
 #define SCAN_SCRAMBLED ( 1 << 3 )
-//      SCAN_HD        ( 1 << 4 )
 
 #define ADAPTER_AUTO            0
 
@@ -44,9 +39,6 @@
 #define SYSLOG                  2
 #define STDERR                  3
 
-#define warning(msg...) _log(__FUNCTION__,__LINE__,1,false,msg)
-#define info(msg...)    _log(__FUNCTION__,__LINE__,2,false,msg)
-
 #define HEXDUMP(d, l) \
   if (wSetup.verbosity > 5) hexdump(__PRETTY_FUNCTION__, d, l);
 
@@ -57,7 +49,10 @@
 
 void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...);
 
-
+#define fatal(x...)     dlog(0, x); return -1
+#define warning(msg...) _log(__FUNCTION__,__LINE__,1,false,msg)
+#define info(msg...)    _log(__FUNCTION__,__LINE__,2,false,msg)
+#define verbose(x...)   dlog(4, x)
 
 /*******************************************************************************
  * forward decls.
@@ -67,10 +62,8 @@ class cDevice;
 class cDvbDevice;
 
 
-
 /*******************************************************************************
- * class TParams
- * read VDR param string and divide to separate items or vice versa.
+ * class TParams, provide VDR param string as separate items.
  ******************************************************************************/
 class TParams {
 private:
@@ -78,10 +71,9 @@ private:
 public:
   TParams();
   TParams(std::string& s);
-
   void Parse(std::string& s);
   void Print(std::string& dest, char Source);  // Source = {'A','C','S','T'}
-
+public:
   int  Bandwidth;
   int  FEC;
   int  FEC_low;
@@ -101,8 +93,7 @@ public:
 
 
 /*******************************************************************************
- * TChannel
- * read VDR channel string and divide to separate items or vice versa.
+ * TChannel, internal channel representation.
  ******************************************************************************/
 
 class TPid {
@@ -187,14 +178,14 @@ public:
   bool Tested;
   TList<struct cell> cells;
 public:
-  TChannel();
+  TChannel(void);
   TChannel& operator= (const cChannel* rhs);
   void CopyTransponderData(const TChannel* Channel);
   void Params(std::string& s);
   void PrintTransponder(std::string& dest);
   void Print(std::string& dest);
   void VdrChannel(cChannel& c);
-  bool ValidSatIf();
+  bool ValidSatIf(void);
 };
 
 bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bool auto_allowed);
@@ -203,9 +194,9 @@ class TChannels : public TList<TChannel*> {
 private:
 public:
   TChannel* GetByParams(const TChannel* NewTransponder) {
-     for(auto tr:v) {
-        if (!is_different_transponder_deep_scan(tr, NewTransponder, true))
-           return tr;
+     for(auto t:v) {
+        if (!is_different_transponder_deep_scan(t, NewTransponder, true))
+           return t;
         }
      return nullptr;
      }
@@ -239,8 +230,8 @@ public:
   int scan_update_existing;
   int scan_append_new;
 public:
-  cMySetup();
-  void InitSystems();
+  cMySetup(void);
+  void InitSystems(void);
 };
 extern cMySetup wSetup;
 
@@ -249,10 +240,6 @@ extern cMySetup wSetup;
 void hexdump(const char* intro, const unsigned char* buf, int len);
 int  IOCTL(int fd, int cmd, void* data);
 bool FileExists(const char* aFile);
-
-#define verbose(x...) dlog(4, x)
-#define fatal(x...)   dlog(0, x); return -1
-
 void mSleep(size_t ms);
 
 template<class T> inline void DeleteNullptr(T*& aClass) {
