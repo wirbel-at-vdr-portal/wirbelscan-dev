@@ -316,6 +316,7 @@ VDR Plugin 'wirbelscan' Revision History
   - replace NULL by c++ style nullptr
   - replace any unistd or BSD-style integers by standard integers
   - replace any *sleep functions by mSleep(), which uses C++11
+  - replace DELETENULL by DeleteNullptr(), to get rid of macro style
 * remove dvb_wrapper.{h,c} and move remains to common.{h,cpp}
 * wirbelscan_services.h
   - remove deprecated entry Satsystem.
@@ -348,3 +349,4 @@ VDR Plugin 'wirbelscan' Revision History
   - remove struct satellite_transponder
   - remove struct tuning_parameters
   - add BCDtoDecimal template
+  - add IntToStr(), IntToHex(), FloatToStr()

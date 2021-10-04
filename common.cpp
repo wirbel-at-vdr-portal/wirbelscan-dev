@@ -3,6 +3,11 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <thread>               // std::this_thread
+#include <string>
+#include <iostream>
+#include <iomanip>              // std::setfill,std::setw
+#include <algorithm>            // std::min
+#include <sstream>              // std::stringstream
 #include <chrono>               // std::chrono::milliseconds
 #include <cstdarg>              // va_list, va_start, ..
 #include <linux/dvb/frontend.h> // fe_status_t, dvb_frontend_info
@@ -850,6 +855,30 @@ void mSleep(size_t ms) {
   std::this_thread::sleep_for(std::chrono::milliseconds(ms));
 }
 
+std::string IntToStr(int n, size_t digits) {
+  std::stringstream ss;
+  if (n < 0) {
+     n *= -1;
+     ss << '-';
+     digits = std::min(digits,digits-1);
+     }
+  ss << std::setfill('0') << std::setw(digits) << n;
+  return ss.str();
+}
+
+std::string IntToHex(size_t n, size_t digits) {
+  std::stringstream ss;
+  ss << "0x" << std::uppercase << std::setfill('0') << std::hex << std::setw(digits) << n;
+  return ss.str();
+}
+
+std::string FloatToStr(double f, size_t precision) {
+  std::stringstream ss;
+  ss.precision(precision);
+  ss << std::fixed << f;
+  return ss.str();
+}
+
 cDvbDevice* GetDvbDevice(cDevice* d) {
   #ifdef __DYNAMIC_DEVICE_PROBE
      /* vdr/device.h was patched for dynamite plugin */
@@ -864,9 +893,9 @@ cDvbDevice* GetDvbDevice(cDevice* d) {
 
 void PrintDvbApi(std::string& s) {
   s = "compiled for DVB API "
-      + std::to_string(DVB_API_VERSION)
+      + IntToStr(DVB_API_VERSION)
       + '.'
-      + std::to_string(DVB_API_VERSION_MINOR);
+      + IntToStr(DVB_API_VERSION_MINOR);
 }
 
 unsigned int GetFrontendStatus(cDevice* dev) {

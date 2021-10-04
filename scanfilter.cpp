@@ -348,7 +348,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
      int ca = d->getCaType();
      if (data->Caids.IndexOf(ca) < 0)
         data->Caids.Add(ca);
-     DELETENULL(d);
+     DeleteNullptr(d);
      }
 
   SI::PMT::Stream stream;
@@ -398,7 +398,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
                     break;
                  default:;
                  }
-              DELETENULL(d);
+              DeleteNullptr(d);
               }
            data->Apids.Add(apid);
            }
@@ -451,7 +451,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
                     break;
                  default:;
                  }
-              DELETENULL(d);
+              DeleteNullptr(d);
               }
            if (dpid.PID) {
               dpid.Lang = lang;
@@ -472,7 +472,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
                     break;
                  default:;
                  }
-              DELETENULL(d);
+              DeleteNullptr(d);
               }
            
            TPid dpid;
@@ -489,7 +489,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
         int ca = d->getCaType();
         if (data->Caids.IndexOf(ca) < 0)
            data->Caids.Add(ca);
-        DELETENULL(d);
+        DeleteNullptr(d);
         }
      }
 
@@ -682,7 +682,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               }
            }
         }
-     DELETENULL(fld);
+     DeleteNullptr(fld);
      // dirty hack because libsi is missing needed cell_frequency_link_descriptor
      // and support is only possible with patching libsi :-((
      //  -> has to be removed as soon libsi supports cell_frequency_link_descriptor
@@ -1143,7 +1143,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
            default:
               dlog(5, "   NIT: unknown descriptor tag 0x%.2x", d->getDescriptorTag());
            }
-        DELETENULL(d);
+        DeleteNullptr(d);
         } // end TS descriptor loop
      } // end TS stream loop
 
@@ -1328,7 +1328,7 @@ void cSdtScanner::Process(const unsigned char* Data, int Length) {
               break;
            default: dlog(5, "SDT: unknown descriptor 0x%.2x", d->getDescriptorTag());
            }
-        DELETENULL(d);
+        DeleteNullptr(d);
         }
      if (service.Name != "") {
         bool found = false;

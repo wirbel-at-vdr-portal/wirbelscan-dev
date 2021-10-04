@@ -191,7 +191,7 @@ void cStateMachine::Action(void) {
               newState = eScanPat;
               }
            else {
-              DELETENULL(aReceiver);
+              DeleteNullptr(aReceiver);
               tp->Tunable = false;
               newState = eNextTransponder;
               }
@@ -241,7 +241,7 @@ void cStateMachine::Action(void) {
               dev->DetachAllReceivers();
               dev->SetOccupied(0);
               }
-           DELETENULL(aReceiver);
+           DeleteNullptr(aReceiver);
 
            if (stop)
               newState = eStop;

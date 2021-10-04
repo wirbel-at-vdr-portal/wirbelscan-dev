@@ -93,9 +93,8 @@ public:
 
 
 /*******************************************************************************
- * TChannel, internal channel representation.
+ * class TChannel, internal channel representation.
  ******************************************************************************/
-
 class TPid {
 public:
   TPid() : PID(0), Type(0), Lang("") {}
@@ -188,16 +187,18 @@ public:
   bool ValidSatIf(void);
 };
 
+
+/*******************************************************************************
+ * class TChannels
+ ******************************************************************************/
 bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bool auto_allowed);
 
 class TChannels : public TList<TChannel*> {
-private:
 public:
   TChannel* GetByParams(const TChannel* NewTransponder) {
-     for(auto t:v) {
+     for(auto t:v)
         if (!is_different_transponder_deep_scan(t, NewTransponder, true))
            return t;
-        }
      return nullptr;
      }
 
@@ -207,6 +208,9 @@ public:
 };
 
 
+/*******************************************************************************
+ * class cMySetup
+ ******************************************************************************/
 class cMySetup {
 public:
   int verbosity;
@@ -236,11 +240,16 @@ public:
 extern cMySetup wSetup;
 
 
-/* generic functions */
+/*******************************************************************************
+ * generic functions
+ ******************************************************************************/
 void hexdump(const char* intro, const unsigned char* buf, int len);
 int  IOCTL(int fd, int cmd, void* data);
 bool FileExists(const char* aFile);
 void mSleep(size_t ms);
+std::string IntToStr(int n, size_t digits = 0);
+std::string IntToHex(size_t n, size_t digits = 0);
+std::string FloatToStr(double f, size_t precision = 2);
 
 template<class T> inline void DeleteNullptr(T*& aClass) {
   T* temp = aClass;
