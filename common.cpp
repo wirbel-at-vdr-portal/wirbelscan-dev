@@ -51,12 +51,10 @@ cMySetup::cMySetup(void) {
 }
 
 void cMySetup::InitSystems(void) {
-  int nDevices = cDevice::NumDevices();
-
   memset(&systems[0], 0, sizeof(systems));
   while(! cDevice::WaitForAllDevicesReady(20)) sleep(1);
 
-  for(int i = 0; i < nDevices; i++) {
+  for(int i=0; i<cDevice::NumDevices(); i++) {
      cDevice* device = cDevice::GetDevice(i);
      if (device == NULL)        
         continue;
@@ -87,39 +85,32 @@ void _log(const char* function, int line, const int level, bool newline, const c
   va_start(ap, fmt);
   vsnprintf(msg, sizeof(msg), fmt, ap);
   va_end(ap);
-
-  switch (wSetup.logFile) {
-     default:
-        printf("WARNING: setting logFile to STDOUT\n");
-        wSetup.logFile = STDOUT;
-        /* Falls through. */
-     case STDOUT: {
-        char tmbuf[9];
-        time_t now = time(NULL);
-        strftime(tmbuf, sizeof(tmbuf), "%H:%M:%S", localtime(&now));
-        if (wSetup.verbosity < 5)
-           printf("%s %s%s", tmbuf, msg, newline?"\n":"");
-        else
-           printf("%s %-40s:%d %s%s", tmbuf, function, line, msg, newline?"\n":"");
-        fflush(stdout);
-        }
-        break;
-     case SYSLOG:
-        syslog(LOG_DEBUG, "%s", msg);
-        break;
-     case STDERR: {
-        char tmbuf[9];
-        time_t now = time(NULL);
-        strftime(tmbuf, sizeof(tmbuf), "%H:%M:%S", localtime(&now));
-        if (wSetup.verbosity < 5)
-           fprintf(stderr, "%s %s%s", tmbuf, msg, newline?"\n":"");
-        else
-           fprintf(stderr, "%s %-40s:%d %s%s", tmbuf, function, line, msg, newline?"\n":"");
-        fflush(stdout);
-        }
-        break;
+  
+  char timestamp[10];
+  time_t now = time(nullptr);
+  strftime(timestamp, sizeof(timestamp), "%H:%M:%S ", localtime(&now));
+  
+  if ((wSetup.logFile < STDOUT) or (wSetup.logFile > STDERR)) {
+     std::cerr << "WARNING: setting logFile to STDOUT" << std::endl;
+     wSetup.logFile = STDOUT;
      }
+  
+  std::ostream& out = std::cout;
 
+  if (wSetup.logFile == SYSLOG) {
+     syslog(LOG_DEBUG, "%s", msg);
+     }
+  else if (wSetup.logFile == STDERR)
+     out = std::cerr;
+  
+  out << timestamp;
+  if (wSetup.verbosity >= 5)
+     out << function << ':' << IntToStr(line) << ' ';
+  out << msg;
+  if (newline)
+     out << std::endl;
+  out.flush();
+  
   if (MenuScanning)
      MenuScanning->AddLogMsg(msg);
 }
