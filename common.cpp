@@ -10,6 +10,7 @@
 #include <sstream>              // std::stringstream
 #include <chrono>               // std::chrono::milliseconds
 #include <cstdarg>              // va_list, va_start, ..
+#include <syslog.h>             // syslog()
 #include <linux/dvb/frontend.h> // fe_status_t, dvb_frontend_info
 #include <linux/dvb/version.h>  // DVB_API_VERSION, DVB_API_VERSION_MINOR
 #include <vdr/device.h>         // cDevice
@@ -85,35 +86,41 @@ void _log(const char* function, int line, const int level, bool newline, const c
   va_start(ap, fmt);
   vsnprintf(msg, sizeof(msg), fmt, ap);
   va_end(ap);
-  
+
   char timestamp[10];
   time_t now = time(nullptr);
   strftime(timestamp, sizeof(timestamp), "%H:%M:%S ", localtime(&now));
-  
+
   if ((wSetup.logFile < STDOUT) or (wSetup.logFile > STDERR)) {
      std::cerr << "WARNING: setting logFile to STDOUT" << std::endl;
      wSetup.logFile = STDOUT;
      }
-  
-  std::ostream& out = std::cout;
 
-  if (wSetup.logFile == SYSLOG) {
+  if (wSetup.logFile == SYSLOG)
      syslog(LOG_DEBUG, "%s", msg);
+  else if (wSetup.logFile == STDOUT) {
+     std::cout << timestamp;
+     if (wSetup.verbosity >= 5)
+        std::cout << function << ':' << IntToStr(line) << ' ';
+     std::cout << msg;
+     if (newline)
+        std::cout << std::endl;
+     std::cout.flush();
      }
-  else if (wSetup.logFile == STDERR)
-     out = std::cerr;
-  
-  out << timestamp;
-  if (wSetup.verbosity >= 5)
-     out << function << ':' << IntToStr(line) << ' ';
-  out << msg;
-  if (newline)
-     out << std::endl;
-  out.flush();
+  else if (wSetup.logFile == STDERR) {
+     std::cerr << timestamp;
+     if (wSetup.verbosity >= 5)
+        std::cerr << function << ':' << IntToStr(line) << ' ';
+     std::cerr << msg;
+     if (newline)
+        std::cerr << std::endl;
+     std::cerr.flush();
+     }
   
   if (MenuScanning)
      MenuScanning->AddLogMsg(msg);
 }
+
 
 
 void hexdump(const char* intro, const unsigned char* buf, int len) {
