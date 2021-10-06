@@ -122,51 +122,46 @@ void _log(const char* function, int line, const int level, bool newline, std::st
 
 std::string hex(size_t n, size_t digits);
 
-void hexdump(const char* intro, const unsigned char* buf, int len) {
-  int i,j;
-  char sbuf[17] = { 0 };
-
-
+void hexdump(std::string intro, const unsigned char* buf, size_t len) {
   if (wSetup.verbosity < 3)
     return;
 
-  if (! buf) {
-     dlog(0, "BUG: %s was called with buf = NULL", __FUNCTION__);
-     return;
-     }
+  if (buf == nullptr)
+     len = 0;
 
-  fprintf(stderr, "\t===================== %s ", intro);
-  for(i = strlen(intro) + 1; i < 50; i++)
-     fprintf(stderr, "=");
-  fprintf(stderr, "\n");
-  fprintf(stderr, "\tlen = %d\n", len);
-  for(i = 0; i < len; i++) {
-     if ((i % 16) == 0)
-        fprintf(stderr, "%s0x%.2X: ", i ? "\n\t" : "\t", (i / 16) * 16);
-     fprintf(stderr, "%.2X ", (uint8_t) *(buf + i));
-     sbuf[i % 16] = *(buf + i);
-     if (((i + 1) % 16) == 0) {
-        // remove non-printable chars
-        for(j = 0; j < 16; j++)
-           if (!((sbuf[j] > 31) && (sbuf[j] < 127))) {
-           sbuf[j] = ' ';
-           }
-        fprintf(stderr, ": %s", sbuf);
-        memset(&sbuf, 0, 17);
+  std::stringstream ss;
+  std::string s;
+  size_t addr_len = hex(len,2).size();
+
+  if (intro.size() < 30)
+     s = std::string(30 - intro.size(), '=');
+
+  ss << "\t===================== " << intro << " " << s << std::endl
+     << "\tlen = " << len << std::endl;
+
+  for(size_t i=0; i<len; i++) {
+     size_t r = i % 16;
+     if (r == 0) {
+        if (i) ss << "\n";
+        ss << "\t" << hex((i / 16) * 16, addr_len) << ": ";
+        s = "                ";
+        }
+     unsigned char c = *(buf + i);
+     ss << hex(c, 2) << ' ';
+     if (std::isprint(c) == 0)
+        c = 32;
+     s[i % 16] = c;
+     if (r == 15)
+        ss << "; " << s;
+     if (i == len-1) {
+        size_t n = len % 16;
+        if (n > 0)
+           ss << std::string((16-n)*3, ' ') << "; " << s;
         }
      }
-  if (len % 16) {
-     for(i = 0; i < (len % 16); i++)
-        if (!((sbuf[i] > 31) && (sbuf[i] < 127)))
-        sbuf[i] = ' ';
-     for (i = (len % 16); i < 16; i++)
-        fprintf(stderr, "   ");
-     fprintf(stderr, ": %s", sbuf);
-     }
-  fprintf(stderr, "\n");
-  fprintf(stderr, "\t========================================================================\n");
-}
 
+  std::cerr << ss.str() << std::endl;
+}
 
 int IOCTL(int fd, int cmd, void* data) {  
   for(int retry=10; retry>=0;) {
