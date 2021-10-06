@@ -43,9 +43,7 @@
   if (wSetup.verbosity > 5) hexdump(__PRETTY_FUNCTION__, d, l);
 
 
-#define dlog(level, fmt...) do { \
-   _log(__PRETTY_FUNCTION__,__LINE__, level, true, fmt); \
-   } while(0)
+#define dlog(level, fmt...) do { _log(__PRETTY_FUNCTION__,__LINE__, level, true, fmt); } while(0)
 
 void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...);
 void _log(const char* function, int line, const int level, bool newline, std::string);
@@ -244,7 +242,7 @@ extern cMySetup wSetup;
 /*******************************************************************************
  * generic functions
  ******************************************************************************/
-void hexdump(const char* intro, const unsigned char* buf, int len);
+void hexdump(std::string intro, const unsigned char* buf, size_t len);
 int  IOCTL(int fd, int cmd, void* data);
 bool FileExists(const char* aFile);
 void mSleep(size_t ms);

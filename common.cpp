@@ -10,6 +10,7 @@
 #include <sstream>              // std::stringstream
 #include <chrono>               // std::chrono::milliseconds
 #include <cstdarg>              // va_list, va_start, ..
+#include <cctype>               // std::isprint
 #include <syslog.h>             // syslog()
 #include <linux/dvb/frontend.h> // fe_status_t, dvb_frontend_info
 #include <linux/dvb/version.h>  // DVB_API_VERSION, DVB_API_VERSION_MINOR
@@ -77,9 +78,19 @@ void cMySetup::InitSystems(void) {
 
 cMySetup wSetup;           
 
+
+/*******************************************************************************
+ * plugins logging facility: dlog(), _log() and hexdump()
+ ******************************************************************************/
 void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...) {
-  if (level <= wSetup.verbosity)
-     _log(function, line, level, newline, FormatStr(fmt));
+  if (level <= wSetup.verbosity) {
+     char str[256];
+     va_list ap;
+     va_start(ap, fmt);
+     vsnprintf(str, sizeof(str), fmt, ap);
+     va_end(ap);
+     _log(function, line, level, newline, std::string(str));
+     }
 }
 
 void _log(const char* function, int line, const int level, bool newline, std::string msg) {
@@ -120,18 +131,17 @@ void _log(const char* function, int line, const int level, bool newline, std::st
      MenuScanning->AddLogMsg(msg);
 }
 
-std::string hex(size_t n, size_t digits);
-
 void hexdump(std::string intro, const unsigned char* buf, size_t len) {
   if (wSetup.verbosity < 3)
     return;
 
-  if (buf == nullptr)
-     len = 0;
-
+  std::string hex(size_t n, size_t digits);
   std::stringstream ss;
   std::string s;
   size_t addr_len = hex(len,2).size();
+
+  if (buf == nullptr)
+     len = 0;
 
   if (intro.size() < 30)
      s = std::string(30 - intro.size(), '=');
@@ -141,12 +151,14 @@ void hexdump(std::string intro, const unsigned char* buf, size_t len) {
 
   for(size_t i=0; i<len; i++) {
      size_t r = i % 16;
+     unsigned char c = *(buf + i);
+
      if (r == 0) {
         if (i) ss << "\n";
-        ss << "\t" << hex((i / 16) * 16, addr_len) << ": ";
+        ss << "\t" << hex((i/16)*16, addr_len) << ": ";
         s = "                ";
         }
-     unsigned char c = *(buf + i);
+
      ss << hex(c, 2) << ' ';
      if (std::isprint(c) == 0)
         c = 32;
@@ -163,6 +175,10 @@ void hexdump(std::string intro, const unsigned char* buf, size_t len) {
   std::cerr << ss.str() << std::endl;
 }
 
+
+/*******************************************************************************
+ * encapsulation of the ioctl() syscall.
+ ******************************************************************************/
 int IOCTL(int fd, int cmd, void* data) {  
   for(int retry=10; retry>=0;) {
      if (ioctl(fd, cmd, data) != 0) {
