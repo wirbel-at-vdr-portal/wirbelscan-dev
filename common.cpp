@@ -120,6 +120,7 @@ void _log(const char* function, int line, const int level, bool newline, std::st
      MenuScanning->AddLogMsg(msg);
 }
 
+std::string hex(size_t n, size_t digits);
 
 void hexdump(const char* intro, const unsigned char* buf, int len) {
   int i,j;
@@ -862,12 +863,16 @@ std::string IntToStr(int n, size_t digits) {
   return ss.str();
 }
 
-std::string IntToHex(size_t n, size_t digits) {
+std::string hex(size_t n, size_t digits) {
   std::stringstream ss;
-  ss << "0x" << std::uppercase << std::setfill('0') << std::hex << std::setw(digits) << n;
+  ss << std::uppercase << std::setfill('0') << std::hex << std::setw(digits) << n;
   return ss.str();
 }
 
+std::string IntToHex(size_t n, size_t digits) {
+  return "0x" + hex(n, digits);
+}
+  
 std::string FloatToStr(double f, size_t precision) {
   std::stringstream ss;
   ss.precision(precision);
