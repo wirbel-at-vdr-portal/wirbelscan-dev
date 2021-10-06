@@ -235,8 +235,7 @@ int dvbc_symbolrate(int index) {
 }
 
 /*******************************************************************************
- * TParams
- * read VDR param string and divide to separate items or vice versa.
+ * TParams, read VDR param string and divide to separate items or vice versa.
  ******************************************************************************/
 
 TParams::TParams() :
@@ -343,130 +342,80 @@ int TParams::Value(const char*& s) {
 }
 
 void TParams::Print(std::string& dest, char Source) {
-  char tmp[8];
-  dest = "";
+  dest.clear();
+  dest.reserve(18 * 4);
 
   switch(Source) {
      case 'A':
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           dest += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           dest += tmp;
-           }
+        if (Inversion != 999)
+           dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           dest += "M" + IntToStr(Modulation);
         break;
      case 'C':
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           dest += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           dest += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           dest += tmp;
-           }
+        if (FEC != 999)
+           dest += "C" + IntToStr(FEC);
+        if (Inversion != 999)
+           dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           dest += "M" + IntToStr(Modulation);
         break;
      case 'S':
         if (Polarization)
            dest += Polarization;
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           dest += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           dest += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           dest += tmp;
-           }
+        if (FEC != 999)
+           dest += "C" + IntToStr(FEC);
+        if (Inversion != 999)
+           dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           dest += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (Pilot != 999) {
-              snprintf(tmp, 8, "N%d", Pilot);
-              dest += tmp;
-              }
-           if (Rolloff != 999) {
-              snprintf(tmp, 8, "O%d", Rolloff);
-              dest += tmp;
-              }
-           if (StreamId != 999) {
-              snprintf(tmp, 8, "P%d", StreamId);
-              dest += tmp;
-              }
+           if (Pilot != 999)
+              dest += "N" + IntToStr(Pilot);
+           if (Rolloff != 999)
+              dest += "O" + IntToStr(Rolloff);
+           if (StreamId != 999)
+              dest += "P" + IntToStr(StreamId);
            }
-        if (DelSys != 999) {
-           snprintf(tmp, 8, "S%d", DelSys);
-           dest += tmp;
-           }
+        if (DelSys != 999)
+           dest += "S" + IntToStr(DelSys);
         break;
      case 'T':
-        if (Bandwidth != 999) {
-           snprintf(tmp, 8, "B%d", Bandwidth);
-           dest += tmp;
-           }
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           dest += tmp;
-           }
-        if (FEC_low != 999) {
-           snprintf(tmp, 8, "D%d", FEC_low);
-           dest += tmp;
-           }
-        if (Guard != 999) {
-           snprintf(tmp, 8, "G%d", Guard);
-           dest += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           dest += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           dest += tmp;
-           }
+        if (Bandwidth != 999)
+           dest += "B" + IntToStr(Bandwidth);
+        if (FEC != 999)
+           dest += "C" + IntToStr(FEC);
+        if (FEC_low != 999)
+           dest += "D" + IntToStr(FEC_low);
+        if (Guard != 999)
+           dest += "G" + IntToStr(Guard);
+        if (Inversion != 999)
+           dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           dest += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (StreamId != 999) {
-              snprintf(tmp, 8, "P%d", StreamId);
-              dest += tmp;
-              }
-           if (SystemId != 999) {
-              snprintf(tmp, 8, "Q%d", SystemId);
-              dest += tmp;
-              }
+           if (StreamId != 999)
+              dest += "P" + IntToStr(StreamId);
+           if (SystemId != 999)
+              dest += "Q" + IntToStr(SystemId);
            }
-        if (DelSys != 999) {
-           snprintf(tmp, 8, "S%d", DelSys);
-           dest += tmp;
-           }
-        if (Transmission != 999) {
-           snprintf(tmp, 8, "T%d", Transmission);
-           dest += tmp;
-           }
-        if (DelSys and MISO != 999) {
-           snprintf(tmp, 8, "X%d", MISO);
-           dest += tmp;
-           }
-        if (Hierarchy != 999) {
-           snprintf(tmp, 8, "Y%d", Hierarchy);
-           dest += tmp;
-           }
+        if (DelSys != 999)
+           dest += "S" + IntToStr(DelSys);
+        if (Transmission != 999)
+           dest += "T" + IntToStr(Transmission);
+        if (DelSys and MISO != 999)
+           dest += "X" + IntToStr(MISO);
+        if (Hierarchy != 999)
+           dest += "Y" + IntToStr(Hierarchy);
         break;
      default:;
-        dlog(0, "%s %d: unknown Source 0x%.02X",
-            __PRETTY_FUNCTION__,__LINE__,(unsigned char) Source);
+        dlog(0, ": unknown Source " + IntToHex((size_t)Source, 2));
      }
 }
 
 
 /*******************************************************************************
- * TChannel
- * read VDR channel string and divide to separate items or vice versa.
+ * class TChannel, internal channel representation.
  ******************************************************************************/
 
 TChannel::TChannel() :
