@@ -244,7 +244,7 @@ extern cMySetup wSetup;
  ******************************************************************************/
 void hexdump(std::string intro, const unsigned char* buf, size_t len);
 int  IOCTL(int fd, int cmd, void* data);
-bool FileExists(const char* aFile);
+bool FileExists(std::string aFile);
 void mSleep(size_t ms);
 std::string IntToStr(int n, size_t digits = 0);
 std::string IntToHex(size_t n, size_t digits = 0);

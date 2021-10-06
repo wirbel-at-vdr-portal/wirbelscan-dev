@@ -12,6 +12,7 @@
 #include <cstdarg>              // va_list, va_start, ..
 #include <cctype>               // std::isprint
 #include <syslog.h>             // syslog()
+#include <sys/stat.h>           // stat()
 #include <linux/dvb/frontend.h> // fe_status_t, dvb_frontend_info
 #include <linux/dvb/version.h>  // DVB_API_VERSION, DVB_API_VERSION_MINOR
 #include <vdr/device.h>         // cDevice
@@ -196,13 +197,10 @@ int IOCTL(int fd, int cmd, void* data) {
   return 0;
 }
 
-#include <sys/stat.h> 
-bool FileExists(const char* aFile) {
-  struct stat Stat;
 
-  if (! stat(aFile,&Stat))
-     return true; 
-  return false; 
+bool FileExists(std::string aFile) {
+  struct stat Stat;
+  return stat(aFile.c_str(), &Stat) == 0;
 }
 
 
