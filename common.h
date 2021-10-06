@@ -48,6 +48,7 @@
    } while(0)
 
 void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...);
+void _log(const char* function, int line, const int level, bool newline, std::string);
 
 #define fatal(x...)     dlog(0, x); return -1
 #define warning(msg...) _log(__FUNCTION__,__LINE__,1,false,msg)
@@ -250,6 +251,7 @@ void mSleep(size_t ms);
 std::string IntToStr(int n, size_t digits = 0);
 std::string IntToHex(size_t n, size_t digits = 0);
 std::string FloatToStr(double f, size_t precision = 2);
+std::string FormatStr(const char* fmt, ...);
 
 template<class T> inline void DeleteNullptr(T*& aClass) {
   T* temp = aClass;
