@@ -75,17 +75,16 @@ void cMySetup::InitSystems(void) {
   initsystems = true;
 }
 
-cMySetup wSetup;            
+cMySetup wSetup;           
 
 void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...) {
+  if (level <= wSetup.verbosity)
+     _log(function, line, level, newline, FormatStr(fmt));
+}
+
+void _log(const char* function, int line, const int level, bool newline, std::string msg) {
   if (level > wSetup.verbosity)
      return;
-
-  char msg[256];
-  va_list ap;
-  va_start(ap, fmt);
-  vsnprintf(msg, sizeof(msg), fmt, ap);
-  va_end(ap);
 
   char timestamp[10];
   time_t now = time(nullptr);
@@ -97,7 +96,7 @@ void _log(const char* function, int line, const int level, bool newline, const c
      }
 
   if (wSetup.logFile == SYSLOG)
-     syslog(LOG_DEBUG, "%s", msg);
+     syslog(LOG_DEBUG, "%s", msg.c_str());
   else if (wSetup.logFile == STDOUT) {
      std::cout << timestamp;
      if (wSetup.verbosity >= 5)
@@ -120,7 +119,6 @@ void _log(const char* function, int line, const int level, bool newline, const c
   if (MenuScanning)
      MenuScanning->AddLogMsg(msg);
 }
-
 
 
 void hexdump(const char* intro, const unsigned char* buf, int len) {
@@ -875,6 +873,15 @@ std::string FloatToStr(double f, size_t precision) {
   ss.precision(precision);
   ss << std::fixed << f;
   return ss.str();
+}
+
+std::string FormatStr(const char* fmt, ...) {
+  char str[256];
+  va_list ap;
+  va_start(ap, fmt);
+  vsnprintf(str, sizeof(str), fmt, ap);
+  va_end(ap);
+  return str;
 }
 
 cDvbDevice* GetDvbDevice(cDevice* d) {
