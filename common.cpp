@@ -257,7 +257,7 @@ TParams::TParams(std::string& s) :
 void TParams::Parse(std::string& s) {
   std::transform(s.begin(), s.end() ,s.begin(), ::toupper);
   const char* c = s.c_str();
-  while(*c) {
+  while(*c)
      switch(*c) {
         case 'H':
         case 'V':
@@ -284,35 +284,33 @@ void TParams::Parse(std::string& s) {
            Modulation = Value(c);
            break;
         case 'N':
-           Pilot= Value(c);
+           Pilot = Value(c);
            break;
         case 'O':
-           Rolloff= Value(c);
+           Rolloff = Value(c);
            break;
         case 'P':
-           StreamId= Value(c);
+           StreamId = Value(c);
            break;
         case 'Q':
-           SystemId= Value(c);
+           SystemId = Value(c);
            break;
         case 'S':
-           DelSys= Value(c);
+           DelSys = Value(c);
            break;
         case 'T':
-           Transmission= Value(c);
+           Transmission = Value(c);
            break;
         case 'X':
-           MISO= Value(c);
+           MISO = Value(c);
            break;
         case 'Y':
-           Hierarchy= Value(c);
+           Hierarchy = Value(c);
            break;
         default:
-           dlog(0, "%s %d: error in '%s': invalid char '%c'",
-               __PRETTY_FUNCTION__,__LINE__,s.c_str(),*c);
+           dlog(0, "error in '" + s + "': invalid char '" + *c + "'";
            return;
         }
-     }
 }
 
 int TParams::Value(const char*& s) {
