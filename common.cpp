@@ -522,128 +522,77 @@ void TChannel::CopyTransponderData(const TChannel* Channel) {
 }
 
 void TChannel::Params(std::string& s) {
-  if (Source.size() == 0) {
-     s.clear();
-     return;
-     }
+  s.clear();
+  s.reserve(18 * 4);
 
-  char tmp[8];
-  s = "";
+  if (Source.size() == 0)
+     return;
 
   switch(Source[0]) {
      case 'A':
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           s += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           s += tmp;
-           }
+        if (Inversion != 999)
+           s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           s += "M" + IntToStr(Modulation);
         break;
      case 'C':
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           s += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           s += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           s += tmp;
-           }
+        if (FEC != 999)
+           s += "C" + IntToStr(FEC);
+        if (Inversion != 999)
+           s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           s += "M" + IntToStr(Modulation);
         break;
      case 'S':
         if (Polarization)
            s += Polarization;
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           s += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           s += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           s += tmp;
-           }
+        if (FEC != 999)
+           s += "C" + IntToStr(FEC);
+        if (Inversion != 999)
+           s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           s += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (Pilot != 999) {
-              snprintf(tmp, 8, "N%d", Pilot);
-              s += tmp;
-              }
-           if (Rolloff != 999) {
-              snprintf(tmp, 8, "O%d", Rolloff);
-              s += tmp;
-              }
-           if (StreamId != 999) {
-              snprintf(tmp, 8, "P%d", StreamId);
-              s += tmp;
-              }
+           if (Pilot != 999)
+              s += "N" + IntToStr(Pilot);
+           if (Rolloff != 999)
+              s += "O" + IntToStr(Rolloff);
+           if (StreamId != 999)
+              s += "P" + IntToStr(StreamId);
            }
-        if (DelSys != 999) {
-           snprintf(tmp, 8, "S%d", DelSys);
-           s += tmp;
-           }
+        if (DelSys != 999)
+           s += "S" + IntToStr(DelSys);
         break;
      case 'T':
-        if (Bandwidth != 999) {
-           snprintf(tmp, 8, "B%d", Bandwidth);
-           s += tmp;
-           }
-        if (FEC != 999) {
-           snprintf(tmp, 8, "C%d", FEC);
-           s += tmp;
-           }
-        if (FEC_low != 999) {
-           snprintf(tmp, 8, "D%d", FEC_low);
-           s += tmp;
-           }
-        if (Guard != 999) {
-           snprintf(tmp, 8, "G%d", Guard);
-           s += tmp;
-           }
-        if (Inversion != 999) {
-           snprintf(tmp, 8, "I%d", Inversion);
-           s += tmp;
-           }
-        if (Modulation != 999) {
-           snprintf(tmp, 8, "M%d", Modulation);
-           s += tmp;
-           }
+        if (Bandwidth != 999)
+           s += "B" + IntToStr(Bandwidth);
+        if (FEC != 999)
+           s += "C" + IntToStr(FEC);
+        if (FEC_low != 999)
+           s += "D" + IntToStr(FEC_low);
+        if (Guard != 999)
+           s += "G" + IntToStr(Guard);
+        if (Inversion != 999)
+           s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)
+           s += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (StreamId != 999) {
-              snprintf(tmp, 8, "P%d", StreamId);
-              s += tmp;
-              }
-           if (SystemId != 999) {
-              snprintf(tmp, 8, "Q%d", SystemId);
-              s += tmp;
-              }
+           if (StreamId != 999)
+              s += "P" + IntToStr(StreamId);
+           if (SystemId != 999)
+              s += "Q" + IntToStr(SystemId);
            }
-        if (DelSys != 999) {
-           snprintf(tmp, 8, "S%d", DelSys);
-           s += tmp;
-           }
-        if (Transmission != 999) {
-           snprintf(tmp, 8, "T%d", Transmission);
-           s += tmp;
-           }
-        if (DelSys and MISO != 999) {
-           snprintf(tmp, 8, "X%d", MISO);
-           s += tmp;
-           }
-        if (Hierarchy != 999) {
-           snprintf(tmp, 8, "Y%d", Hierarchy);
-           s += tmp;
-           }
+        if (DelSys != 999)
+           s += "S" + IntToStr(DelSys);
+        if (Transmission != 999)
+           s += "T" + IntToStr(Transmission);
+        if (DelSys and MISO != 999)
+           s += "X" + IntToStr(MISO);
+        if (Hierarchy != 999)
+           s += "Y" + IntToStr(Hierarchy);
         break;
-     default:;
-        dlog(0, "%s %d: unknown Source %s",
-            __PRETTY_FUNCTION__,__LINE__, Source.c_str());
+     default:
+        dlog(0, ": unknown Source " + Source);
      }
 }
 
