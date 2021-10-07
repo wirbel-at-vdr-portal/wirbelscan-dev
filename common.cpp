@@ -594,42 +594,29 @@ void TChannel::Params(std::string& s) {
 }
 
 void TChannel::PrintTransponder(std::string& dest) {
-  std::string s;
   int i = Frequency;
-  char b[16];
   char source = Source[0];
-
-  switch(source) {
-     case 'A': dest = "ATSC" ; break;
-     case 'C': dest = "C"; break;
-     case 'S': dest = "S"; break;
-     case 'T': dest = "T"; break;
-     default:;
-     }
-  if (DelSys == 1)
-     dest += "2";
-  else
-     dest += " ";
 
   if (i < 1000)    i *= 1000;
   if (i > 999999)  i /= 1000;
-  snprintf(b,16," %8.2f MHz ", source == 'S'? i:i/1000.0);
-  dest += b;
-//dest += std::to_string(i) + " MHz ";
 
-  switch(source) {
-     case 'C':
-     case 'S':
-        i = Symbolrate;
-        if (i < 1000)    i *= 1000;
-        if (i > 999999)  i /= 1000;
-        snprintf(b,16,"SR %d ",i);
-        dest += b;
-      //dest += "SR " + std::to_string(i);
-        break;
-     default:;
+  dest = source;
+
+  if (DelSys == 1)
+     dest += "2 ";
+  else
+     dest += "  ";
+
+  dest += FloatToStr((source == 'S')?i:i/1000.0, 8, 2) + " MHz";
+
+  if ((source == 'C') or (source == 'S')) {
+     i = Symbolrate;
+     if (i < 1000)    i *= 1000;
+     if (i > 999999)  i /= 1000;
+     dest += "SR " + IntToStr(i)
      }
 
+  std::string s;
   Params(s);
   dest += s;
 }
