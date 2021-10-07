@@ -622,77 +622,80 @@ void TChannel::PrintTransponder(std::string& dest) {
 }
 
 void TChannel::Print(std::string& dest) {
+  std::stringstream ss;
   std::string params;
-  char buf[512], *p = buf;
-
   Params(params);
 
-  sprintf(p, "%s%s%s%s%s:%d:%s:%s:%d:%d",
-     Name.size()?Name.c_str():"NULL",
-     Shortname.size()?",":"", Shortname.c_str(),
-     Provider.size() ?";":"", Provider.c_str(),
-     Frequency, params.c_str(), Source.c_str(),
-     Symbolrate, VPID.PID);
-  p += strlen(p);
+  if (Name.empty())
+     ss << "NULL";
+  else
+     ss << Name;
 
-  if (PCR and PCR != VPID.PID) {
-     sprintf(p, "+%d", PCR);
-     p += strlen(p);
-     }
+  if (not Shortname.empty())
+     ss <<  ',' << Shortname;
 
-  if (VPID.Type) {
-     sprintf(p, "=%d", VPID.Type);
-     p += strlen(p);
-     }
+  if (not Provider.empty())
+     ss <<  ';' << Provider;
 
-  sprintf(p, "%s", ":"); p++;
+  ss << ':' << IntToStr(Frequency)
+     << ':' << params
+     << ':' << Source 
+     << ':' << IntToStr(Symbolrate)
+     << ':' << IntToStr(VPID.PID);
+
+  if (PCR and (PCR != VPID.PID))
+     ss << '+' << IntToStr(PCR);
+
+  if (VPID.Type)
+     ss << '=' << IntToStr(VPID.Type);
 
   if (APIDs.Count()) {
-     for(int i = 0; i < APIDs.Count(); ++i) {
-        sprintf(p, "%s%d", i?",":"", APIDs[i].PID);
-        p += strlen(p);
-        if (APIDs[i].Lang.size()) {
-           sprintf(p, "=%s", APIDs[i].Lang.c_str());
-           p += strlen(p);
-           }
-        if (APIDs[i].Type) {
-           sprintf(p, "@%d", APIDs[i].Type);
-           p += strlen(p);
-           }
+     for(int i=0; i<APIDs.Count(); ++i) {
+        if (i == 0)
+           ss << ':';
+        else
+           ss << ',';
+        ss << IntToStr(APIDs[i].PID);
+        if (not APIDs[i].Lang.empty())
+           ss << '=' << APIDs[i].Lang;
+        if (APIDs[i].Type)
+           ss << '@' << IntToStr(APIDs[i].Type);
         }
      }
-  else {
-     sprintf(p, "%d", 0); p++;
-     }
+  else
+     ss << ":0";
 
   if (DPIDs.Count()) {
-     sprintf(p, "%s", ";"); p++;
-     for(int i = 0; i < DPIDs.Count(); ++i) {
-        sprintf(p, "%s%d", i?",":"", DPIDs[i].PID);
-        p += strlen(p);
-        if (DPIDs[i].Lang.size()) {
-           sprintf(p, "=%s", DPIDs[i].Lang.c_str());
-           p += strlen(p);           
-           }
-        if (DPIDs[i].Type) {
-           sprintf(p, "@%d", DPIDs[i].Type);
-           p += strlen(p);           
-           }
+     for(int i=0; i<DPIDs.Count(); ++i) {
+        if (i == 0)
+           ss << ';';
+        else
+           ss << ',';
+        ss << IntToStr(DPIDs[i].PID);
+        if (not DPIDs[i].Lang.empty())
+           ss << '=' << DPIDs[i].Lang;
+        if (DPIDs[i].Type)
+           ss << '@' << IntToStr(DPIDs[i].Type);
         }
      }
-  sprintf(p, ":%d:", TPID);
-  p += strlen(p);
+  ss << ':' << IntToStr(TPID);
   if (CAIDs.Count()) {
-     for(int i = 0; i < CAIDs.Count(); ++i) {
-        sprintf(p, "%s%x", i?",":"", CAIDs[i]);
-        p += strlen(p);
+     for(int i=0; i<CAIDs.Count(); ++i) {
+        if (i == 0)
+           ss << ':';
+        else
+           ss << ',';
+        ss << std::lowercase << std::hex  << CAIDs[i] << std::dec;
         }
      }
-  else {
-     sprintf(p, "%d", 0); p++;
-     }
-  sprintf(p, ":%d:%d:%d:%d", SID, ONID, TID, RID);
-  dest = buf;
+  else
+     ss << ":0";
+  ss << ':' << IntToStr(SID)
+     << ':' << IntToStr(ONID)
+     << ':' << IntToStr(TID)
+     << ':' << IntToStr(RID)
+
+  dest = std::swap(ss.str());
 }
 
 void TChannel::VdrChannel(cChannel& c) {
@@ -703,9 +706,7 @@ void TChannel::VdrChannel(cChannel& c) {
 
 static bool SourceMatches(int a, int b) {
   static const int SatRotor = cSource::stSat | cSource::st_Any;
-
-  return (a == b or
-         (a == SatRotor and (b & cSource::stSat)));
+  return (a == b or (a == SatRotor and (b & cSource::stSat)));
 }
 
 bool TChannel::ValidSatIf() {
