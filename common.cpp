@@ -315,9 +315,7 @@ void TParams::Parse(std::string& s) {
 
 int TParams::Value(const char*& s) {
   int v = 0;
-
-  ++s;
-
+  s++;
   while(*s) {
      switch(*s) {
         case '0':
@@ -415,7 +413,6 @@ void TParams::Print(std::string& dest, char Source) {
 /*******************************************************************************
  * class TChannel, internal channel representation.
  ******************************************************************************/
-
 TChannel::TChannel() :
      Name("???"), Shortname(""), Provider(""), Frequency(0),
      Bandwidth(8), FEC(999), FEC_low(999), Guard(999), Polarization(0),
@@ -778,10 +775,10 @@ std::string IntToHex(size_t n, size_t digits) {
   return "0x" + hex(n, digits);
 }
   
-std::string FloatToStr(double f, size_t precision) {
+std::string FloatToStr(double f, size_t width, size_t precision) {
   std::stringstream ss;
   ss.precision(precision);
-  ss << std::fixed << f;
+  ss << std::fixed << std::setfill(' ') << std::setw(width) << f;
   return ss.str();
 }
 
