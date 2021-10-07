@@ -144,8 +144,8 @@ void hexdump(std::string intro, const unsigned char* buf, size_t len) {
   if (buf == nullptr)
      len = 0;
 
-  if (intro.size() < 30)
-     s = std::string(30 - intro.size(), '=');
+  if (intro.size() < 48)
+     s = std::string(48 - intro.size(), '=');
 
   ss << "\t===================== " << intro << " " << s << std::endl
      << "\tlen = " << len << std::endl;
@@ -172,6 +172,8 @@ void hexdump(std::string intro, const unsigned char* buf, size_t len) {
            ss << std::string((16-n)*3, ' ') << "; " << s;
         }
      }
+
+  ss << std::endl << "\t" << std::string(71, '=') << std::endl;
 
   std::cerr << ss.str() << std::endl;
 }
@@ -308,7 +310,7 @@ void TParams::Parse(std::string& s) {
            Hierarchy = Value(c);
            break;
         default:
-           dlog(0, "error in '" + s + "': invalid char '" + *c + "'";
+           dlog(0, "error in '" + s + "': invalid char '" + *c + "'");
            return;
         }
 }
@@ -594,31 +596,32 @@ void TChannel::Params(std::string& s) {
 }
 
 void TChannel::PrintTransponder(std::string& dest) {
+  std::stringstream ss;
+  std::string params;
+  Params(params);
   int i = Frequency;
   char source = Source[0];
 
   if (i < 1000)    i *= 1000;
   if (i > 999999)  i /= 1000;
 
-  dest = source;
+  ss << source;
 
   if (DelSys == 1)
-     dest += "2 ";
+     ss << "2 ";
   else
-     dest += "  ";
+     ss << "  ";
 
-  dest += FloatToStr((source == 'S')?i:i/1000.0, 8, 2) + " MHz";
+  ss << FloatToStr((source == 'S')?i:i/1000.0, 8, 2) << " MHz ";
 
   if ((source == 'C') or (source == 'S')) {
      i = Symbolrate;
      if (i < 1000)    i *= 1000;
      if (i > 999999)  i /= 1000;
-     dest += "SR " + IntToStr(i)
+     ss << "SR " << IntToStr(i) << ' ' << params;
      }
 
-  std::string s;
-  Params(s);
-  dest += s;
+  dest = std::move(ss.str());
 }
 
 void TChannel::Print(std::string& dest) {
@@ -685,7 +688,7 @@ void TChannel::Print(std::string& dest) {
            ss << ':';
         else
            ss << ',';
-        ss << std::lowercase << std::hex  << CAIDs[i] << std::dec;
+        ss << std::nouppercase << std::hex << CAIDs[i] << std::dec;
         }
      }
   else
@@ -693,9 +696,9 @@ void TChannel::Print(std::string& dest) {
   ss << ':' << IntToStr(SID)
      << ':' << IntToStr(ONID)
      << ':' << IntToStr(TID)
-     << ':' << IntToStr(RID)
+     << ':' << IntToStr(RID);
 
-  dest = std::swap(ss.str());
+  dest = std::move(ss.str());
 }
 
 void TChannel::VdrChannel(cChannel& c) {
