@@ -406,7 +406,7 @@ void TParams::Print(std::string& dest, char Source) {
         if (Hierarchy != 999)
            dest += "Y" + IntToStr(Hierarchy);
         break;
-     default:;
+     default:
         dlog(0, ": unknown Source " + IntToHex((size_t)Source, 2));
      }
 }
