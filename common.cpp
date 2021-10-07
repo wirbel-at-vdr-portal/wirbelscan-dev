@@ -642,7 +642,8 @@ bool TChannel::ValidSatIf() {
            break;
            }
      if (!d) {
-        dlog(0, "no diseqc settings for (%s, %d, %c)", Source.c_str(), Frequency, Polarization);
+        dlog(0, "no diseqc settings for (" +
+                Source + ", " + IntTostr(Frequency) + ", " + Polarization + ')');
         return false;
         }
      }
@@ -650,8 +651,9 @@ bool TChannel::ValidSatIf() {
      f -= f < Setup.LnbSLOF ? Setup.LnbFrequLo : Setup.LnbFrequHi;
 
   if (f < 950 or f > 2150) {
-     dlog(0, "transponder (%s, %d, %c) (freq %d -> out of tuning range)",
-         Source.c_str(), Frequency, Polarization, f);
+     dlog(0, "transponder (" +
+             Source + ", " + IntTostr(Frequency) + ", " + Polarization +
+             ") (freq " + IntToStr(f) + " -> out of tuning range)");
      return false;
      }
   return true;
@@ -729,11 +731,11 @@ unsigned int GetFrontendStatus(cDevice* dev) {
 
   int fe = open(s.c_str(), O_RDONLY | O_NONBLOCK);
   if (fe < 0) {
-     dlog(0, "%s: could not open %s", __FUNCTION__, s.c_str());
+     dlog(0, "could not open " + s);
      return 0;
      }
   if (IOCTL(fe, FE_READ_STATUS, &status) < 0)
-     dlog(0, "%s: could not read %s", __FUNCTION__, s.c_str());
+     dlog(0, "could not read status: " + s);
 
   close(fe);
   return status;
@@ -753,12 +755,12 @@ unsigned int GetCapabilities(cDevice* dev) {
 
   int fe = open(s.c_str(), O_RDONLY | O_NONBLOCK);
   if (fe < 0) {
-     dlog(0, "%s: could not open %s", __FUNCTION__, s.c_str());
+     dlog(0, "could not open " + s);
      return 0;
      }
 
   if (IOCTL(fe, FE_GET_INFO, &fe_info) < 0)
-     dlog(0, "%s: could not read %s", __FUNCTION__, s.c_str());
+     dlog(0, "could not query: " + s);
 
   close(fe);
   return fe_info.caps;
