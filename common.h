@@ -248,7 +248,7 @@ bool FileExists(std::string aFile);
 void mSleep(size_t ms);
 std::string IntToStr(int n, size_t digits = 0);
 std::string IntToHex(size_t n, size_t digits = 0);
-std::string FloatToStr(double f, size_t precision = 2);
+std::string FloatToStr(double f, size_t width = 5, size_t precision = 2);
 std::string FormatStr(const char* fmt, ...);
 
 template<class T> inline void DeleteNullptr(T*& aClass) {
