@@ -261,57 +261,25 @@ void TParams::Parse(std::string& s) {
   const char* c = s.c_str();
   while(*c)
      switch(*c) {
-        case 'H':
-        case 'V':
-        case 'L':
-        case 'R':
-           Polarization = *c++;
-           break;
-        case 'B':
-           Bandwidth = Value(c);
-           break;
-        case 'C':
-           FEC = Value(c);
-           break;
-        case 'D':
-           FEC_low = Value(c);
-           break;
-        case 'G':
-           Guard = Value(c);
-           break;
-        case 'I':
-           Inversion = Value(c);
-           break;
-        case 'M':
-           Modulation = Value(c);
-           break;
-        case 'N':
-           Pilot = Value(c);
-           break;
-        case 'O':
-           Rolloff = Value(c);
-           break;
-        case 'P':
-           StreamId = Value(c);
-           break;
-        case 'Q':
-           SystemId = Value(c);
-           break;
-        case 'S':
-           DelSys = Value(c);
-           break;
-        case 'T':
-           Transmission = Value(c);
-           break;
-        case 'X':
-           MISO = Value(c);
-           break;
-        case 'Y':
-           Hierarchy = Value(c);
-           break;
-        default:
-           dlog(0, "error in '" + s + "': invalid char '" + *c + "'");
-           return;
+        case 'H': Polarization = *c++;     break; 
+        case 'V': Polarization = *c++;     break;
+        case 'L': Polarization = *c++;     break;
+        case 'R': Polarization = *c++;     break;
+        case 'B': Bandwidth    = Value(c); break;
+        case 'C': FEC          = Value(c); break;
+        case 'D': FEC_low      = Value(c); break;
+        case 'G': Guard        = Value(c); break;
+        case 'I': Inversion    = Value(c); break;
+        case 'M': Modulation   = Value(c); break;
+        case 'N': Pilot        = Value(c); break;
+        case 'O': Rolloff      = Value(c); break;
+        case 'P': StreamId     = Value(c); break;
+        case 'Q': SystemId     = Value(c); break;
+        case 'S': DelSys       = Value(c); break;
+        case 'T': Transmission = Value(c); break;
+        case 'X': MISO         = Value(c); break;
+        case 'Y': Hierarchy    = Value(c); break;
+        default : dlog(0, "error in '" + s + "': invalid char '" + *c + "'");
         }
 }
 
@@ -345,69 +313,43 @@ void TParams::Print(std::string& dest, char Source) {
 
   switch(Source) {
      case 'A':
-        if (Inversion != 999)
-           dest += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           dest += "M" + IntToStr(Modulation);
+        if (Inversion != 999)       dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      dest += "M" + IntToStr(Modulation);
         break;
      case 'C':
-        if (FEC != 999)
-           dest += "C" + IntToStr(FEC);
-        if (Inversion != 999)
-           dest += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           dest += "M" + IntToStr(Modulation);
+        if (FEC != 999)             dest += "C" + IntToStr(FEC);
+        if (Inversion != 999)       dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      dest += "M" + IntToStr(Modulation);
         break;
      case 'S':
-        if (Polarization)
-           dest += Polarization;
-        if (FEC != 999)
-           dest += "C" + IntToStr(FEC);
-        if (Inversion != 999)
-           dest += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           dest += "M" + IntToStr(Modulation);
+        if (Polarization)           dest += Polarization;
+        if (FEC != 999)             dest += "C" + IntToStr(FEC);
+        if (Inversion != 999)       dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      dest += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (Pilot != 999)
-              dest += "N" + IntToStr(Pilot);
-           if (Rolloff != 999)
-              dest += "O" + IntToStr(Rolloff);
-           if (StreamId != 999)
-              dest += "P" + IntToStr(StreamId);
+           if (Pilot != 999)        dest += "N" + IntToStr(Pilot);
+           if (Rolloff != 999)      dest += "O" + IntToStr(Rolloff);
+           if (StreamId != 999)     dest += "P" + IntToStr(StreamId);
            }
-        if (DelSys != 999)
-           dest += "S" + IntToStr(DelSys);
+        if (DelSys != 999)          dest += "S" + IntToStr(DelSys);
         break;
      case 'T':
-        if (Bandwidth != 999)
-           dest += "B" + IntToStr(Bandwidth);
-        if (FEC != 999)
-           dest += "C" + IntToStr(FEC);
-        if (FEC_low != 999)
-           dest += "D" + IntToStr(FEC_low);
-        if (Guard != 999)
-           dest += "G" + IntToStr(Guard);
-        if (Inversion != 999)
-           dest += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           dest += "M" + IntToStr(Modulation);
+        if (Bandwidth != 999)       dest += "B" + IntToStr(Bandwidth);
+        if (FEC != 999)             dest += "C" + IntToStr(FEC);
+        if (FEC_low != 999)         dest += "D" + IntToStr(FEC_low);
+        if (Guard != 999)           dest += "G" + IntToStr(Guard);
+        if (Inversion != 999)       dest += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      dest += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (StreamId != 999)
-              dest += "P" + IntToStr(StreamId);
-           if (SystemId != 999)
-              dest += "Q" + IntToStr(SystemId);
+           if (StreamId != 999)     dest += "P" + IntToStr(StreamId);
+           if (SystemId != 999)     dest += "Q" + IntToStr(SystemId);
            }
-        if (DelSys != 999)
-           dest += "S" + IntToStr(DelSys);
-        if (Transmission != 999)
-           dest += "T" + IntToStr(Transmission);
-        if (DelSys and MISO != 999)
-           dest += "X" + IntToStr(MISO);
-        if (Hierarchy != 999)
-           dest += "Y" + IntToStr(Hierarchy);
+        if (DelSys != 999)          dest += "S" + IntToStr(DelSys);
+        if (Transmission != 999)    dest += "T" + IntToStr(Transmission);
+        if (DelSys and MISO != 999) dest += "X" + IntToStr(MISO);
+        if (Hierarchy != 999)       dest += "Y" + IntToStr(Hierarchy);
         break;
-     default:
-        dlog(0, ": unknown Source " + IntToHex((size_t)Source, 2));
+     default: dlog(0, ": unknown Source " + IntToHex((size_t)Source, 2));
      }
 }
 
@@ -529,69 +471,43 @@ void TChannel::Params(std::string& s) {
 
   switch(Source[0]) {
      case 'A':
-        if (Inversion != 999)
-           s += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           s += "M" + IntToStr(Modulation);
+        if (Inversion != 999)       s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      s += "M" + IntToStr(Modulation);
         break;
      case 'C':
-        if (FEC != 999)
-           s += "C" + IntToStr(FEC);
-        if (Inversion != 999)
-           s += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           s += "M" + IntToStr(Modulation);
+        if (FEC != 999)             s += "C" + IntToStr(FEC);
+        if (Inversion != 999)       s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      s += "M" + IntToStr(Modulation);
         break;
      case 'S':
-        if (Polarization)
-           s += Polarization;
-        if (FEC != 999)
-           s += "C" + IntToStr(FEC);
-        if (Inversion != 999)
-           s += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           s += "M" + IntToStr(Modulation);
+        if (Polarization)           s += Polarization;
+        if (FEC != 999)             s += "C" + IntToStr(FEC);
+        if (Inversion != 999)       s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      s += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (Pilot != 999)
-              s += "N" + IntToStr(Pilot);
-           if (Rolloff != 999)
-              s += "O" + IntToStr(Rolloff);
-           if (StreamId != 999)
-              s += "P" + IntToStr(StreamId);
+           if (Pilot != 999)        s += "N" + IntToStr(Pilot);
+           if (Rolloff != 999)      s += "O" + IntToStr(Rolloff);
+           if (StreamId != 999)     s += "P" + IntToStr(StreamId);
            }
-        if (DelSys != 999)
-           s += "S" + IntToStr(DelSys);
+        if (DelSys != 999)          s += "S" + IntToStr(DelSys);
         break;
      case 'T':
-        if (Bandwidth != 999)
-           s += "B" + IntToStr(Bandwidth);
-        if (FEC != 999)
-           s += "C" + IntToStr(FEC);
-        if (FEC_low != 999)
-           s += "D" + IntToStr(FEC_low);
-        if (Guard != 999)
-           s += "G" + IntToStr(Guard);
-        if (Inversion != 999)
-           s += "I" + IntToStr(Inversion);
-        if (Modulation != 999)
-           s += "M" + IntToStr(Modulation);
+        if (Bandwidth != 999)       s += "B" + IntToStr(Bandwidth);
+        if (FEC != 999)             s += "C" + IntToStr(FEC);
+        if (FEC_low != 999)         s += "D" + IntToStr(FEC_low);
+        if (Guard != 999)           s += "G" + IntToStr(Guard);
+        if (Inversion != 999)       s += "I" + IntToStr(Inversion);
+        if (Modulation != 999)      s += "M" + IntToStr(Modulation);
         if (DelSys) {
-           if (StreamId != 999)
-              s += "P" + IntToStr(StreamId);
-           if (SystemId != 999)
-              s += "Q" + IntToStr(SystemId);
+           if (StreamId != 999)     s += "P" + IntToStr(StreamId);
+           if (SystemId != 999)     s += "Q" + IntToStr(SystemId);
            }
-        if (DelSys != 999)
-           s += "S" + IntToStr(DelSys);
-        if (Transmission != 999)
-           s += "T" + IntToStr(Transmission);
-        if (DelSys and MISO != 999)
-           s += "X" + IntToStr(MISO);
-        if (Hierarchy != 999)
-           s += "Y" + IntToStr(Hierarchy);
+        if (DelSys != 999)          s += "S" + IntToStr(DelSys);
+        if (Transmission != 999)    s += "T" + IntToStr(Transmission);
+        if (DelSys and MISO != 999) s += "X" + IntToStr(MISO);
+        if (Hierarchy != 999)       s += "Y" + IntToStr(Hierarchy);
         break;
-     default:
-        dlog(0, ": unknown Source " + Source);
+     default: dlog(0, ": unknown Source " + Source);
      }
 }
 
