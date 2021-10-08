@@ -373,7 +373,7 @@ int choose_country(std::string country,
         break;
 
      case BR:     //      Brazil
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               scan_type = SCAN_CABLE;
               info("DVB cable\n");
@@ -422,8 +422,8 @@ int choose_country(std::string country,
      case NZ:     //      NEW ZEALAND
      case PL:     //      POLAND
      case SE:     //      SWEDEN
-     case SK:     //      SLOVAKIA    
-        switch(dvb) {    
+     case SK:     //      SLOVAKIA
+        switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_QAM;
               info("DVB-C\n");
@@ -431,12 +431,12 @@ int choose_country(std::string country,
            default:
               channellist = DVBT_DE;
               info("DVB-T Europe\n");
-              break;               
+              break;
            }
         break;
      case CZ:     //      CZECH REPUBLIC
      case FI:     //      FINLAND
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_FI;
               info("DVB-C FI\n");
@@ -444,11 +444,11 @@ int choose_country(std::string country,
            default:
               channellist = DVBT_DE;
               info("DVB-T Europe\n");
-              break;               
+              break;
            }
         break;
      case FR:     //      FRANCE
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_FR;
               info("DVB-C FR\n");
@@ -456,11 +456,11 @@ int choose_country(std::string country,
            default:
               channellist = DVBT_FR;
               info("DVB-T FR\n");
-              break;               
+              break;
            }
         break;
      case GB:     //      UNITED KINGDOM
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_QAM;
               info("DVB-C\n");
@@ -468,35 +468,35 @@ int choose_country(std::string country,
            default:
               channellist = DVBT_GB;
               info("DVB-T GB\n");
-              break;               
+              break;
            }
         break;
      case AU:     //      AUSTRALIA
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               info("cable australia not yet defined.\n");
               break;
            default:
               channellist = DVBT_AU;
               info("DVB-T AU\n");
-              break;               
+              break;
            }
         break;
-     //**********ATSC freq lists******************************************//    
+     //**********ATSC freq lists******************************************//
      case US:     //      UNITED STATES
      case CA:     //      CANADA
-     case TW:     //      TAIWAN, DVB-T w. ATSC freq list    
+     case TW:     //      TAIWAN, DVB-T w. ATSC freq list
         if (atsc_is_vsb(atsc)) {
            channellist = ATSC_VSB;
            info("VSB US/CA, DVB-T TW\n");
            }
         if (atsc_is_qam(atsc)) {
            channellist = ATSC_QAM;
-           info("QAM US/CA\n");    
+           info("QAM US/CA\n");
            }
         break;
      case BR:     //      BRAZIL, DVB-C/ISDB-T w. ATSC freq list
-        switch(dvb) {    
+        switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_BR;
               info("DVB-C BR\n");
@@ -504,17 +504,17 @@ int choose_country(std::string country,
            default:
               channellist = ISDBT_6MHZ;
               info("ISDB-T, BR\n");
-              break;               
+              break;
            }
         break;
-     //******************************************************************//    
+     //******************************************************************//
      default:
         info("Country identifier %s not defined. Using default freq lists.\n", country);
         return -1;
         break;
      }
 
-  return 0; // success        
+  return 0; // success
 }
 
 
@@ -533,7 +533,7 @@ int base_offset(int channel, int channellist) {
            case 23 ... 94:   return   81000000;
            case 95 ... 99:   return -477000000;
            case 100 ... 133: return   51000000;
-           default:          return SKIP_CHANNEL; 
+           default:          return SKIP_CHANNEL;
            }
      case ATSC_VSB: //ATSC terrestrial, US NTSC center freqs
         switch(channel) {
@@ -567,7 +567,7 @@ int base_offset(int channel, int channellist) {
          //case  5 ... 12: return  142500000; // VHF unused in FRANCE, skip those in offset loop
            case 21 ... 69: return  306000000;
            default:        return  SKIP_CHANNEL;
-           }     
+           }
      case DVBC_QAM: //EUROPE
         switch(channel) {
            case  0:
@@ -763,7 +763,7 @@ int freq_offset(int channel, int channellist, int index) {
                  }
            default:
               return  STOP_OFFSET_LOOP;
-           }                
+           }
      default:
         switch(index) {
            case NO_OFFSET: return 0;
@@ -825,7 +825,7 @@ int atsc_is_qam(int atsc) {
 struct cCountry country_list[] = {
   /*- ISO 3166-1 - unique id - long country name          alpha-3 numeric */
   {"AF", AF, "AFGHANISTAN"},                                  /*AFG, 4  },*/
-  {"AX", AX, "ÅLAND ISLANDS"},                                /*ALA, 248},*/
+  {"AX", AX, "Ã…LAND ISLANDS"},                                /*ALA, 248},*/
   {"AL", AL, "ALBANIA"},                                      /*ALB, 8  },*/
   {"DZ", DZ, "ALGERIA"},                                      /*DZA, 12 },*/
   {"AS", AS, "AMERICAN SAMOA"},                               /*ASM, 16 },*/
@@ -878,10 +878,10 @@ struct cCountry country_list[] = {
   {"CD", CD, "CONGO, THE DEMOCRATIC REPUBLIC OF THE"},        /*COD, 180},*/
   {"CK", CK, "COOK ISLANDS"},                                 /*COK, 184},*/
   {"CR", CR, "COSTA RICA"},                                   /*CRI, 188},*/
-  {"CI", CI, "CÔTE D'IVOIRE"},                                /*CIV, 384},*/
+  {"CI", CI, "CÃ”TE D'IVOIRE"},                                /*CIV, 384},*/
   {"HR", HR, "CROATIA"},                                      /*HRV, 191},*/
   {"CU", CU, "CUBA"},                                         /*CUB, 192},*/
-  {"CW", CW, "CURAÇAO"},                                      /*CUW, 531},*/
+  {"CW", CW, "CURAÃ‡AO"},                                      /*CUW, 531},*/
   {"CY", CY, "CYPRUS"},                                       /*CYP, 196},*/
   {"CZ", CZ, "CZECH REPUBLIC"},                               /*CZE, 203},*/
   {"DK", DK, "DENMARK"},                                      /*DNK, 208},*/
@@ -1004,11 +1004,11 @@ struct cCountry country_list[] = {
   {"PT", PT, "PORTUGAL"},                                     /*PRT, 620},*/
   {"PR", PR, "PUERTO RICO"},                                  /*PRI, 630},*/
   {"QA", QA, "QATA"},                                         /*QAT, 634},*/
-  {"RE", RE, "RÉUNION"},                                      /*REU, 638},*/
+  {"RE", RE, "RÃ‰UNION"},                                      /*REU, 638},*/
   {"RO", RO, "ROMANIA"},                                      /*ROU, 642},*/
   {"RU", RU, "RUSSIAN FEDERATION"},                           /*RUS, 643},*/
   {"RW", RW, "RWANDA"},                                       /*RWA, 646},*/
-  {"BL", BL, "SAINT BARTHÉLEMY"},                             /*BLM, 652},*/
+  {"BL", BL, "SAINT BARTHÃ‰LEMY"},                             /*BLM, 652},*/
   {"SH", SH, "SAINT HELENA"},                                 /*SHN, 654},*/
   {"KN", KN, "SAINT KITTS AND NEVIS"},                        /*KNA, 659},*/
   {"LC", LC, "SAINT LUCIA"},                                  /*LCA, 662},*/
@@ -1150,7 +1150,7 @@ int get_user_country(void) {
 
      /* Assume here something like language[_territory][.codeset], ie. "de_DE.iso8859-1@euro" or "de_DE.utf-8" */
      size_t p1 = Locale.find('_') + 1;
-     size_t p2 = Locale.find_last_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", p1);   
+     size_t p2 = Locale.find_last_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ", p1);
      std::string Country = Locale.substr(p1, 1+p2-p1);
 
      if (Locale.size() != 2)
