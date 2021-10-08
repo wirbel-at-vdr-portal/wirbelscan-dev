@@ -388,7 +388,7 @@ void cMenuScanning::SetStr(unsigned strength, bool locked) {
   static char s[256];
 
   if (strength > 100U)
-     dlog(0, "strength = %u!", strength);
+     dlog(0, "strength = " + IntToStr(strength) + '!');
 
   if (locked and !strength)
      snprintf(s, 256, "STR -- [_________] %s", locked?"LOCKED":"");
@@ -415,8 +415,7 @@ void cMenuScanning::SetStr(unsigned strength, bool locked) {
 
 void cMenuScanning::SetChan(int count) {
   static std::string s;
-  s = "known Channels: ";
-  s += itoa(channelcount = count);
+  s = "known Channels: " + IntToStr(channelcount = count);
 
   ChanNew->SetText(s.c_str(), true);
   ChanNew->Set();
@@ -523,7 +522,7 @@ bool cMenuScanning::StopScan(void) {
 
 bool cMenuScanning::StartScan(void) {
   int type = wSetup.DVB_Type;
-  dlog(0, "StartScan(%s)", DVB_Types[type]);
+  dlog(0, "StartScan(" + std::string(DVB_Types[type]) + ')');
 
   if (!wSetup.systems[type]) {
      dlog(0, "Skipping scan: CANNOT SCAN - No device!");
@@ -563,7 +562,7 @@ bool DoScan(int DVB_Type) {
      }
   wSetup.InitSystems();
   if (DVB_Type == SCAN_NO_DEVICE || ! wSetup.systems[DVB_Type]) {
-     dlog(0, "%s", DVB_Type == SCAN_NO_DEVICE ? "ERROR: type = 'no device'" : "ERROR: no device found");
+     dlog(0, "ERROR: no device found");
      return false;
      }
   timestamp = time(0);
@@ -580,4 +579,3 @@ void DoStop(void) {
   if (Scanner && Scanner->Active())
      Scanner->SetShouldstop(true);
 }
-
