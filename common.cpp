@@ -724,57 +724,49 @@ void PrintDvbApi(std::string& s) {
 }
 
 unsigned int GetFrontendStatus(cDevice* dev) {
+  fe_status_t status = FE_NONE;  
   cDvbDevice* dvbdevice = GetDvbDevice(dev);
-  if (dvbdevice == nullptr) return 0; 
+  if (dvbdevice == nullptr) return status; 
 
-  fe_status_t status = FE_NONE;
-  std::string s = "/dev/dvb/adapter"
-                + std::to_string(dvbdevice->Adapter())
-                + "/frontend"
-                + std::to_string(dvbdevice->Frontend());
+  std::string s = "/dev/dvb/adapter" + std::to_string(dvbdevice->Adapter()) +
+                  "/frontend"        + std::to_string(dvbdevice->Frontend());
 
   int fe = open(s.c_str(), O_RDONLY | O_NONBLOCK);
-  if (fe < 0) {
+  if (fe < 0)
      dlog(0, "could not open " + s);
-     return 0;
+  else {
+     if (IOCTL(fe, FE_READ_STATUS, &status) < 0)
+        dlog(0, "could not read status: " + s);
+     close(fe);
      }
-  if (IOCTL(fe, FE_READ_STATUS, &status) < 0)
-     dlog(0, "could not read status: " + s);
-
-  close(fe);
   return status;
 }
 
 unsigned int GetCapabilities(cDevice* dev) {
-  cDvbDevice* dvbdevice = GetDvbDevice(dev);
-  if (dvbdevice == nullptr) return 0;
-
-  std::string s = "/dev/dvb/adapter"
-                + std::to_string(dvbdevice->Adapter())
-                + "/frontend"
-                + std::to_string(dvbdevice->Frontend());
-
   struct dvb_frontend_info fe_info;
   fe_info.caps = FE_IS_STUPID;
 
+  cDvbDevice* dvbdevice = GetDvbDevice(dev);
+  if (dvbdevice == nullptr) return fe_info.caps;
+
+  std::string s = "/dev/dvb/adapter" + std::to_string(dvbdevice->Adapter()) +
+                  "/frontend"        + std::to_string(dvbdevice->Frontend());
+
+
   int fe = open(s.c_str(), O_RDONLY | O_NONBLOCK);
-  if (fe < 0) {
+  if (fe < 0)
      dlog(0, "could not open " + s);
-     return 0;
+  else {
+     if (IOCTL(fe, FE_GET_INFO, &fe_info) < 0)
+        dlog(0, "could not query: " + s);
+     close(fe);
      }
-
-  if (IOCTL(fe, FE_GET_INFO, &fe_info) < 0)
-     dlog(0, "could not query: " + s);
-
-  close(fe);
   return fe_info.caps;
 }
 
 bool GetTerrCapabilities(cDevice* dev, bool* CodeRate, bool* Modulation, bool* Inversion, bool* Bandwidth, bool* Hierarchy,
                           bool* TransmissionMode, bool* GuardInterval, bool* DvbT2) {
   unsigned int cap = GetCapabilities(dev);
-  if (cap == 0)
-     return false;
   *CodeRate         = cap & FE_CAN_FEC_AUTO;
   *Modulation       = cap & FE_CAN_QAM_AUTO;
   *Inversion        = cap & FE_CAN_INVERSION_AUTO; 
@@ -783,40 +775,30 @@ bool GetTerrCapabilities(cDevice* dev, bool* CodeRate, bool* Modulation, bool* I
   *TransmissionMode = cap & FE_CAN_GUARD_INTERVAL_AUTO;
   *GuardInterval    = cap & FE_CAN_TRANSMISSION_MODE_AUTO;
   *DvbT2            = cap & FE_CAN_2G_MODULATION;
-  return true; 
+  return cap != FE_IS_STUPID;
 }
-
 
 bool GetCableCapabilities(cDevice* dev, bool* Modulation, bool* Inversion) {
-  int cap = GetCapabilities(dev);
-  if (cap == 0)
-     return false;
+  unsigned int cap = GetCapabilities(dev);
   *Modulation       = cap & FE_CAN_QAM_AUTO;
   *Inversion        = cap & FE_CAN_INVERSION_AUTO;
-  return true; 
+  return cap != FE_IS_STUPID;
 }
 
-
 bool GetAtscCapabilities(cDevice* dev, bool* Modulation, bool* Inversion, bool* VSB, bool* QAM) {
-  int cap = GetCapabilities(dev);
-  if (cap == 0)
-     return false;
-
+  unsigned int cap = GetCapabilities(dev);
   *Modulation       = cap & FE_CAN_QAM_AUTO;
   *Inversion        = cap & FE_CAN_INVERSION_AUTO;
   *VSB              = cap & FE_CAN_8VSB;
   *QAM              = cap & FE_CAN_QAM_256;
-  return true; 
+  return cap != FE_IS_STUPID;
 }
 
-
 bool GetSatCapabilities(cDevice* dev, bool* CodeRate, bool* Modulation, bool* RollOff, bool* DvbS2) {
-  int cap = GetCapabilities(dev);
-  if (cap == 0)
-     return false;
+  unsigned int cap = GetCapabilities(dev);
   *CodeRate         = cap & FE_CAN_FEC_AUTO;
   *Modulation       = cap & FE_CAN_QAM_AUTO;
-  *RollOff          = cap & 0; /* there is no capability flag foreseen for rolloff auto? */
+  *RollOff          = 0; /* deprecated: bool* RollOff */
   *DvbS2            = cap & FE_CAN_2G_MODULATION;
-  return true; 
+  return cap != FE_IS_STUPID;
 }
