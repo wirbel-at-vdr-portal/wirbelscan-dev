@@ -49,7 +49,7 @@ std::string satellite_to_full_name(size_t idx) {
   for(size_t i=0; i<SAT_COUNT(sat_list); i++)
      if (idx == sat_list[i].id)
         return sat_list[i].full_name;
-  warning("SATELLITE CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.\n");
+  warning("SATELLITE CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.");
   mSleep(5000);
   return "??";
 }
@@ -71,7 +71,8 @@ int rotor_position_to_sat_list_index(int rotor_position) {
  *****************************************************************************/
 void print_satellites(void) {
   for(size_t i=0; i<SAT_COUNT(sat_list); i++)
-     info("\t%s\t\t%s\n", sat_list[i].short_name, sat_list[i].full_name);
+     info("\t"   + std::string(sat_list[i].short_name) +
+          "\t\t" + std::string(sat_list[i].full_name));
 }
 
 
@@ -83,10 +84,10 @@ int choose_satellite(std::string satellite, int& channellist) {
   channellist = txt_to_satellite(satellite);
   if (channellist < 0) {
      channellist = S19E2;
-     warning("\n\nSATELLITE CODE IS NOT DEFINED. FALLING BACK TO \"S19E2\"\n\n");
+     warning("\n\nSATELLITE CODE IS NOT DEFINED. FALLING BACK TO 'S19E2'\n");
      mSleep(10000);
      retval = -1;
      }
-  info("using settings for %s\n", satellite_to_full_name(channellist).c_str());
+  info("using settings for '" + satellite_to_full_name(channellist) + "'");
   return retval;
 }
