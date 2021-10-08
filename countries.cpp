@@ -325,10 +325,10 @@ int choose_country(std::string country,
   if (channellist == USERLIST) return 0;
 
   if (country_to_short_name(txt_to_country(country)) != country) {
-     warning("\n\nCOUNTRY CODE IS NOT DEFINED. FALLING BACK TO \"DE\"\n\n");
+     warning("\n\nCOUNTRY CODE IS NOT DEFINED. FALLING BACK TO 'DE'");
      mSleep(10000);
      }
-  info("using settings for %s\n", country_to_full_name(txt_to_country(country)).c_str());
+  info("using settings for '" + country_to_full_name(txt_to_country(country)) + "'");
 
   /*
    * choose DVB or ATSC frontend type
@@ -363,11 +363,11 @@ int choose_country(std::string country,
         switch(dvb) {    
            case SCAN_CABLE:
               scan_type = SCAN_CABLE;
-              info("DVB cable\n");
+              info("DVB cable");
               break;
            default:
               scan_type = SCAN_TERRESTRIAL;
-              info("DVB aerial\n");
+              info("DVB aerial");
               break;
            }
         break;
@@ -376,11 +376,11 @@ int choose_country(std::string country,
         switch(dvb) {
            case SCAN_CABLE:
               scan_type = SCAN_CABLE;
-              info("DVB cable\n");
+              info("DVB cable");
               break;
            default:
               scan_type = SCAN_TERRESTRIAL;
-              info("ISDB-T (SBTVD)\n");
+              info("ISDB-T (SBTVD)");
               break;
            }
         break;
@@ -388,11 +388,11 @@ int choose_country(std::string country,
      case US:     //      UNITED STATES
      case CA:     //      CANADA
         scan_type = SCAN_TERRCABLE_ATSC;
-        info("ATSC\n");
+        info("ATSC");
         break;
 
      default:
-        info("Country identifier %s not defined. Using defaults.\n", country);
+        info("Country identifier '" + country + "' not defined. Using defaults.");
         return -1;
         break;
      }
@@ -426,11 +426,11 @@ int choose_country(std::string country,
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_QAM;
-              info("DVB-C\n");
+              info("DVB-C");
               break;
            default:
               channellist = DVBT_DE;
-              info("DVB-T Europe\n");
+              info("DVB-T Europe");
               break;
            }
         break;
@@ -439,11 +439,11 @@ int choose_country(std::string country,
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_FI;
-              info("DVB-C FI\n");
+              info("DVB-C FI");
               break;
            default:
               channellist = DVBT_DE;
-              info("DVB-T Europe\n");
+              info("DVB-T Europe");
               break;
            }
         break;
@@ -451,11 +451,11 @@ int choose_country(std::string country,
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_FR;
-              info("DVB-C FR\n");
+              info("DVB-C FR");
               break;
            default:
               channellist = DVBT_FR;
-              info("DVB-T FR\n");
+              info("DVB-T FR");
               break;
            }
         break;
@@ -463,22 +463,22 @@ int choose_country(std::string country,
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_QAM;
-              info("DVB-C\n");
+              info("DVB-C");
               break;
            default:
               channellist = DVBT_GB;
-              info("DVB-T GB\n");
+              info("DVB-T GB");
               break;
            }
         break;
      case AU:     //      AUSTRALIA
         switch(dvb) {
            case SCAN_CABLE:
-              info("cable australia not yet defined.\n");
+              info("cable australia not yet defined.");
               break;
            default:
               channellist = DVBT_AU;
-              info("DVB-T AU\n");
+              info("DVB-T AU");
               break;
            }
         break;
@@ -488,28 +488,28 @@ int choose_country(std::string country,
      case TW:     //      TAIWAN, DVB-T w. ATSC freq list
         if (atsc_is_vsb(atsc)) {
            channellist = ATSC_VSB;
-           info("VSB US/CA, DVB-T TW\n");
+           info("VSB US/CA, DVB-T TW");
            }
         if (atsc_is_qam(atsc)) {
            channellist = ATSC_QAM;
-           info("QAM US/CA\n");
+           info("QAM US/CA");
            }
         break;
      case BR:     //      BRAZIL, DVB-C/ISDB-T w. ATSC freq list
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_BR;
-              info("DVB-C BR\n");
+              info("DVB-C BR");
               break;
            default:
               channellist = ISDBT_6MHZ;
-              info("ISDB-T, BR\n");
+              info("ISDB-T, BR");
               break;
            }
         break;
      //******************************************************************//
      default:
-        info("Country identifier %s not defined. Using default freq lists.\n", country);
+        info("Country identifier '" + country + "' not defined. Using default freq lists.");
         return -1;
         break;
      }
@@ -586,7 +586,7 @@ int base_offset(int channel, int channellist) {
            default:        return  SKIP_CHANNEL;
            }
      default:
-        fatal("%s: undefined channellist %d\n", __FUNCTION__, channellist);
+        fatal("undefined channellist " + IntToStr(channellist));
         return SKIP_CHANNEL;
      }
 }
@@ -617,7 +617,7 @@ int freq_step(int channel, int channellist) {
      case DVBC_FR:
         return  8000000; // dvb-c, 8MHz step
      default:
-        fatal("%s: undefined channellist %d\n", __FUNCTION__, channellist);
+        fatal("undefined channellist " + IntToStr(channellist));
         return SKIP_CHANNEL;
      }
 }
@@ -635,16 +635,13 @@ int max_dvbc_srate(int bandwidth) {
   #define DVBC_SYMBOL_LEN (1.0 + DVBC_ROLLOFF)
 
   switch(bandwidth) {
-     case 0 ... 6:
-        fatal("%s %d, using old style DVB API", __FUNCTION__, __LINE__);
-        return SKIP_CHANNEL;
      case 8000000:
      case 7000000:
      case 6000000:
      case 5000000:
         return (int) (0.5 + ((double) bandwidth) / DVBC_SYMBOL_LEN);
      default:
-        fatal("%s: unknown channel bandwidth %d\n", __FUNCTION__, bandwidth);
+        fatal("unknown channel bandwidth " + IntToStr(bandwidth));
         return SKIP_CHANNEL;
      }
 }
@@ -1105,7 +1102,7 @@ std::string country_to_full_name(size_t idx) {
   for(size_t i=0; i<country_count(); i++)
      if (idx == country_list[i].id)
         return country_list[i].full_name;
-  warning("COUNTRY CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.\n");
+  warning("COUNTRY CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.");
   mSleep(5000);
   return "GERMANY"; // defaults to DVB-t de_DE
 }
@@ -1116,7 +1113,8 @@ std::string country_to_full_name(size_t idx) {
  ******************************************************************************/
 void print_countries(void) {
   for(size_t i=0; i<country_count(); i++)
-     info("\t%s\t\t%s\n", country_list[i].short_name, country_list[i].full_name);
+     info("\t"    + std::string(country_list[i].short_name) +
+           "\t\t" + std::string(country_list[i].full_name));
 }
 
 
@@ -1158,12 +1156,11 @@ int get_user_country(void) {
 
      for(size_t i=0; i<country_count(); i++)
         if (Locale == country_list[i].short_name) {
-           //info("found Locale = %s\n", Locale.c_str());
            return country_list[i].id;
            }
     }
 
-  warning("could not guess your country. Falling back to 'DE'\n");
+  warning("could not guess your country. Falling back to 'DE'");
   return DE;
 }
 
