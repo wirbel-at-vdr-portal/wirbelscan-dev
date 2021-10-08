@@ -75,7 +75,7 @@ VDR Plugin 'wirbelscan' Revision History
 - added some Copyright Remark to README as proposed from Debian VDR Packaging Team
 - removed PAL SE1 105250/107500
   see http://de.wikipedia.org/wiki/Kabelfernsehen:
-  "Der Sonderkanal S01 kann wegen der Überschneidung mit dem UKW-Radio-Frequenzband nicht genutzt werden"
+  "Der Sonderkanal S01 kann wegen der Ãœberschneidung mit dem UKW-Radio-Frequenzband nicht genutzt werden"
 - added 73.00 MHz for DVB-C PAL
 - italian translations (Diego Pierotto <vdr-italian@tiscali.it>)
 - removed obsolete ptv plugin option
@@ -317,6 +317,7 @@ VDR Plugin 'wirbelscan' Revision History
   - replace any unistd or BSD-style integers by standard integers
   - replace any *sleep functions by mSleep(), which uses C++11
   - replace DELETENULL by DeleteNullptr(), to get rid of macro style
+  - remove as much as possible *printf style and logging
 * remove dvb_wrapper.{h,c} and move remains to common.{h,cpp}
 * wirbelscan_services.h
   - remove deprecated entry Satsystem.
