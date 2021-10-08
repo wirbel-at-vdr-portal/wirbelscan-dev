@@ -33,21 +33,21 @@
  * class cMySetup, plugin setup data
  ******************************************************************************/
 cMySetup::cMySetup(void) {
-  verbosity       = 3;              /* default to messages           */
-  DVB_Type        = SCAN_TERRESTRIAL;
-  DVBT_Inversion  = 0;              /* auto/off                      */
-  DVBC_Inversion  = 0;              /* auto/off                      */
-  DVBC_Symbolrate = 0;              /* default to AUTO               */
-  DVBC_QAM        = 0;              /* default to AUTO               */
-  DVBC_Network_PID= 0x10;           /* as 300486                     */
-  CountryIndex    = COUNTRY::txt_to_country("DE");
-  SatIndex        = txt_to_satellite("S19E2");
-  enable_s2       = 1;
-  ATSC_type       = 0;              /* VSB                           */
-  logFile         = STDOUT;         /* log errors/messages to stdout */
-  scanflags       = SCAN_TV | SCAN_RADIO | SCAN_FTA | SCAN_SCRAMBLED;
-  update          = false;
-  initsystems     = false;
+  verbosity            = 3;              /* default to messages           */
+  DVB_Type             = SCAN_TERRESTRIAL;
+  DVBT_Inversion       = 0;              /* auto/off                      */
+  DVBC_Inversion       = 0;              /* auto/off                      */
+  DVBC_Symbolrate      = 0;              /* default to AUTO               */
+  DVBC_QAM             = 0;              /* default to AUTO               */
+  DVBC_Network_PID     = 0x10;           /* as 300486                     */
+  CountryIndex         = COUNTRY::txt_to_country("DE");
+  SatIndex             = txt_to_satellite("S19E2");
+  enable_s2            = 1;
+  ATSC_type            = 0;              /* VSB                           */
+  logFile              = STDOUT;         /* log errors/messages to stdout */
+  scanflags            = SCAN_TV | SCAN_RADIO | SCAN_FTA | SCAN_SCRAMBLED;
+  update               = false;
+  initsystems          = false;
   scan_remove_invalid  = false;
   scan_update_existing = false;
   scan_append_new      = true;
@@ -59,7 +59,7 @@ void cMySetup::InitSystems(void) {
 
   for(int i=0; i<cDevice::NumDevices(); i++) {
      cDevice* device = cDevice::GetDevice(i);
-     if (device == NULL)        
+     if (device == nullptr)        
         continue;
 
      if (device->ProvidesSource(cSource::FromString("A"))) systems[SCAN_TERRCABLE_ATSC] = 1;
