@@ -10,6 +10,7 @@
 #include <sstream>              // std::stringstream
 #include <chrono>               // std::chrono::milliseconds
 #include <cstdarg>              // va_list, va_start, ..
+#include <ctime>                // time_t, strftime
 #include <cctype>               // std::isprint
 #include <syslog.h>             // syslog()
 #include <sys/stat.h>           // stat()
@@ -98,19 +99,22 @@ void _log(const char* function, int line, const int level, bool newline, std::st
   if (level > wSetup.verbosity)
      return;
 
-  char timestamp[10];
-  time_t now = time(nullptr);
-  strftime(timestamp, sizeof(timestamp), "%H:%M:%S ", localtime(&now));
+  auto now = []()->std::string {
+    char s[16];
+    time_t t = time(nullptr);
+    strftime(s, sizeof(s), "%H:%M:%S ", localtime(&t));
+    return std::string(s);
+    );
 
   if ((wSetup.logFile < STDOUT) or (wSetup.logFile > STDERR)) {
-     std::cerr << "WARNING: setting logFile to STDOUT" << std::endl;
+     syslog(LOG_DEBUG, "%s", "wirbelscan - WARNING: setting logFile to STDOUT");
      wSetup.logFile = STDOUT;
      }
 
   if (wSetup.logFile == SYSLOG)
      syslog(LOG_DEBUG, "%s", msg.c_str());
   else if (wSetup.logFile == STDOUT) {
-     std::cout << timestamp;
+     std::cout << now();
      if (wSetup.verbosity >= 5)
         std::cout << function << ':' << IntToStr(line) << ' ';
      std::cout << msg;
@@ -119,7 +123,7 @@ void _log(const char* function, int line, const int level, bool newline, std::st
      std::cout.flush();
      }
   else if (wSetup.logFile == STDERR) {
-     std::cerr << timestamp;
+     std::cerr << now();
      if (wSetup.verbosity >= 5)
         std::cerr << function << ':' << IntToStr(line) << ' ';
      std::cerr << msg;
