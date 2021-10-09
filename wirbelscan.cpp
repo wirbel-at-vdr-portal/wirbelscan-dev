@@ -4,6 +4,7 @@
  ******************************************************************************/
 #include <string>
 #include <vector>
+#include <sstream>
 #include <vdr/plugin.h>
 #include <vdr/i18n.h>
 #include "common.h"      // wSetup
@@ -385,6 +386,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
   else if cmd("STORE"   ) { StoreSetup();   return "setup stored.";     }
 
   else if cmd("SETUP") {
+     std::string s;
      cMySetup d;
 
      if (12 != sscanf(Option, "%i:%i:%i:%i:%i:%i:%i:%i:%i:%i:%i:%u",
@@ -400,69 +402,64 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
         }
 
      wSetup = d;
-     return cString::sprintf("changed setup to %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%u",
-                            wSetup.verbosity,
-                            wSetup.logFile,
-                            wSetup.DVB_Type,
-                            wSetup.DVBT_Inversion,
-                            wSetup.DVBC_Inversion,
-                            wSetup.DVBC_Symbolrate,
-                            wSetup.DVBC_QAM,
-                            wSetup.CountryIndex,
-                            wSetup.SatIndex,
-                            wSetup.enable_s2,
-                            wSetup.ATSC_type,
-                            wSetup.scanflags);
+     s = "changed setup to " + 
+         IntToStr(wSetup.verbosity)       + ':' +
+         IntToStr(wSetup.logFile)         + ':' +
+         IntToStr(wSetup.DVB_Type)        + ':' +
+         IntToStr(wSetup.DVBT_Inversion)  + ':' +
+         IntToStr(wSetup.DVBC_Inversion)  + ':' +
+         IntToStr(wSetup.DVBC_Symbolrate) + ':' +
+         IntToStr(wSetup.DVBC_QAM)        + ':' +
+         IntToStr(wSetup.CountryIndex)    + ':' +
+         IntToStr(wSetup.SatIndex)        + ':' +
+         IntToStr(wSetup.enable_s2)       + ':' +
+         IntToStr(wSetup.ATSC_type)       + ':' +
+         IntToStr(wSetup.scanflags);
+     return s.c_str();
      }
 
   else if cmd("QUERY") {
-     return cString::sprintf("plugin version: %s\n"
-                            "current setup:  %d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d\n"
-                            "commands api:   %s\n"
-                            "status api:     %s\n"
-                            "setup api:      %s\n"
-                            "country api:    %s\n"
-                            "sat api:        %s\n"
-                            "user api:       %s",
-                            WIRBELSCAN_VERSION,
-                            wSetup.verbosity,
-                            wSetup.logFile,
-                            wSetup.DVB_Type,
-                            wSetup.DVBT_Inversion,
-                            wSetup.DVBC_Inversion,
-                            wSetup.DVBC_Symbolrate,
-                            wSetup.DVBC_QAM,
-                            wSetup.CountryIndex,
-                            wSetup.SatIndex,
-                            wSetup.enable_s2,
-                            wSetup.ATSC_type,
-                            wSetup.scanflags,
-                            SCommand,
-                            SStatus,
-                            SSetup,
-                            SCountry,
-                            SSat,
-                            SUser);
+     std::string s;
+     s = "plugin version: " + std::string(WIRBELSCAN_VERSION) + '\n' +
+         IntToStr(wSetup.verbosity)       + ':' +
+         "current setup:  " +
+         IntToStr(wSetup.verbosity)       + ':' +
+         IntToStr(wSetup.logFile)         + ':' +
+         IntToStr(wSetup.DVB_Type)        + ':' +
+         IntToStr(wSetup.DVBT_Inversion)  + ':' +
+         IntToStr(wSetup.DVBC_Inversion)  + ':' +
+         IntToStr(wSetup.DVBC_Symbolrate) + ':' +
+         IntToStr(wSetup.DVBC_QAM)        + ':' +
+         IntToStr(wSetup.CountryIndex)    + ':' +
+         IntToStr(wSetup.SatIndex)        + ':' +
+         IntToStr(wSetup.enable_s2)       + ':' +
+         IntToStr(wSetup.ATSC_type)       + ':' +
+         IntToStr(wSetup.scanflags)       + '\n' +
+         "commands api:   " + std::string(SCommand) + "\n"
+         "status api:     " + std::string(SStatus)  + "\n"
+         "setup api:      " + std::string(SSetup)   + "\n"
+         "country api:    " + std::string(SCountry) + "\n"
+         "sat api:        " + std::string(SSat)     + "\n"
+         "user api:       " + std::string(SUser);
+     return s.c_str();
      }
 
   else if cmd("LSTC") {
-     cString s = "";
+     std::stringstream ss;
      for(size_t i=0; i<COUNTRY::country_count(); i++)
-        s = cString::sprintf("%s%lu:%s:%s\n", *s,
-                            (unsigned long) COUNTRY::country_list[i].id,
-                            COUNTRY::country_list[i].short_name,
-                            COUNTRY::country_list[i].full_name);
-     return s;
+        ss << IntToStr(COUNTRY::country_list[i].id) << ':'
+           << COUNTRY::country_list[i].short_name   << ':'
+           << COUNTRY::country_list[i].full_name    << '\n';
+     return ss.str().c_str();
      }
 
   else if cmd("LSTS") {
-     cString s = "";
+     std::stringstream ss;
      for(size_t i=0; i<sat_count(); i++)
-        s = cString::sprintf("%s%lu:%s:%s\n", *s,
-                            (unsigned long) sat_list[i].id,
-                            sat_list[i].short_name,
-                            sat_list[i].full_name);
-     return s;
+        ss << IntToStr(sat_list[i].id) << ':'
+           << sat_list[i].short_name   << ':'
+           << sat_list[i].full_name    << '\n';
+     return ss.str().c_str();
      }
 
   return nullptr;
