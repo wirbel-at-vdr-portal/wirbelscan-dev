@@ -308,7 +308,7 @@ VDR Plugin 'wirbelscan' Revision History
 2021-10-xx
 -------------------------------------------------------------------------------
 * review whole plugin after many years in service:
-  - update contact address and homepage, which have been not updated on a few files.
+  - update contact address and homepage, outdated on a few files.
   - build system: change from VDR style *.c file names to *.cpp
   - build system: sort includes to be bare minimum
   - build system: prefer c++ includes to c includes (stdint.h -> cstdint)
@@ -317,7 +317,7 @@ VDR Plugin 'wirbelscan' Revision History
   - replace any unistd or BSD-style integers by standard integers
   - replace any *sleep functions by mSleep(), which uses C++11
   - replace DELETENULL by DeleteNullptr(), to get rid of macro style
-  - remove as much as possible *printf style and logging
+  - remove as much as possible *printf and sscanf style and logging
 * remove dvb_wrapper.{h,c} and move remains to common.{h,cpp}
 * wirbelscan_services.h
   - remove deprecated entry Satsystem.
@@ -345,6 +345,7 @@ VDR Plugin 'wirbelscan' Revision History
 * countries.{h,cpp}
   - remove COUNTRY_COUNT
   - convert get_user_country() to c++ style
+  - move country_t, offset_type_t and SKIP_CHANNEL to countries.cpp
 * common.{h,cpp}
   - remove FREENULL macro.
   - remove struct satellite_transponder
@@ -352,4 +353,7 @@ VDR Plugin 'wirbelscan' Revision History
   - add BCDtoDecimal template
   - add IntToStr(), IntToHex(), FloatToStr()
   - remove va_*, vsnprint and remove cstdarg
+  - remove HEXDUMP() macro, used in two places only
+* wirbelscan.cpp
+  
 
