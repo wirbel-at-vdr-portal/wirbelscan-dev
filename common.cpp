@@ -517,13 +517,13 @@ void TChannel::PrintTransponder(std::string& dest) {
   else
      ss << "  ";
 
-  ss << FloatToStr((source == 'S')?i:i/1000.0, 8, 2) << " MHz ";
+  ss << FloatToStr((source == 'S')?i:i/1000.0, 8, 2) << " MHz";
 
   if ((source == 'C') or (source == 'S')) {
      i = Symbolrate;
      if (i < 1000)    i *= 1000;
      if (i > 999999)  i /= 1000;
-     ss << "SR " << IntToStr(i) << ' ' << params;
+     ss << " SR " << IntToStr(i) << ' ' << params;
      }
 
   dest = std::move(ss.str());
