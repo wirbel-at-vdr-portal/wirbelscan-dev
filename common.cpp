@@ -55,11 +55,11 @@ cMySetup::cMySetup(void) {
 
 void cMySetup::InitSystems(void) {
   memset(&systems[0], 0, sizeof(systems));
-  while(! cDevice::WaitForAllDevicesReady(20)) sleep(1);
+  while(! cDevice::WaitForAllDevicesReady(20)) mSleep(100);
 
   for(int i=0; i<cDevice::NumDevices(); i++) {
      cDevice* device = cDevice::GetDevice(i);
-     if (device == nullptr)        
+     if (device == nullptr)
         continue;
 
      if (device->ProvidesSource(cSource::FromString("A"))) systems[SCAN_TERRCABLE_ATSC] = 1;
@@ -77,7 +77,7 @@ void cMySetup::InitSystems(void) {
   initsystems = true;
 }
 
-cMySetup wSetup;           
+cMySetup wSetup;
 
 
 /*******************************************************************************
