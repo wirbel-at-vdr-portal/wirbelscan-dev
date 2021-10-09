@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <string>
+#include <array>
 #include <vdr/sources.h>
 #include <vdr/device.h>
 #include "scanner.h"
@@ -706,8 +707,9 @@ void cScanner::Action(void) {
              goto stop;
 
           switch (type) {
-             case SCAN_TERRESTRIAL:
-                sys_parm = mod_parm == 0 ? 1 : 0; // NOTE: mod_parm is abused as 'system'
+             case SCAN_TERRESTRIAL: {
+                std::array<int,2> DelSys = {1,0}; // {T2,T}
+                sys_parm = DelSys[mod_parm];      // NOTE: mod_parm is abused as 'system'
                 if (thisSystem != sys_parm) {
                    thisSystem = sys_parm;
                    std::string Gen2(sys_parm, '2');
@@ -772,6 +774,7 @@ void cScanner::Action(void) {
                    Progress();
                    continue;
                    }
+                }
                 break;
              case SCAN_CABLE:
                 f = chan_to_freq(channel, this_channellist);
