@@ -81,7 +81,7 @@ bool known_transponder(TChannel* newChannel, bool auto_allowed, TChannels* list)
            return true;
         }
      else
-        dlog(0, "%s: source[0] = 0x%.02X", __FUNCTION__, (unsigned char) c);
+        dlog(0, std::string(__FUNCTION__) + ": source[0] = " + IntToHex((unsigned) c, 2));
      }
   return (false);
 }
@@ -191,7 +191,7 @@ bool is_different_transponder_deep_scan(const TChannel* a, const TChannel* b, bo
         return false;
         }
      default:
-        dlog(0, "%s: unknown source type '%s'", __FUNCTION__, a->Source.c_str());
+        dlog(0, std::string(__FUNCTION__) + ": unknown source type '" + a->Source + "'");
      }
   return true;
 }
@@ -224,15 +224,15 @@ void cPatScanner::Action(void) {
 
   while(Running() && isActive) {
      if (wait.Wait(10)) {
-        dlog(0, "received signal (%p)", this);
+        dlog(5, "cPatScanner: received signal");
         break;
         }
      if (count++ > 1000) { // > 10sec
-        dlog(5, "%s: PAT timeout.", __PRETTY_FUNCTION__);
+        dlog(5, "cPatScanner: PAT timeout.");
         break;
         }
      else if ((count > 300) and not(anyBytes)) {
-        dlog(5, "%s: PAT timeout.", __PRETTY_FUNCTION__);
+        dlog(5, "cPatScanner: PAT timeout.");
         break;
         }
      nbytes = device->ReadFilter(fd, buffer, sizeof(buffer));
@@ -258,7 +258,7 @@ void cPatScanner::Process(const unsigned char* Data, int Length) {
      }
 
   if (!Sync.Sync(tsPAT.getVersionNumber(), tsPAT.getSectionNumber(), tsPAT.getLastSectionNumber())) {
-     dlog(4, "%s: wait for PAT Sync\n", __PRETTY_FUNCTION__);
+     dlog(4, "cPatScanner: wait for PAT Sync");
      return;
      }
 
@@ -529,7 +529,7 @@ void cNitScanner::Action(void) {
         break;
         }
      if (count++ > 4000) {   // 4000 x 10msec = 40sec
-        dlog(2, "NIT timeout\n");
+        dlog(2, "NIT timeout");
         break;
         }
      else if ((count > 1800) and not(anyBytes))
@@ -724,12 +724,10 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               int System = 0;
               bool west_flag = sd->getWestEastFlag() == 0;
 
-              // orbital = 192 (C0), Source = 1392509120 (530000C0)
-              
               if ((west_flag != west) or ( abs(BCDtoDecimal(sd->getOrbitalPosition()) - orbital) > 2 )) {
-                 dlog(4, "SatelliteDeliverySystemDescriptor - expected: %.1f%c - got %.1f%c. Skipping transportStreamDescriptor.",
-                          orbital/10.0, west?'W':'E',
-                          BCDtoDecimal(sd->getOrbitalPosition())/10.0, west_flag?'W':'E');
+                 char c = west_flag?'W':'E';
+                 dlog(4, "Skipping transportStreamDescriptor for S" +
+                          FloatToStr(BCDtoDecimal(sd->getOrbitalPosition())/10.0, 1) + c);
                  continue;
                  }
 
@@ -1141,7 +1139,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
            case 0x80 ... 0xFE:
               break; // user defined 
            default:
-              dlog(5, "   NIT: unknown descriptor tag 0x%.2x", d->getDescriptorTag());
+              dlog(5, "   NIT: unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
            }
         DeleteNullptr(d);
         } // end TS descriptor loop
@@ -1169,7 +1167,6 @@ TChannel* GetByTransponder(const TChannel* Transponder) {
             ch->Source == Transponder->Source &&
             ch->TID == Transponder->TID &&
             ch->SID == Transponder->SID) {
-           //dlog(4, "   GetByTransponder: known channel %s", *PrintChannel(Transponder));
            return (ch);
            }
         }
@@ -1204,11 +1201,11 @@ void cSdtScanner::Action(void) {
   int fd = device->OpenFilter(SI_EXT::PID_SDT, SI_EXT::TABLE_ID_SDT_ACTUAL, 0xFF);
   while(Running() && active) {
      if (wait.Wait(10)) {
-        dlog(0, "received signal (%p)", this);
+        dlog(5, "cSdtScanner: received signal");
         break;
         }
      if (count++ > 4000) { //40sec
-        dlog(2, "SDT timeout\n");
+        dlog(2, "SDT timeout");
         break;
         }
      else if ((count > 1800) and not(anyBytes))
@@ -1305,9 +1302,6 @@ void cSdtScanner::Process(const unsigned char* Data, int Length) {
 
               cd->description.getText(buf, sizeof(buf));
               text_char = buf;
-
-              dlog(0, "SI::ComponentDescriptor: stream_content %d, stream_content_ext %d, component_type %d, component_tag %d, lang %s, text %s",
-                     stream_content, stream_content_ext, component_type, component_tag, ISO_639_language_code.c_str(), text_char.c_str()); 
               */
               break;
               }
@@ -1326,7 +1320,7 @@ void cSdtScanner::Process(const unsigned char* Data, int Length) {
            case SI::LinkageDescriptorTag:
            case 0x80 ... 0xFE: // user defined //
               break;
-           default: dlog(5, "SDT: unknown descriptor 0x%.2x", d->getDescriptorTag());
+           default: dlog(5, "SDT: unknown descriptor " + IntToHex(d->getDescriptorTag(),2));
            }
         DeleteNullptr(d);
         }
