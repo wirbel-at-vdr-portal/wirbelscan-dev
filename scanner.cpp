@@ -24,9 +24,10 @@ cScanner* Scanner = nullptr;
 
 static unsigned int chan_to_freq(int channel, int channellist) {
   if (channellist == 999)
-     dlog(6, "channellist=%d, base_offset=%d, channel=%d, step=%d",
-              channellist, base_offset(channel, channellist),
-              channel, freq_step(channel, channellist));
+     dlog(6, "channellist="   + IntToStr(channellist) +
+             ", base_offset=" + IntToStr(base_offset(channel, channellist)) +
+             ", channel="     + IntToStr(channel) +
+             ", step="        + IntToStr(freq_step(channel, channellist)));
 
   if (base_offset(channel, channellist) != -1)  // -1 == invalid
      return (base_offset(channel, channellist) + channel * freq_step(channel, channellist));
@@ -75,7 +76,7 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
 
   std::string s;
   Channel->PrintTransponder(s);
-  dlog(6, "'%s' %s", Channel->Source.c_str(), s.c_str());
+  dlog(6, "'" + Channel->Source + "' " + s);
 
   // skip ChannelID check in cChannel::Parse()
   // we just want to find a device here, nothing else.
@@ -88,7 +89,7 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
   Channel->NID = nid;
   Channel->SID = sid;
 
-  dlog(4, "testing '%s'", *c.ToText());
+  dlog(4, "testing '" + std::string(*c.ToText()) + "'");
 
   for(int i=0; i<cDevice::NumDevices(); i++) {
      // next line should never fail.
@@ -96,7 +97,8 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
         continue;
      name = dev->DeviceName();
      if (!dev->ProvidesTransponder(&c)) {
-        dlog(4, "device %d = %s (not usable)", dev->CardIndex(), name.c_str());
+        dlog(4, "device " + IntToStr(dev->CardIndex()) + " = " + name +
+                " (not usable)");
         continue;
         }
 
@@ -110,7 +112,7 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
         }
      else
         gen2 = false;
-     dlog(4, "device %d = %s", dev->CardIndex(), name.c_str());
+     dlog(4, "device " + IntToStr(dev->CardIndex()) + " = " + name);
      if (device_is_preferred(Channel, name, gen2) >= preferred) {
         preferred   = device_is_preferred(Channel, name, gen2);
         pref_device = i;
@@ -219,7 +221,8 @@ void cScanner::Action(void) {
   initialTransponders = 0;
   dev = nullptr;
   status = 1;
-  dlog(3, "wirbelscan version %s @ VDR %s", WIRBELSCAN_VERSION, VDRVERSION);
+  dlog(3, "wirbelscan version " + std::string(WIRBELSCAN_VERSION) +
+          " @ VDR " + std::string(VDRVERSION));
 
   switch(type) {
      case SCAN_TRANSPONDER: {
@@ -291,7 +294,7 @@ void cScanner::Action(void) {
                aChannel->Bandwidth    = 6;
                break;
             default:
-               dlog(0, "unsupported user transponder type.\n");
+               dlog(0, "unsupported user transponder type.");
             }
         if ((dev = GetPreferredDevice(aChannel)) == nullptr) {
            dlog(0, "No device available - exiting!");
@@ -302,7 +305,7 @@ void cScanner::Action(void) {
 
         if (std::string(dev->DeviceName()).find("SAT>IP") == std::string::npos) {
            PrintDvbApi(s);
-           dlog(5, "%s", s.c_str());
+           dlog(5, s);
 
            switch(t->Type()) {
                case SCAN_TERRESTRIAL:
@@ -339,7 +342,7 @@ void cScanner::Action(void) {
            s2Support = 1;
            }
         deviceName = dev->DeviceName();
-        dlog(3, "frontend %s", deviceName.c_str());     
+        dlog(3, "frontend " + deviceName);     
         if (MenuScanning)
            MenuScanning->SetDeviceInfo(deviceName);
         break;
@@ -377,7 +380,7 @@ void cScanner::Action(void) {
 
         if (std::string(dev->DeviceName()).find("SAT>IP") == std::string::npos) {
            PrintDvbApi(s);
-           dlog(5, "%s", s.c_str());
+           dlog(5, s);
            if (! GetTerrCapabilities(dev, &crAuto, &modAuto, &invAuto, &bwAuto, &hAuto, &tmAuto, &gAuto, &t2Support))
               dlog(0, "ERROR: Could not query capabilites.");
            }
@@ -392,14 +395,14 @@ void cScanner::Action(void) {
            t2Support = 1;
            }
         deviceName = dev->DeviceName();
-        dlog(3, "frontend %s", deviceName.c_str());     
+        dlog(3, "frontend " + deviceName);     
         if (MenuScanning)
            MenuScanning->SetDeviceInfo(deviceName);
 
         if (invAuto)
            caps_inversion = 999;
         else {
-           dlog(5, "I999 not supported, trying I%d.", wSetup.DVBT_Inversion);
+           dlog(5, "I999 not supported, trying I" + IntToStr(wSetup.DVBT_Inversion) + ".");
            caps_inversion = wSetup.DVBT_Inversion;
            }
 
@@ -407,32 +410,32 @@ void cScanner::Action(void) {
            caps_qam = 999;
         else {
            caps_qam = 64;
-           dlog(5, "M999 not supported, trying M%d.", caps_qam);
+           dlog(5, "M999 not supported, trying M" + IntToStr(caps_qam) + ".");
            }
         if (tmAuto)
            caps_transmission_mode = 999;
         else {
            const int t[] = {2,8,999,4,1,16,32};
            caps_transmission_mode = t[dvbt_transmission_mode(5, this_channellist)];
-           dlog(5, "T999 not supported, trying T%d.", caps_transmission_mode);
+           dlog(5, "T999 not supported, trying T" + IntToStr(caps_transmission_mode) + ".");
            }
         if (gAuto)
            caps_guard_interval = 999;
         else {
            caps_guard_interval = 8;
-           dlog(5, "G999 not supported, trying G%d.", caps_guard_interval);
+           dlog(5, "G999 not supported, trying G" + IntToStr(caps_guard_interval) + ".");
            }
         if (hAuto)
            caps_hierarchy = 999;
         else {
           caps_hierarchy = 0;
-          dlog(5, "Y999 not supported, trying Y%d.", caps_hierarchy);
+          dlog(5, "Y999 not supported, trying Y" + IntToStr(caps_hierarchy) + ".");
            }
         if (crAuto)
            caps_fec = 999;
         else {
            caps_fec = 0;
-           dlog(5, "C999 not supported, trying C%d", caps_fec);
+           dlog(5, "C999 not supported, trying C" + IntToStr(caps_fec) + ".");
            }
         if (t2Support)
            dlog(5, "DVB-T2 supported");
@@ -473,7 +476,7 @@ void cScanner::Action(void) {
 
         if (std::string(dev->DeviceName()).find("SAT>IP") == std::string::npos) {
            PrintDvbApi(s);
-           dlog(5, "%s", s.c_str());
+           dlog(5, s);
            if (! GetCableCapabilities(dev, &modAuto, &invAuto))
               dlog(0, "ERROR: Could not query capabilites.");
            }
@@ -482,7 +485,7 @@ void cScanner::Action(void) {
            modAuto   = 0;
            }  
         deviceName = dev->DeviceName();
-        dlog(3, "frontend %s", deviceName.c_str());
+        dlog(3, "frontend " + deviceName);
         if (MenuScanning)
            MenuScanning->SetDeviceInfo(deviceName);
 
@@ -490,7 +493,7 @@ void cScanner::Action(void) {
            caps_inversion = 999;
         else {
            caps_inversion = wSetup.DVBC_Inversion;
-           dlog(5, "I999 not supported, trying I%d.", caps_inversion);
+           dlog(5, "I999 not supported, trying I" + IntToStr(caps_inversion) + ".");
            }
 
         if (modAuto)
@@ -498,12 +501,10 @@ void cScanner::Action(void) {
         else {
            std::string s;
            for(int i = modulation_min; i <= modulation_max; i++) {
-              char b[5];
-              snprintf(b, 5, "M%d", dvbc_modulation(i));
               if (s.size()) s += ", ";
-              s += b;
+              s += "M" + IntToStr(dvbc_modulation(i));
               }
-           dlog(5, "M999 not supported, trying %s.", s.c_str());
+           dlog(5, "M999 not supported, trying " + s + ".");
            caps_qam = 64;
            qam_no_auto = 1;
            }
@@ -561,7 +562,7 @@ void cScanner::Action(void) {
 
         if (std::string(dev->DeviceName()).find("SAT>IP") == std::string::npos) {
            PrintDvbApi(s);
-           dlog(5, "%s", s.c_str());
+           dlog(5, s);
            if (! GetSatCapabilities(dev, &crAuto, &modAuto, &roAuto, &s2Support))
               dlog(0, "ERROR: Could not query capabilites.");
            }
@@ -573,7 +574,7 @@ void cScanner::Action(void) {
            }
         if (caps_s2) s2Support = 1;
         deviceName = dev->DeviceName();
-        dlog(3, "frontend %s", deviceName.c_str());
+        dlog(3, "frontend " + deviceName);
         if (MenuScanning)
            MenuScanning->SetDeviceInfo(deviceName);
 
@@ -622,7 +623,7 @@ void cScanner::Action(void) {
 
         if (std::string(dev->DeviceName()).find("SAT>IP") == std::string::npos) {
            PrintDvbApi(s);
-           dlog(5, "%s", s.c_str());
+           dlog(5, s);
            if (! GetAtscCapabilities(dev, &modAuto, &invAuto, &vsbSupport, &qamSupport))
               dlog(0, "ERROR: Could not query capabilites.");
            }
@@ -633,7 +634,7 @@ void cScanner::Action(void) {
            qamSupport = 1;
            }
         deviceName = dev->DeviceName();
-        dlog(3, "frontend %s", deviceName.c_str());
+        dlog(3, "frontend " + deviceName);
         if (MenuScanning)
            MenuScanning->SetDeviceInfo(deviceName);
 
@@ -641,7 +642,7 @@ void cScanner::Action(void) {
            caps_inversion = 999;
         else {
            caps_inversion = 0;
-           dlog(5, "I999 not supported, trying I%d", caps_inversion);
+           dlog(5, "I999 not supported, trying I" + IntToStr(caps_inversion) + ".");
            }
         if (vsbSupport)
            dlog(5, "VSB");
@@ -666,7 +667,7 @@ void cScanner::Action(void) {
         break;
         }
      default:
-        dlog(0, "ERROR: Unknown scan type %d", type);
+        dlog(0, "ERROR: Unknown scan type " + IntToStr(type));
         return;
      } // end switch type
 
@@ -709,7 +710,8 @@ void cScanner::Action(void) {
                 sys_parm = mod_parm; // NOTE: mod_parm is abused as 'system'
                 if (thisSystem != sys_parm) {
                    thisSystem = sys_parm;
-                   dlog(4, "Scanning DVB-T%s...", sys_parm?"2":"");
+                   std::string Gen2(sys_parm, '2');
+                   dlog(4, "Scanning DVB-T" + Gen2 + "...");
                    }
 
                 if (sys_parm == 0) {
@@ -732,8 +734,12 @@ void cScanner::Action(void) {
                 int bHz = bandwidth(channel, this_channellist), bvdr = bHz / 1000000;
                 if (bHz == 1712000) bvdr = 1712;
 
-                if (this_bandwidth != bvdr)
-                   dlog(4, "Scanning %fMHz frequencies...", bvdr < 11 ? bvdr : bvdr/1000.0);
+                if (this_bandwidth != bvdr) {
+                   if (bvdr < 11)
+                      dlog(4, "Scanning " + IntToStr(bvdr) + "MHz frequencies...");
+                   else
+                      dlog(4, "Scanning " + FloatToStr(bvdr/1000.0,1,2) + "MHz frequencies...");
+                   }
                 this_bandwidth = bvdr;
                 }
 
@@ -757,10 +763,11 @@ void cScanner::Action(void) {
                 aChannel->SystemId = 0;
 
                 aChannel->PrintTransponder(s);
-                dlog(4, "%s", s.c_str());
+                dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, "%.3fMHz: skipped (already known transponder)", aChannel->Frequency / 1e6);
+                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3) +
+                        "MHz: skipped (already known transponder)");
                    thisChannel++;
                    Progress();
                    continue;
@@ -779,7 +786,7 @@ void cScanner::Action(void) {
                 if (qam_no_auto > 0) {
                    this_qam = dvbc_modulation(mod_parm);
                    if ((int) aChannel->Modulation != this_qam)
-                      dlog(4, "searching M%d...", this_qam);
+                      dlog(4, "searching M" + IntToStr(this_qam) + "...");
                    }
                 else if (mod_parm > 0) {
                    continue; // demod supports qam_auto, and we had one loop with QAM_AUTO.
@@ -799,10 +806,11 @@ void cScanner::Action(void) {
                 aChannel->RID = 0;
 
                 aChannel->PrintTransponder(s);
-                dlog(4, "%s", s.c_str());
+                dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, "%.3fMHz: skipped (already known transponder)", aChannel->Frequency/1e3);
+                   dlog(4, FloatToStr(aChannel->Frequency/1e3, 1, 3) +
+                        "MHz: skipped (already known transponder)");
                    thisChannel++;
                    Progress();
                    continue;
@@ -841,15 +849,14 @@ void cScanner::Action(void) {
                    continue;
  
                 aChannel->Print(s);
-                dlog(4, "%s", s.c_str());
+                dlog(4, s);
 
                 ///orbital_position = sat_list[this_channellist].orbital_position;
                 ///west_east_flag   = sat_list[this_channellist].west_east_flag;
                 if (sat_list[this_channellist].items[channel].modulation_system == 6) {
                    if (!(caps_s2) || (wSetup.enable_s2 == 0)) {
-                      dlog(4, "%d: skipped ()",
-                           sat_list[this_channellist].items[channel].intermediate_frequency,
-                           (wSetup.enable_s2 == 0)?"disabled":"no driver support");
+                      dlog(4, IntToStr(sat_list[this_channellist].items[channel].intermediate_frequency) +
+                              ": skipped (no S2 support)");
                       thisChannel++;
                       Progress();
                       continue;
@@ -857,7 +864,8 @@ void cScanner::Action(void) {
                    }
                 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, "%.3f: skipped (already known transponder)", aChannel->Frequency / 1e0);
+                   dlog(4, FloatToStr(aChannel->Frequency/1e0, 1, 3) +
+                        ": skipped (already known transponder)");
                    thisChannel++;
                    continue;
                    }
@@ -887,7 +895,7 @@ void cScanner::Action(void) {
                       f += freq_offset(channel, ATSC_QAM, offs);
                       break;
                    default:
-                      dlog(0, "unknown atsc modulation id %d", mod_parm);
+                      dlog(0, "unknown atsc modulation id " + IntToStr(mod_parm));
                       return;
                    } // end switch mod_parm
                 //fixme: vsb vs qam here
@@ -904,11 +912,11 @@ void cScanner::Action(void) {
                 aChannel->RID = 0;
 
                 aChannel->PrintTransponder(s);
-                dlog(4, "%s", s.c_str());
+                dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, "%f3fMHz M%d: skipped (already known transponder)",
-                       aChannel->Frequency/1e6, this_atsc);
+                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3) +
+                        "MHz M" + IntToStr(this_atsc) + ": skipped (already known transponder)");
                    thisChannel++;
                    Progress();
                    continue;
@@ -917,7 +925,7 @@ void cScanner::Action(void) {
 
              case SCAN_TRANSPONDER:
                 aChannel->PrintTransponder(s);
-                dlog(4, "%s", s.c_str());
+                dlog(4, s);
                 break;
              default:;
              } // end switch type
@@ -1023,11 +1031,10 @@ void cScanner::AddChannels(void) {
         break;
         }
 
-     //dlog(5, "%s channel '%s'", newCh?"known":"unknown", *ch->ToText());
 
      // existing channel not found by IDs
      if (wSetup.scan_remove_invalid and !newCh and ch->Source() == source) {
-        dlog(4, "remove invalid channel '%s'", *ch->ToText());
+        dlog(4, "remove invalid channel '" + std::string(*ch->ToText()) + "'");
         WChannels->Del((cChannel*) ch);
         i--;
         continue;
@@ -1039,7 +1046,7 @@ void cScanner::AddChannels(void) {
         newCh->Print(s);
         if (s != *ch->ToText()) {
            ((cChannel*) ch)->Parse(s.c_str());
-           dlog(4, "updated channel '%s'", *ch->ToText());
+           dlog(4, "updated channel '" + std::string(*ch->ToText()) + "'");
            }
         }
      }
@@ -1063,7 +1070,7 @@ void cScanner::AddChannels(void) {
         cChannel* c = new cChannel;
         n->Print(s);
         c->Parse(s.c_str());
-        dlog(4, "Add channel '%s'", s.c_str());
+        dlog(4, "Add channel '" + s + "'");
         WChannels->Add(c);
         }           
      }

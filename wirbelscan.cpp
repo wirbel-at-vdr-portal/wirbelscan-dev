@@ -269,7 +269,7 @@ bool cPluginWirbelscan::Service(const char* id, void* Data) {
         cPreAllocBuffer* b = (cPreAllocBuffer*) Data;
         SListItem* l = b->buffer;
         b->count = 0;
-        if (b->size < (uint) sat_count()) {
+        if (b->size < sat_count()) {
            b->size = sat_count();
            return true;
            }
@@ -287,7 +287,7 @@ bool cPluginWirbelscan::Service(const char* id, void* Data) {
         cPreAllocBuffer* b = (cPreAllocBuffer*) Data;
         SListItem* l = b->buffer;
         b->count = 0;
-        if (b->size < (uint) COUNTRY::country_count()) {
+        if (b->size < COUNTRY::country_count()) {
            b->size = COUNTRY::country_count();
            return true;
            }

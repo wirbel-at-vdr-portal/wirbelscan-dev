@@ -102,7 +102,7 @@ void cStateMachine::Report(eState State) {
      };
 
   if ((State != lastState) and (wSetup.verbosity > 4))
-     dlog(5, "%s", stateMsg[lastState = State]);
+     dlog(5, stateMsg[lastState = State]);
 };
 
 
@@ -150,7 +150,7 @@ void cStateMachine::Action(void) {
 
         case eTune: {
            Transponder->PrintTransponder(s);
-           dlog(4, "tuning to %s", s.c_str());
+           dlog(4, "tuning to " + s);
            lTransponder = s;
 
            if (MenuScanning)
@@ -196,7 +196,7 @@ void cStateMachine::Action(void) {
               newState = eNextTransponder;
               }
 
-           dlog(4, "ScannedTransponders.Add(%d): '%s'", __LINE__, s.c_str());
+           dlog(4, "ScannedTransponders.Add: '" + s + "'");
            ScannedTransponders.Add(tp);
 
            if (dvbdevice)
@@ -263,7 +263,7 @@ void cStateMachine::Action(void) {
                  newState = eDetachReceiver;
                  }
               else {
-                 dlog(4, "searching %d services", PatData.services.Count());
+                 dlog(4, "searching " + IntToStr(PatData.services.Count()) + " services");
                  newState = eScanPmt;
                  }
               break;
@@ -350,24 +350,23 @@ void cStateMachine::Action(void) {
         case eAddChannels: {
            if (wSetup.verbosity > 4) {
               for(int i = 0; i < PmtData.Count(); i++)
-                 dlog(0, "PMT %d: program_number = %d; Vpid = %d (%d); Tpid = %d Apid = %d Dpid = %d",
-                         PmtData[i]->program_map_PID,
-                         PmtData[i]->program_number,
-                         PmtData[i]->Vpid.PID,PmtData[i]->PCR_PID,
-                         PmtData[i]->Tpid,
-                         PmtData[i]->Apids.Count()?PmtData[i]->Apids[0].PID:0,
-                         PmtData[i]->Dpids.Count()?PmtData[i]->Dpids[0].PID:0);
+                 dlog(0, "PMT "                + IntToStr(PmtData[i]->program_map_PID) +
+                         ": program_number = " + IntToStr(PmtData[i]->program_number)  +
+                         "; Vpid = "           + IntToStr(PmtData[i]->Vpid.PID)        +
+                         " ("                  + IntToStr(PmtData[i]->PCR_PID)         +
+                         "); Tpid = "          + IntToStr(PmtData[i]->Tpid)            +
+                         "; Apid = "           + IntToStr(PmtData[i]->Apids.Count()?PmtData[i]->Apids[0].PID:0) +
+                         "; Dpid = "           + IntToStr(PmtData[i]->Dpids.Count()?PmtData[i]->Dpids[0].PID:0));
 
               for(int i = 0; i < SdtData.services.Count(); i++) {
                  if (SdtData.services[i].reported)
                     continue;
                  SdtData.services[i].reported = true;
-                 dlog(0, "SDT: ONID = %d, TID = %d, SID = %d, FreeCA = %d, Name = '%s'",
-                      SdtData.services[i].original_network_id,
-                      SdtData.services[i].transport_stream_id,
-                      SdtData.services[i].service_id,
-                      SdtData.services[i].free_CA_mode,
-                      SdtData.services[i].Name.c_str());
+                 dlog(0, "SDT: ONID = "        + IntToStr(SdtData.services[i].original_network_id) +
+                         ", TID = "            + IntToStr(SdtData.services[i].transport_stream_id) +
+                         ", SID = "            + IntToStr(SdtData.services[i].service_id) +
+                         ", FreeCA = "         + IntToStr(SdtData.services[i].free_CA_mode) +
+                         ", Name = '"          + SdtData.services[i].Name + "'");
                  }
 
               for(int i = 0; i < NitData.transport_streams.Count(); i++) {
@@ -375,15 +374,26 @@ void cStateMachine::Action(void) {
                     continue;
                  NitData.transport_streams[i]->reported = true;
                  NitData.transport_streams[i]->PrintTransponder(s);
-                 dlog(0, "NIT: %s'%s', NID = %d, ONID = %d, TID = %d",
-                    abs(NitData.transport_streams[i]->OrbitalPos - initial->OrbitalPos) > 5?"WRONG SATELLITE: ":"",
-                    s.c_str(), NitData.transport_streams[i]->NID, NitData.transport_streams[i]->ONID, NitData.transport_streams[i]->TID);
-                 if (NitData.transport_streams[i]->Source == "T" and NitData.transport_streams[i]->DelSys == 1) {
-                    for(int c = 0; c < NitData.transport_streams[i]->cells.Count(); c++) {
-                       for(int cf = 0; cf < NitData.transport_streams[i]->cells[c].num_center_frequencies; cf++)
-                          dlog(0, "   center%d = %u (cell_id %u)", c+1, NitData.transport_streams[i]->cells[c].center_frequencies[cf], NitData.transport_streams[i]->cells[c].cell_id);
-                       for(int tf = 0; tf < NitData.transport_streams[i]->cells[c].num_transposers; tf++)
-                          dlog(0, "      transposer%d = %u (cell_id_extension %u)", tf+1, NitData.transport_streams[i]->cells[c].transposers[tf].transposer_frequency, NitData.transport_streams[i]->cells[c].transposers[tf].cell_id_extension);
+                 std::string is_wrong;
+                 if (abs(NitData.transport_streams[i]->OrbitalPos - initial->OrbitalPos) > 5)
+                    is_wrong = "WRONG SATELLITE: ";
+                 dlog(0, "NIT: " + is_wrong + "'" + s + "'" + 
+                         ", NID = "  + IntToStr(NitData.transport_streams[i]->NID)  +
+                         ", ONID = " + IntToStr(NitData.transport_streams[i]->ONID) +
+                         ", TID = "  + IntToStr(NitData.transport_streams[i]->TID));
+
+                 if (NitData.transport_streams[i]->Source == "T" and
+                     NitData.transport_streams[i]->DelSys == 1) {
+                    for(int c=0; c<NitData.transport_streams[i]->cells.Count(); c++) {
+                       for(int cf=0; cf<NitData.transport_streams[i]->cells[c].num_center_frequencies; cf++)
+                          dlog(0, "   center"   + IntToStr(c+1) +
+                                  " = "         + IntToStr(NitData.transport_streams[i]->cells[c].center_frequencies[cf]) +
+                                  " (cell_id "  + IntToStr(NitData.transport_streams[i]->cells[c].cell_id) + ")");
+
+                       for(int tf=0; tf<NitData.transport_streams[i]->cells[c].num_transposers; tf++)
+                          dlog(0, "      transposer"     + IntToStr(tf+1) +
+                                  " = "                  + IntToStr(NitData.transport_streams[i]->cells[c].transposers[tf].transposer_frequency) +
+                                  " (cell_id_extension " + IntToStr(NitData.transport_streams[i]->cells[c].transposers[tf].cell_id_extension) + ")");
                        }
                     }
                  }
@@ -458,7 +468,7 @@ void cStateMachine::Action(void) {
                   n->service_type == SI_EXT::RCS_FLS_EN301790 or
                   n->service_type == SI_EXT::DVB_MHP_service or
                   n->service_type == SI_EXT::H264_AVC_codec_mosaic_service) {
-                 dlog(5, "skip service %d '%s' (no Audio/Video)", n->SID, n->Name.c_str());
+                 dlog(5, "skip service " + IntToStr(n->SID) + " '" + n->Name + "' (no Audio/Video)");
                  continue;
                  }
 
@@ -466,11 +476,11 @@ void cStateMachine::Action(void) {
 
               if ((wSetup.scanflags & PMT_ALL) != PMT_ALL and n->service_type < 0xFFFF) {
                  if ((wSetup.scanflags & SCAN_SCRAMBLED) != SCAN_SCRAMBLED and n->free_CA_mode) {
-                    dlog(5, "skip service %d '%s' (encrypted)", n->SID, n->Name.c_str());
+                    dlog(5, "skip service " + IntToStr(n->SID) + " '" + n->Name + "' (encrypted)");
                     continue;
                     }
                  if ((wSetup.scanflags & SCAN_FTA) != SCAN_FTA and !n->free_CA_mode) {
-                    dlog(5, "skip service %d '%s' (FTA)", n->SID, n->Name.c_str());
+                    dlog(5, "skip service " + IntToStr(n->SID) + " '" + n->Name + "' (FTA)");
                     continue;
                     }
 
@@ -489,7 +499,7 @@ void cStateMachine::Action(void) {
                         n->service_type == SI_EXT::H264_AVC_frame_compat_plano_stereoscopic_HD_NVOD_timeshifted_service or
                         n->service_type == SI_EXT::H264_AVC_frame_compat_plano_stereoscopic_HD_NVOD_reference_service or
                         n->service_type == SI_EXT::HEVC_digital_television_service) {
-                       dlog(5, "skip service %d '%s' (tv)", n->SID, n->Name.c_str());
+                       dlog(5, "skip service " + IntToStr(n->SID) + " '" + n->Name + "' (tv)");
                        continue;
                        }
                     }
@@ -497,17 +507,17 @@ void cStateMachine::Action(void) {
                     if (n->service_type == SI_EXT::digital_radio_sound_service or
                         n->service_type == SI_EXT::FM_radio_service or
                         n->service_type == SI_EXT::advanced_codec_digital_radio_sound_service) {
-                       dlog(5, "skip service %d '%s' (radio)", n->SID, n->Name.c_str());
+                       dlog(5, "skip service " + IntToStr(n->SID) + " '" + n->Name + "' (radio)");
                        continue;
                        }
                     }
                  }
               if (wSetup.verbosity > 4) {
                  n->Print(s);
-                 dlog(4, "NewChannels.Add: '%s'", s.c_str());
+                 dlog(4, "NewChannels.Add: '" + s + "'");
                  }
               else {
-                 if (n->Name != "???") dlog(0, "%s", n->Name.c_str());
+                 if (n->Name != "???") dlog(0, n->Name);
                  }
               NewChannels.Add(n);
               if (MenuScanning)
@@ -526,7 +536,7 @@ void cStateMachine::Action(void) {
                     NewChannels[i]->Provider     = SdtData.services[j].Provider;
                     NewChannels[i]->free_CA_mode = SdtData.services[j].free_CA_mode;
                     NewChannels[i]->Print(s);
-                    dlog(5, "Update: '%s'", s.c_str());
+                    dlog(5, "Update: '" + s + "'");
                     break;
                     }
                  }
@@ -542,8 +552,9 @@ void cStateMachine::Action(void) {
                  tp->ONID = NitData.transport_streams[i]->ONID;
                  tp->TID = NitData.transport_streams[i]->TID;
                  tp->PrintTransponder(s);
-                 dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d",
-                      __LINE__, s.c_str(), tp->NID, tp->TID);
+                 dlog(4, "NewTransponders.Add: '" + s + "'" +
+                         ", NID = " + IntToStr(tp->NID) +
+                         ", TID = " + IntToStr(tp->TID));
                  NewTransponders.Add(tp);
                  }
 
@@ -557,7 +568,9 @@ void cStateMachine::Action(void) {
                        tp->Frequency = NitData.transport_streams[i]->cells[c].center_frequencies[cf];
                        if (!known_transponder(tp, true)) {
                           tp->PrintTransponder(s);
-                          dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), tp->NID, tp->TID);
+                          dlog(4, "NewTransponders.Add: '" + s + "'" +
+                                  ", NID = " + IntToStr(tp->NID) +
+                                  ", TID = " + IntToStr(tp->TID));
                           NewTransponders.Add(tp);
                           }
                        else
@@ -571,7 +584,9 @@ void cStateMachine::Action(void) {
                        tp->Frequency = NitData.transport_streams[i]->cells[c].transposers[tf].transposer_frequency;
                        if (!known_transponder(tp, true)) {
                           tp->PrintTransponder(s);
-                          dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), tp->NID, tp->TID);
+                          dlog(4, "NewTransponders.Add: '" + s + "'" +
+                                  ", NID = " + IntToStr(tp->NID) +
+                                  ", TID = " + IntToStr(tp->TID));
                           NewTransponders.Add(tp);
                           }
                        else
@@ -585,10 +600,9 @@ void cStateMachine::Action(void) {
               TChannel t;
 
               if (wSetup.verbosity > 5)
-                 dlog(0, "NIT: cell_id %u, frequency %7.3fMHz network_id %d",
-                       NitData.cell_frequency_links[i].cell_id,
-                       NitData.cell_frequency_links[i].frequency/1e6,
-                       NitData.cell_frequency_links[i].network_id);
+                 dlog(0, "NIT: cell_id "   + IntToStr  (NitData.cell_frequency_links[i].cell_id) +
+                         ", frequency "    + FloatToStr(NitData.cell_frequency_links[i].frequency/1e6, 7, 3) +
+                         "MHz network_id " + IntToStr  (NitData.cell_frequency_links[i].network_id));
               t.Source       = 'T';
               t.Frequency    = NitData.cell_frequency_links[i].frequency;
               t.Bandwidth    = t.Frequency <= 226500000 ? 7 : 8;
@@ -605,7 +619,9 @@ void cStateMachine::Action(void) {
                  TChannel* n = new TChannel;
                  n->CopyTransponderData(&t);
                  n->PrintTransponder(s);
-                 dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), n->NID, n->TID);
+                 dlog(4, "NewTransponders.Add: '" + s + "'" +
+                         ", NID = " + IntToStr(n->NID) +
+                         ", TID = " + IntToStr(n->TID));
                  NewTransponders.Add(n);
                  }
 
@@ -614,14 +630,18 @@ void cStateMachine::Action(void) {
                  TChannel* n = new TChannel;
                  n->CopyTransponderData(&t);
                  n->PrintTransponder(s);
-                 dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), n->NID, n->TID);
+                 dlog(4, "NewTransponders.Add: '" + s + "'" +
+                         ", NID = " + IntToStr(n->NID) +
+                         ", TID = " + IntToStr(n->TID));
                  NewTransponders.Add(n);
                  }
 
               for(int j = 0; j < NitData.cell_frequency_links[i].subcellcount; j++) {
-                 dlog(5, "NIT:    cell_id_extension %u, frequency %7.3fMHz",
-                      NitData.cell_frequency_links[i].subcells[j].cell_id_extension,
-                      NitData.cell_frequency_links[i].subcells[j].transposer_frequency/1e6);
+                 dlog(5, "NIT:    cell_id_extension " +
+                         IntToStr(NitData.cell_frequency_links[i].subcells[j].cell_id_extension) +
+                         ", frequency " +
+                         FloatToStr(NitData.cell_frequency_links[i].subcells[j].transposer_frequency/1e6, 7, 3) +
+                         "MHz");
                  t.Frequency = NitData.cell_frequency_links[i].subcells[j].transposer_frequency;
                  t.Bandwidth = t.Frequency <= 226500000 ? 7 : 8;
                  t.DelSys    = 0;
@@ -630,7 +650,9 @@ void cStateMachine::Action(void) {
                     TChannel* tp = new TChannel;
                     tp->CopyTransponderData(&t);
                     tp->PrintTransponder(s);
-                    dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), tp->NID, tp->TID);
+                    dlog(4, "NewTransponders.Add: '" + s + "'" +
+                            ", NID = " + IntToStr(tp->NID) +
+                            ", TID = " + IntToStr(tp->TID));
                     NewTransponders.Add(tp);
                     }
                  
@@ -639,7 +661,9 @@ void cStateMachine::Action(void) {
                     TChannel* tp = new TChannel;
                     tp->CopyTransponderData(&t);
                     tp->PrintTransponder(s);
-                    dlog(4, "NewTransponders.Add(%d): '%s', NID = %d, TID = %d", __LINE__, s.c_str(), tp->NID, tp->TID);
+                    dlog(4, "NewTransponders.Add: '" + s + "'" +
+                            ", NID = " + IntToStr(tp->NID) +
+                            ", TID = " + IntToStr(tp->TID));
                     NewTransponders.Add(tp);
                     }
                  }
@@ -648,7 +672,7 @@ void cStateMachine::Action(void) {
            // delete data from current tp
            PatData.network_PID = 0x10;
            PatData.services.Clear();
-           for(int i = 0; i < PmtData.Count(); i++)
+           for(int i=0; i<PmtData.Count(); i++)
               delete PmtData[i];
            PmtData.Clear();
            NitData.frequency_list.Clear();
@@ -665,7 +689,7 @@ void cStateMachine::Action(void) {
         }
      state = newState;
      }
-  dlog(0, "%s\n", "DIRECT_EXIT");
+  dlog(0, "DIRECT_EXIT");
   DIRECT_EXIT:
   Cancel();
 }
