@@ -43,15 +43,14 @@
   if (wSetup.verbosity > 5) hexdump(__PRETTY_FUNCTION__, d, l);
 
 
-#define dlog(level, fmt...) do { _log(__PRETTY_FUNCTION__,__LINE__, level, true, fmt); } while(0)
+#define dlog(level, str) do { _log(__PRETTY_FUNCTION__,__LINE__, level, true, str); } while(0)
 
-void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...);
 void _log(const char* function, int line, const int level, bool newline, std::string);
 
-#define fatal(x...)     dlog(0, x); return -1
-#define warning(msg...) _log(__FUNCTION__,__LINE__,1,false,msg)
-#define info(msg...)    _log(__FUNCTION__,__LINE__,2,false,msg)
-#define verbose(x...)   dlog(4, x)
+#define fatal(x)     dlog(0, x); return -1
+#define warning(x)   dlog(1, x)
+#define info(x)      dlog(2, x)
+#define verbose(x)   dlog(4, x)
 
 /*******************************************************************************
  * forward decls.

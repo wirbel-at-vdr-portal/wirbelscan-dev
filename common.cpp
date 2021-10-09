@@ -84,17 +84,6 @@ cMySetup wSetup;
 /*******************************************************************************
  * plugins logging facility: dlog(), _log() and hexdump()
  ******************************************************************************/
-void _log(const char* function, int line, const int level, bool newline, const char* fmt, ...) {
-  if (level <= wSetup.verbosity) {
-     char str[256];
-     va_list ap;
-     va_start(ap, fmt);
-     vsnprintf(str, sizeof(str), fmt, ap);
-     va_end(ap);
-     _log(function, line, level, newline, std::string(str));
-     }
-}
-
 void _log(const char* function, int line, const int level, bool newline, std::string msg) {
   if (level > wSetup.verbosity)
      return;
