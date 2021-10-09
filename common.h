@@ -43,9 +43,9 @@
   if (wSetup.verbosity > 5) hexdump(__PRETTY_FUNCTION__, d, l);
 
 
-#define dlog(level, str) do { _log(__PRETTY_FUNCTION__,__LINE__, level, true, str); } while(0)
+#define dlog(level, str) do { _log(__PRETTY_FUNCTION__,__LINE__, level, str); } while(0)
 
-void _log(const char* function, int line, const int level, bool newline, std::string);
+void _log(const char* function, int line, const int level, std::string);
 
 #define fatal(x)     dlog(0, x); return -1
 #define warning(x)   dlog(1, x)

@@ -84,7 +84,7 @@ cMySetup wSetup;
 /*******************************************************************************
  * plugins logging facility: dlog(), _log() and hexdump()
  ******************************************************************************/
-void _log(const char* function, int line, const int level, bool newline, std::string msg) {
+void _log(const char* function, int line, const int level, std::string msg) {
   if (level > wSetup.verbosity)
      return;
 
@@ -106,18 +106,14 @@ void _log(const char* function, int line, const int level, bool newline, std::st
      std::cout << now();
      if (wSetup.verbosity >= 5)
         std::cout << function << ':' << IntToStr(line) << ' ';
-     std::cout << msg;
-     if (newline)
-        std::cout << std::endl;
+     std::cout << msg << std::endl;
      std::cout.flush();
      }
   else if (wSetup.logFile == STDERR) {
      std::cerr << now();
      if (wSetup.verbosity >= 5)
         std::cerr << function << ':' << IntToStr(line) << ' ';
-     std::cerr << msg;
-     if (newline)
-        std::cerr << std::endl;
+     std::cerr << msg << std::endl;
      std::cerr.flush();
      }
   
