@@ -584,7 +584,7 @@ void cNitScanner::ParseCellFrequencyLinks(uint16_t network_id, const unsigned ch
   c.network_id = network_id;
 
   if (wSetup.verbosity > 5)
-     hexdump(__PRETTY_FUNCTION__, Data, len);
+     hexdump("cNitScanner", Data, len);
 
   while(len >= 7) {
      c.cell_id = Data[offset + 0] << 8 |
@@ -644,7 +644,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
   if (!first_crc32)
      first_crc32 = crc32;
 
-  HEXDUMP(Data, Length);
+  if (wSetup.verbosity > 5)
+     hexdump(__PRETTY_FUNCTION__, Data, Length);
+
   SI::NIT::TransportStream ts;
   for(SI::Loop::Iterator it; nit.transportStreamLoop.getNext(ts, it);) {
      SI::Descriptor* d;
@@ -1244,7 +1246,8 @@ void cSdtScanner::Process(const unsigned char* Data, int Length) {
   if (data.original_network_id == 0)
      data.original_network_id = sdt.getOriginalNetworkId();
 
-  HEXDUMP(Data, Length);
+  if (wSetup.verbosity > 5)
+     hexdump("cSdtScanner", Data, Length);
 
   SI::SDT::Service SiSdtService;
   for(SI::Loop::Iterator it; sdt.serviceLoop.getNext(SiSdtService, it);) {

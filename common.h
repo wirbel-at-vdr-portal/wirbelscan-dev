@@ -39,9 +39,6 @@
 #define SYSLOG                  2
 #define STDERR                  3
 
-#define HEXDUMP(d, l) \
-  if (wSetup.verbosity > 5) hexdump(__PRETTY_FUNCTION__, d, l);
-
 
 #define dlog(level, str) do { _log(__PRETTY_FUNCTION__,__LINE__, level, str); } while(0)
 
