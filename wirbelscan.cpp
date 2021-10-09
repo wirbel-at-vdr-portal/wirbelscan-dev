@@ -378,6 +378,14 @@ const char** cPluginWirbelscan::SVDRPHelpPages(void) {
 // process svdrp commands.
 cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option, int& ReplyCode) {
   auto uppercase = [](std::string& s) { for(auto& c:s) c = std::toupper(c); };
+  auto split = [](const std::string s, const char delim) {
+     std::stringstream ss(s);
+     std::vector<std::string> result;
+     std::string i;
+     while(std::getline(ss, i, delim))
+        result.push_back(i);
+     return result;
+     };
   std::string cmd(Command);
   uppercase(cmd);
 
@@ -389,23 +397,32 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
   else if (cmd == "STORE"  ) { StoreSetup();   return "setup stored.";     }
 
   else if (cmd == "SETUP") {
-     std::string s;
-     cMySetup d;
+     std::vector<std::string> items;
+     if (Option and *Option) items = split(Option, ':');
 
-     if (12 != sscanf(Option, "%i:%i:%i:%i:%i:%i:%i:%i:%i:%i:%i:%u",
-        &d.verbosity, &d.logFile,
-        &d.DVB_Type,
-        &d.DVBT_Inversion, &d.DVBC_Inversion,
-        &d.DVBC_Symbolrate, &d.DVBC_QAM,
-        &d.CountryIndex, &d.SatIndex,
-        &d.enable_s2, &d.ATSC_type, &d.scanflags)) {
-        //error.
+     bool valid = items.size() == 12;
+     for(auto i:items)
+        if (i.empty() or i.find_first_not_of("0123456789") != std::string::npos)
+           valid = false;
+
+     if (not valid) {
         ReplyCode = 501;
         return "couldnt parse setup string.";
         }
+     wSetup.verbosity        = std::stol(items[0]);
+     wSetup.logFile          = std::stol(items[1]);
+     wSetup.DVB_Type         = std::stol(items[2]);
+     wSetup.DVBT_Inversion   = std::stol(items[3]);
+     wSetup.DVBC_Inversion   = std::stol(items[4]);
+     wSetup.DVBC_Symbolrate  = std::stol(items[5]);
+     wSetup.DVBC_QAM         = std::stol(items[6]);
+     wSetup.CountryIndex     = std::stol(items[7]);
+     wSetup.SatIndex         = std::stol(items[8]);
+     wSetup.enable_s2        = std::stol(items[9]);
+     wSetup.ATSC_type        = std::stol(items[10]);
+     wSetup.scanflags        = std::stol(items[11]);
 
-     wSetup = d;
-     s = "changed setup to " + 
+     std::string s = "changed setup to " + 
          IntToStr(wSetup.verbosity)       + ':' +
          IntToStr(wSetup.logFile)         + ':' +
          IntToStr(wSetup.DVB_Type)        + ':' +
