@@ -9,7 +9,6 @@
 #include <algorithm>            // std::min
 #include <sstream>              // std::stringstream
 #include <chrono>               // std::chrono::milliseconds
-#include <cstdarg>              // va_list, va_start, ..
 #include <ctime>                // time_t, strftime
 #include <cctype>               // std::isprint
 #include <syslog.h>             // syslog()
@@ -678,15 +677,6 @@ std::string FloatToStr(double f, size_t width, size_t precision) {
   ss.precision(precision);
   ss << std::fixed << std::setfill(' ') << std::setw(width) << f;
   return ss.str();
-}
-
-std::string FormatStr(const char* fmt, ...) {
-  char str[256];
-  va_list ap;
-  va_start(ap, fmt);
-  vsnprintf(str, sizeof(str), fmt, ap);
-  va_end(ap);
-  return str;
 }
 
 cDvbDevice* GetDvbDevice(cDevice* d) {

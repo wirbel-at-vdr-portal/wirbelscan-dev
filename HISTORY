@@ -351,3 +351,5 @@ VDR Plugin 'wirbelscan' Revision History
   - remove struct tuning_parameters
   - add BCDtoDecimal template
   - add IntToStr(), IntToHex(), FloatToStr()
+  - remove va_*, vsnprint and remove cstdarg
+
