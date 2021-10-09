@@ -707,7 +707,7 @@ void cScanner::Action(void) {
 
           switch (type) {
              case SCAN_TERRESTRIAL:
-                sys_parm = mod_parm; // NOTE: mod_parm is abused as 'system'
+                sys_parm = mod_parm == 0 ? 1 : 0; // NOTE: mod_parm is abused as 'system'
                 if (thisSystem != sys_parm) {
                    thisSystem = sys_parm;
                    std::string Gen2(sys_parm, '2');
