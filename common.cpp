@@ -104,7 +104,7 @@ void _log(const char* function, int line, const int level, bool newline, std::st
     time_t t = time(nullptr);
     strftime(s, sizeof(s), "%H:%M:%S ", localtime(&t));
     return std::string(s);
-    );
+    };
 
   if ((wSetup.logFile < STDOUT) or (wSetup.logFile > STDERR)) {
      syslog(LOG_DEBUG, "%s", "wirbelscan - WARNING: setting logFile to STDOUT");
@@ -647,7 +647,7 @@ bool TChannel::ValidSatIf() {
            }
      if (!d) {
         dlog(0, "no diseqc settings for (" +
-                Source + ", " + IntTostr(Frequency) + ", " + Polarization + ')');
+                Source + ", " + IntToStr(Frequency) + ", " + Polarization + ')');
         return false;
         }
      }
@@ -656,7 +656,7 @@ bool TChannel::ValidSatIf() {
 
   if (f < 950 or f > 2150) {
      dlog(0, "transponder (" +
-             Source + ", " + IntTostr(Frequency) + ", " + Polarization +
+             Source + ", " + IntToStr(Frequency) + ", " + Polarization +
              ") (freq " + IntToStr(f) + " -> out of tuning range)");
      return false;
      }
