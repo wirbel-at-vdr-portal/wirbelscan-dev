@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include <cctype>        // std::toupper()
 #include <vdr/plugin.h>
 #include <vdr/i18n.h>
 #include "common.h"      // wSetup
@@ -97,7 +98,7 @@ cMenuSetupPage* cPluginWirbelscan::SetupMenu(void) {
 
 // read back plugins settings.
 bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
-  std::string name = Name;
+  std::string name(Name);
   if      (name == "verbosity")        wSetup.verbosity=atoi(Value);
   else if (name == "logFile")          wSetup.logFile=atoi(Value);
   else if (name == "DVB_Type")         wSetup.DVB_Type=atoi(Value);
@@ -374,18 +375,20 @@ const char** cPluginWirbelscan::SVDRPHelpPages(void) {
   return SVDRHelp;
 }
 
-#define cmd(x) (strcasecmp(Command, x) == 0)
-
 // process svdrp commands.
 cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option, int& ReplyCode) {
-  if      cmd("S_TERR"  ) { return DoScan(wSetup.DVB_Type = SCAN_TERRESTRIAL)   ? "DVB-T scan started"     : "Could not start DVB-T scan.";    }
-  else if cmd("S_CABL"  ) { return DoScan(wSetup.DVB_Type = SCAN_CABLE)         ? "DVB-C scan started"     : "Could not start DVB-C scan.";    }
-  else if cmd("S_SAT"   ) { return DoScan(wSetup.DVB_Type = SCAN_SATELLITE)     ? "DVB-S scan started"     : "Could not start DVB-S scan.";    }
-  else if cmd("S_START" ) { return DoScan(wSetup.DVB_Type)              ? "starting scan"          : "Could not start scan.";          }
-  else if cmd("S_STOP"  ) { DoStop();       return "stopping scan(s)";  }
-  else if cmd("STORE"   ) { StoreSetup();   return "setup stored.";     }
+  auto uppercase = [](std::string& s) { for(auto& c:s) c = std::toupper(c); };
+  std::string cmd(Command);
+  uppercase(cmd);
 
-  else if cmd("SETUP") {
+  if      (cmd == "S_TERR" ) { return DoScan(wSetup.DVB_Type = SCAN_TERRESTRIAL)   ? "DVB-T scan started"     : "Could not start DVB-T scan.";    }
+  else if (cmd == "S_CABL" ) { return DoScan(wSetup.DVB_Type = SCAN_CABLE)         ? "DVB-C scan started"     : "Could not start DVB-C scan.";    }
+  else if (cmd == "S_SAT"  ) { return DoScan(wSetup.DVB_Type = SCAN_SATELLITE)     ? "DVB-S scan started"     : "Could not start DVB-S scan.";    }
+  else if (cmd == "S_START") { return DoScan(wSetup.DVB_Type)              ? "starting scan"          : "Could not start scan.";          }
+  else if (cmd == "S_STOP" ) { DoStop();       return "stopping scan(s)";  }
+  else if (cmd == "STORE"  ) { StoreSetup();   return "setup stored.";     }
+
+  else if (cmd == "SETUP") {
      std::string s;
      cMySetup d;
 
@@ -418,7 +421,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
      return s.c_str();
      }
 
-  else if cmd("QUERY") {
+  else if (cmd == "QUERY") {
      std::string s;
      s = "plugin version: " + std::string(WIRBELSCAN_VERSION) + '\n' +
          IntToStr(wSetup.verbosity)       + ':' +
@@ -444,7 +447,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
      return s.c_str();
      }
 
-  else if cmd("LSTC") {
+  else if (cmd == "LSTC") {
      std::stringstream ss;
      for(size_t i=0; i<COUNTRY::country_count(); i++)
         ss << IntToStr(COUNTRY::country_list[i].id) << ':'
@@ -453,7 +456,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
      return ss.str().c_str();
      }
 
-  else if cmd("LSTS") {
+  else if (cmd == "LSTS") {
      std::stringstream ss;
      for(size_t i=0; i<sat_count(); i++)
         ss << IntToStr(sat_list[i].id) << ':'
