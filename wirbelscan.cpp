@@ -21,7 +21,7 @@ extern int channelcount;     // menusetup.c
 extern int nextTransponders; // scanfilter.c
 extern cScanner* Scanner;
 
-const char* WIRBELSCAN_VERSION        = "2021.07.14";
+const char* WIRBELSCAN_VERSION        = "2021.10.09";
 const char* WIRBELSCAN_DESCRIPTION    = "DVB channel scan for VDR";
 const char* WIRBELSCAN_MAINMENUENTRY  = nullptr; /* main menu -> use wirbelscancontrol plugin */
 cPluginWirbelscan* thisPlugin;

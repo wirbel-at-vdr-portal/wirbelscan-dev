@@ -19,11 +19,10 @@ OBJS   = $(CPPSRC:%.cpp=%.o)
 #OBJS  = $(shell ls *.cpp | sed -e 's/\.cpp/\.o/g')
 
 DISTFILES = $(CPPSRC) $(wildcard *.h) $(wildcard *.dat) po
-DISTFILES+= build COPYING HISTORY Makefile README TODO SERVICES.html
+DISTFILES+= build COPYING HISTORY Makefile README SERVICES.html
 
 ### The version number of this plugin (taken from the main source file):
-VERSION = $(shell grep 'static const char \*WIRBELSCAN_VERSION *=' $(PLUGIN).cpp | awk '{ print $$6 }' | sed -e 's/[";]//g')
-
+VERSION = $(shell grep 'const char\* WIRBELSCAN_VERSION *= ' wirbelscan.cpp | awk '{ print $$5 }' | sed -e 's/[";]//g')
 
 ### The directory environment:
 # Use package data if installed...otherwise assume we're under the VDR source directory:

@@ -355,5 +355,5 @@ VDR Plugin 'wirbelscan' Revision History
   - remove va_*, vsnprint and remove cstdarg
   - remove HEXDUMP() macro, used in two places only
 * wirbelscan.cpp
-  
-
+  - convert as much as possible to std::string, std::stringstream
+  - bump version
