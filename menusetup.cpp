@@ -21,11 +21,21 @@ using namespace COUNTRY;
 extern cScanner* Scanner;
 static const char* ScannerDesc  = "wirbelscan scan thread";
 
-std::array<const char*,7> DVB_Types = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
-std::array<const char*,4> logfiles  = {"Off","stdout","syslog","stderr"};
+#undef tr
+#define tr(str) (str)
+
+std::array<const char*,7>  DVB_Types   = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
+std::array<const char*,4>  logfiles    = {"Off","stdout","syslog","stderr"};
+std::array<const char*,17> Symbolrates = {tr("AUTO"),"6900","6875","6111","6250",
+                                          "6790","6811","5900","5000","3450","4000",
+                                          "6950","7000","6952","5156","5483",tr("ALL (slow)")};
+std::array<const char*,5>  Qams        = {tr("AUTO"),"64","128","256",tr("ALL (slow)")};
+std::array<const char*,2>  inversions  = {tr("AUTO/OFF"),tr("AUTO/ON")};
+std::array<const char*,3>  atsc_types  = {"VSB (aerial)","QAM (cable)","VSB + QAM (aerial + cable)"};
 
 std::vector<const char*> SatNames;
 std::vector<const char*> CountryNames;
+
 
 cMenuScanning* MenuScanning    = nullptr;   // pointer to actual menu
 cOsdItem*      DeviceUsed      = nullptr;
@@ -45,8 +55,7 @@ std::string lTransponder;
 std::string deviceName;
 time_t timestamp;
 
-#undef tr
-#define tr(str) (str)
+
 
 /*******************************************************************************
  * class cMenuSettings
@@ -68,11 +77,6 @@ public:
 
 
 cMenuSettings::cMenuSettings(void) {
-  static const char* Symbolrates[] = {tr("AUTO"),"6900","6875","6111","6250","6790","6811","5900","5000","3450","4000","6950","7000","6952","5156","5483",tr("ALL (slow)")};
-  static const char* Qams[]        = {tr("AUTO"),"64","128","256",tr("ALL (slow)")};
-  static const char* inversions[]  = {tr("AUTO/OFF"),tr("AUTO/ON")};
-  static const char* atsc_types[]  = {"VSB (aerial)","QAM (cable)","VSB + QAM (aerial + cable)"};
-
   // devices may have changed meanwhile
   wSetup.InitSystems();
 
@@ -115,24 +119,24 @@ cMenuSettings::cMenuSettings(void) {
 
   if (wSetup.systems[SCAN_CABLE] || wSetup.systems[SCAN_TERRESTRIAL] || wSetup.systems[SCAN_TERRCABLE_ATSC]) {
      AddCategory(tr("Cable and Terrestrial"));
-     Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex, country_count(), CountryNames.data()));
+     Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex,     CountryNames.size(), CountryNames.data()));
      if (wSetup.systems[SCAN_CABLE]) {
-        Add(new cMenuEditStraItem(tr("Cable Inversion"),  &wSetup.DVBC_Inversion,    2, inversions));
-        Add(new cMenuEditStraItem(tr("Cable Symbolrate"), &wSetup.DVBC_Symbolrate,  17, Symbolrates));
-        Add(new cMenuEditStraItem(tr("Cable modulation"), &wSetup.DVBC_QAM,          5, Qams));
+        Add(new cMenuEditStraItem(tr("Cable Inversion"),  &wSetup.DVBC_Inversion,   inversions.size(), inversions.data()));
+        Add(new cMenuEditStraItem(tr("Cable Symbolrate"), &wSetup.DVBC_Symbolrate,  Symbolrates.size(), Symbolrates.data()));
+        Add(new cMenuEditStraItem(tr("Cable modulation"), &wSetup.DVBC_QAM,         Qams.size(), Qams.data()));
         Add(new cMenuEditIntItem (tr("Cable Network PID"),&wSetup.DVBC_Network_PID, 16, 0xFFFE, "AUTO"));
         }
      if (wSetup.systems[SCAN_TERRESTRIAL])
-        Add(new cMenuEditStraItem(tr("Terr  Inversion"),  &wSetup.DVBT_Inversion,   2, inversions));
+        Add(new cMenuEditStraItem(tr("Terr  Inversion"),  &wSetup.DVBT_Inversion,   inversions.size(), inversions.data()));
 
      if (wSetup.systems[SCAN_TERRCABLE_ATSC])
-        Add(new cMenuEditStraItem(tr("ATSC  Type"),       &wSetup.ATSC_type,        3, atsc_types));
+        Add(new cMenuEditStraItem(tr("ATSC  Type"),       &wSetup.ATSC_type,        atsc_types.size(), atsc_types.data()));
 
      }
 
   if (wSetup.systems[SCAN_SATELLITE]) {
      AddCategory(tr("Satellite"));
-     Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, sat_count(), SatNames.data()));
+     Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, SatNames.size(), SatNames.data()));
      Add(new cMenuEditBoolItem(tr("DVB-S2"),           &wSetup.enable_s2));
      }
 
