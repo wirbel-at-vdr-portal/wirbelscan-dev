@@ -94,11 +94,6 @@ void _log(const char* function, int line, const int level, std::string msg) {
     return std::string(s);
     };
 
-  if ((wSetup.logFile < STDOUT) or (wSetup.logFile > STDERR)) {
-     syslog(LOG_DEBUG, "%s", "wirbelscan - WARNING: setting logFile to STDOUT");
-     wSetup.logFile = STDOUT;
-     }
-
   if (wSetup.logFile == SYSLOG)
      syslog(LOG_DEBUG, "%s", msg.c_str());
   else if (wSetup.logFile == STDOUT) {

@@ -369,3 +369,9 @@ VDR Plugin 'wirbelscan' Revision History
   - convert SatNames and CountryNames to std::vector, this avoids duplicating
     those const char *, while opening the menu.
   - convert DVB_Types to std::array
+* wirbelscan.cpp, common.cpp, menusetup.cpp
+  - wSetup.logFile == 0 was used in the past to turn off logging,
+    but was different in common.c/cpp. Restore it.
+    Similarly, wSetup.logFile == 3 is logging to stderr, make it avail from
+    GUI.
+

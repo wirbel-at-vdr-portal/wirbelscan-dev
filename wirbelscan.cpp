@@ -100,7 +100,7 @@ cMenuSetupPage* cPluginWirbelscan::SetupMenu(void) {
 bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   std::string name(Name);
   if      (name == "verbosity")        wSetup.verbosity            = constrain(std::stoi(Value), 0, 6);
-  else if (name == "logFile")          wSetup.logFile              = constrain(std::stoi(Value), STDOUT, STDERR);
+  else if (name == "logFile")          wSetup.logFile              = constrain(std::stoi(Value), 0, STDERR);
   else if (name == "DVB_Type")         wSetup.DVB_Type             = constrain(std::stoi(Value), SCAN_TERRESTRIAL, SCAN_TRANSPONDER);
   else if (name == "DVBT_Inversion")   wSetup.DVBT_Inversion       = constrain(std::stoi(Value), 0, 1);
   else if (name == "DVBC_Inversion")   wSetup.DVBC_Inversion       = constrain(std::stoi(Value), 0, 1);

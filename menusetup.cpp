@@ -22,6 +22,7 @@ extern cScanner* Scanner;
 static const char* ScannerDesc  = "wirbelscan scan thread";
 
 std::array<const char*,7> DVB_Types = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
+std::array<const char*,4> logfiles  = {"Off","stdout","syslog","stderr"};
 
 std::vector<const char*> SatNames;
 std::vector<const char*> CountryNames;
@@ -69,7 +70,6 @@ public:
 cMenuSettings::cMenuSettings(void) {
   static const char* Symbolrates[] = {tr("AUTO"),"6900","6875","6111","6250","6790","6811","5900","5000","3450","4000","6950","7000","6952","5156","5483",tr("ALL (slow)")};
   static const char* Qams[]        = {tr("AUTO"),"64","128","256",tr("ALL (slow)")};
-  static const char* logfiles[]    = {tr("Off"),"stdout","syslog"};
   static const char* inversions[]  = {tr("AUTO/OFF"),tr("AUTO/ON")};
   static const char* atsc_types[]  = {"VSB (aerial)","QAM (cable)","VSB + QAM (aerial + cable)"};
 
@@ -105,7 +105,7 @@ cMenuSettings::cMenuSettings(void) {
   AddCategory(tr("General"));
   Add(new cMenuEditStraItem(tr("Source Type"),        &wSetup.DVB_Type,  DVB_Types.size()-1, DVB_Types.data()));
   Add(new cMenuEditIntItem (tr("verbosity"),          &wSetup.verbosity, 0, 6));
-  Add(new cMenuEditStraItem(tr("logfile"),            &wSetup.logFile,   3, logfiles));
+  Add(new cMenuEditStraItem(tr("logfile"),            &wSetup.logFile,   logfiles.size(), logfiles.data()));
 
   AddCategory(tr("Channels"));
   Add(new cMenuEditBoolItem(tr("TV channels"),        &scan_tv));

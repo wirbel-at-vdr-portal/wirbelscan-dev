@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2016-08-13 11:32+0200\n"
+"POT-Creation-Date: 2021-10-10 12:05+0200\n"
 "PO-Revision-Date: 2007-09-03 18:38+0200\n"
 "Last-Translator: wk\n"
 "Language-Team: <vdr@linuxtv.org>\n"
@@ -23,9 +23,6 @@ msgstr "AUTO"
 
 msgid "ALL (slow)"
 msgstr "ALL (slow)"
-
-msgid "Off"
-msgstr "Off"
 
 msgid "AUTO/OFF"
 msgstr "AUTO/OFF"
@@ -124,6 +121,9 @@ msgstr "Log Messages"
 
 msgid "CANNOT SCAN - No device!"
 msgstr "CANNOT SCAN - No device!"
+
+#~ msgid "Off"
+#~ msgstr "Off"
 
 #~ msgid "HD channels"
 #~ msgstr "HD channels"
