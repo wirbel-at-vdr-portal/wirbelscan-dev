@@ -305,7 +305,7 @@ VDR Plugin 'wirbelscan' Revision History
 * common.c:
   - hexdump to stderr instead of stdout
 
-2021-10-xx
+2021-10-09
 -------------------------------------------------------------------------------
 * review whole plugin after many years in service:
   - update contact address and homepage, outdated on a few files.
@@ -357,3 +357,12 @@ VDR Plugin 'wirbelscan' Revision History
 * wirbelscan.cpp
   - convert as much as possible to std::string, std::stringstream
   - bump version
+
+2021-10-10+
+-------------------------------------------------------------------------------
+* wirbelscan.cpp
+  - found old bug: invalid country or satellite settings in setup.conf could
+         crash the plugin, if used inside VDR, but not inside w_scan_cpp.
+  - apply range checks to setup.conf stored variables.
+  - replace atoi by std::sto{i,l,ll}
+

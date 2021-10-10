@@ -99,26 +99,26 @@ cMenuSetupPage* cPluginWirbelscan::SetupMenu(void) {
 // read back plugins settings.
 bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   std::string name(Name);
-  if      (name == "verbosity")        wSetup.verbosity=atoi(Value);
-  else if (name == "logFile")          wSetup.logFile=atoi(Value);
-  else if (name == "DVB_Type")         wSetup.DVB_Type=atoi(Value);
-  else if (name == "DVBT_Inversion")   wSetup.DVBT_Inversion=atoi(Value);
-  else if (name == "DVBC_Inversion")   wSetup.DVBC_Inversion=atoi(Value);
-  else if (name == "DVBC_Symbolrate")  wSetup.DVBC_Symbolrate=atoi(Value);
-  else if (name == "DVBC_Network_PID") wSetup.DVBC_Network_PID=atoi(Value);
-  else if (name == "DVBC_QAM")         wSetup.DVBC_QAM=atoi(Value);
-  else if (name == "CountryIndex")     wSetup.CountryIndex=atoi(Value);
-  else if (name == "SatIndex")         wSetup.SatIndex=atoi(Value);
-  else if (name == "enable_s2")        wSetup.enable_s2=atoi(Value);
-  else if (name == "ATSC_type")        wSetup.ATSC_type=atoi(Value);
-  else if (name == "scanflags")        wSetup.scanflags=atoi(Value);
-  else if (name == "user0")            wSetup.user[0]=atol(Value);
-  else if (name == "user1")            wSetup.user[1]=atol(Value);
-  else if (name == "user2")            wSetup.user[2]=atol(Value);
-  else if (name == "ri")               wSetup.scan_remove_invalid=atoi(Value);
-  else if (name == "ue")               wSetup.scan_update_existing=atoi(Value);
-  else if (name == "an")               wSetup.scan_append_new=atoi(Value);
-  else return false;                                              
+  if      (name == "verbosity")        wSetup.verbosity            = constrain(std::stoi(Value), 0, 6);
+  else if (name == "logFile")          wSetup.logFile              = constrain(std::stoi(Value), STDOUT, STDERR);
+  else if (name == "DVB_Type")         wSetup.DVB_Type             = constrain(std::stoi(Value), SCAN_TERRESTRIAL, SCAN_TRANSPONDER);
+  else if (name == "DVBT_Inversion")   wSetup.DVBT_Inversion       = constrain(std::stoi(Value), 0, 1);
+  else if (name == "DVBC_Inversion")   wSetup.DVBC_Inversion       = constrain(std::stoi(Value), 0, 1);
+  else if (name == "DVBC_Symbolrate")  wSetup.DVBC_Symbolrate      = constrain(std::stoi(Value), 0, 16);
+  else if (name == "DVBC_Network_PID") wSetup.DVBC_Network_PID     = constrain(std::stoi(Value), 0x10, 0xFFFF);
+  else if (name == "DVBC_QAM")         wSetup.DVBC_QAM             = constrain(std::stoi(Value), 0, 4);
+  else if (name == "CountryIndex")     wSetup.CountryIndex         = constrain(std::stoi(Value), 0, (int)COUNTRY::country_count()-1);
+  else if (name == "SatIndex")         wSetup.SatIndex             = constrain(std::stoi(Value), 0, (int)sat_count()-1);
+  else if (name == "enable_s2")        wSetup.enable_s2            = constrain(std::stoi(Value), 0, 1);
+  else if (name == "ATSC_type")        wSetup.ATSC_type            = constrain(std::stoi(Value), 0, 2);
+  else if (name == "scanflags")        wSetup.scanflags            = constrain(std::stoi(Value), 0, 255);
+  else if (name == "user0")            wSetup.user[0]              = std::stol(Value);
+  else if (name == "user1")            wSetup.user[1]              = std::stol(Value);
+  else if (name == "user2")            wSetup.user[2]              = std::stol(Value);
+  else if (name == "ri")               wSetup.scan_remove_invalid  = constrain(std::stoi(Value), 0, 1);
+  else if (name == "ue")               wSetup.scan_update_existing = constrain(std::stoi(Value), 0, 1);
+  else if (name == "an")               wSetup.scan_append_new      = constrain(std::stoi(Value), 0, 1);
+  else return false;
   return true;
 }
 
@@ -147,7 +147,6 @@ void cPluginWirbelscan::StoreSetup(void) {
   SetupStore("ri",              wSetup.scan_remove_invalid);
   SetupStore("ue",              wSetup.scan_update_existing);
   SetupStore("an",              wSetup.scan_append_new);
-  mSleep(50);
   Setup.Save();
 }
 
