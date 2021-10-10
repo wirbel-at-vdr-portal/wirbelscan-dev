@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <string>
+#include <vector>
 #include <ctime>
 #include <vdr/config.h>
 #include "menusetup.h"
@@ -19,6 +20,9 @@ using namespace COUNTRY;
 extern cScanner* Scanner;
 static const char* ScannerDesc  = "wirbelscan scan thread";
 static const char* DVB_Types[]  = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
+
+std::vector<const char*> SatNames;
+std::vector<const char*> CountryNames;
 
 cMenuScanning* MenuScanning    = nullptr;   // pointer to actual menu
 cOsdItem*      DeviceUsed      = nullptr;
@@ -66,8 +70,6 @@ cMenuSettings::cMenuSettings(void) {
   static const char* logfiles[]    = {tr("Off"),"stdout","syslog"};
   static const char* inversions[]  = {tr("AUTO/OFF"),tr("AUTO/ON")};
   static const char* atsc_types[]  = {"VSB (aerial)","QAM (cable)","VSB + QAM (aerial + cable)"};
-  static char* SatNames[256];
-  static char* CountryNames[256];
 
   // devices may have changed meanwhile
   wSetup.InitSystems();
@@ -85,13 +87,16 @@ cMenuSettings::cMenuSettings(void) {
   scan_scrambled = (wSetup.scanflags & SCAN_SCRAMBLED) > 0;
   scan_fta       = (wSetup.scanflags & SCAN_FTA      ) > 0;
 
-  for(size_t i=0; i<sat_count(); i++) {
-     SatNames[i] = (char*) malloc(strlen(sat_list[i].full_name) + 1);
-     strcpy(SatNames[i], sat_list[i].full_name);
+  if (SatNames.empty()) {
+     SatNames.reserve(sat_count());
+     for(size_t i=0; i<sat_count(); i++)
+        SatNames.push_back(sat_list[i].full_name);
      }
-  for(size_t i=0; i<country_count(); i++) {
-     CountryNames[i] = (char*) malloc(strlen(country_list[i].full_name) + 1);
-     strcpy(CountryNames[i], country_list[i].full_name);
+
+  if (CountryNames.empty()) {
+     CountryNames.reserve(country_count());
+     for(size_t i=0; i<country_count(); i++)
+        CountryNames.push_back(country_list[i].full_name);
      }
 
   SetSection(tr("Setup"));
@@ -108,7 +113,7 @@ cMenuSettings::cMenuSettings(void) {
 
   if (wSetup.systems[SCAN_CABLE] || wSetup.systems[SCAN_TERRESTRIAL] || wSetup.systems[SCAN_TERRCABLE_ATSC]) {
      AddCategory(tr("Cable and Terrestrial"));
-     Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex, country_count(), CountryNames));
+     Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex, country_count(), CountryNames.data()));
      if (wSetup.systems[SCAN_CABLE]) {
         Add(new cMenuEditStraItem(tr("Cable Inversion"),  &wSetup.DVBC_Inversion,    2, inversions));
         Add(new cMenuEditStraItem(tr("Cable Symbolrate"), &wSetup.DVBC_Symbolrate,  17, Symbolrates));
@@ -125,7 +130,7 @@ cMenuSettings::cMenuSettings(void) {
 
   if (wSetup.systems[SCAN_SATELLITE]) {
      AddCategory(tr("Satellite"));
-     Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, sat_count(), SatNames));
+     Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, sat_count(), SatNames.data()));
      Add(new cMenuEditBoolItem(tr("DVB-S2"),           &wSetup.enable_s2));
      }
 

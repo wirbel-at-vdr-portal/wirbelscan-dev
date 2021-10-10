@@ -365,4 +365,7 @@ VDR Plugin 'wirbelscan' Revision History
          crash the plugin, if used inside VDR, but not inside w_scan_cpp.
   - apply range checks to setup.conf stored variables.
   - replace atoi by std::sto{i,l,ll}
+* menusetup.cpp
+  - convert SatNames and CountryNames to std::vector, this avoids duplicating
+    those const char *, while opening the menu.
 
