@@ -334,7 +334,7 @@ void cMenuScanning::SetChanAdd(uint32_t flags) {
 
 void cMenuScanning::SetStatus(int status) {
   int type = Scanner?Scanner->DvbType() : wSetup.DVB_Type;
-  static const char* st[] = {
+  std::array<const char*,5> st = {
      "STOP","RUN","No device available - exiting!",
      "No DVB-S2 device available - trying fallback to DVB-S",
      " "};
@@ -347,10 +347,12 @@ void cMenuScanning::SetStatus(int status) {
   else
      s += country_list[wSetup.CountryIndex].full_name;
   s += " ";
+
   if (Scanner)
-     s += st[Scanner->Status()];
-  else
-     s += st[status];
+     status = Scanner->Status(); //< check that.
+
+  status = constrain(status, 0, (int)st.size()-1);
+  s += st[status];
 
   ScanType->SetText(s.c_str(), true);
   ScanType->Set();

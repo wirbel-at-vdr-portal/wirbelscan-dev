@@ -375,4 +375,6 @@ VDR Plugin 'wirbelscan' Revision History
     but was different in common.c/cpp. Restore it.
     Similarly, wSetup.logFile == 3 is logging to stderr, make it avail from
     GUI.
+* menusetup.cpp
+  - in cMenuScanning::SetStatus(), protect st using constrain
 
