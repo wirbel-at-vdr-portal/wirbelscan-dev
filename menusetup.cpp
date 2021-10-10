@@ -4,6 +4,7 @@
  ******************************************************************************/
 #include <string>
 #include <vector>
+#include <array>
 #include <ctime>
 #include <vdr/config.h>
 #include "menusetup.h"
@@ -19,7 +20,8 @@
 using namespace COUNTRY;
 extern cScanner* Scanner;
 static const char* ScannerDesc  = "wirbelscan scan thread";
-static const char* DVB_Types[]  = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
+
+std::array<const char*,7> DVB_Types = {"DVB-T/T2","DVB-C","DVB-S/S2","RESERVE1","RESERVE2","ATSC", "no device found"};
 
 std::vector<const char*> SatNames;
 std::vector<const char*> CountryNames;
@@ -101,7 +103,7 @@ cMenuSettings::cMenuSettings(void) {
 
   SetSection(tr("Setup"));
   AddCategory(tr("General"));
-  Add(new cMenuEditStraItem(tr("Source Type"), (int*) &wSetup.DVB_Type,  6, DVB_Types));
+  Add(new cMenuEditStraItem(tr("Source Type"),        &wSetup.DVB_Type,  DVB_Types.size()-1, DVB_Types.data()));
   Add(new cMenuEditIntItem (tr("verbosity"),          &wSetup.verbosity, 0, 6));
   Add(new cMenuEditStraItem(tr("logfile"),            &wSetup.logFile,   3, logfiles));
 

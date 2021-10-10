@@ -368,4 +368,4 @@ VDR Plugin 'wirbelscan' Revision History
 * menusetup.cpp
   - convert SatNames and CountryNames to std::vector, this avoids duplicating
     those const char *, while opening the menu.
-
+  - convert DVB_Types to std::array
