@@ -19,7 +19,6 @@
 
 using namespace COUNTRY;
 extern cScanner* Scanner;
-static const char* ScannerDesc  = "wirbelscan scan thread";
 
 #undef tr
 #define tr(str) (str)
@@ -35,6 +34,9 @@ std::array<const char*,3>  atsc_types  = {"VSB (aerial)","QAM (cable)","VSB + QA
 
 std::vector<const char*> SatNames;
 std::vector<const char*> CountryNames;
+
+std::array<std::string, 4> flagslo = {"don\'t add channels", "TV", "Radio", "TV + Radio"};  
+std::array<std::string, 4> flagshi = {"don\'t add channels", "Free to Air", "Scrambled", "Free to Air + Scrambled"};
 
 
 cMenuScanning* MenuScanning    = nullptr;   // pointer to actual menu
@@ -157,8 +159,7 @@ void cMenuSettings::Store(void) {
 
 
 void cMenuSettings::AddCategory(std::string category) {
-  category.insert(0, "---------------  ");
-  Add(new cOsdItem(category.c_str()));
+  Add(new cOsdItem(("---------------  " + category).c_str()));
 }
 
 
@@ -212,10 +213,6 @@ eOSState cMenuSettings::ProcessKey(eKeys Key) {
            wSetup.DVB_Type = SCAN_NO_DEVICE;
         ProcessKey(kLeft);
         }
-     //while(!wSetup.systems[wSetup.DVB_Type] && wSetup.DVB_Type != SCAN_NO_DEVICE) {
-     //   dlog(4, "%s unsupported", DVB_Types[wSetup.DVB_Type]);
-     //   ProcessKey(direction < 0? kLeft:kRight);
-     //   }
      }
 
   return state;      
@@ -266,27 +263,7 @@ cMenuScanning::cMenuScanning(void) :
 
   AddCategory(tr("Channels"));
 
-  std::string flags;
-
-  if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == SCAN_TV)
-     flags = "TV only";
-  else if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == SCAN_RADIO)
-     flags = "Radio only";
-  else if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == (SCAN_RADIO | SCAN_TV))
-     flags = "TV + Radio";
-  else
-     flags = "don''t add channels";
-
-  if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == SCAN_FTA)
-     flags += " (Free to Air only)";
-  else if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == SCAN_SCRAMBLED)
-     flags += " (Scrambled only)";
-  else if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == (SCAN_FTA | SCAN_SCRAMBLED))
-     flags += " (Free to Air + Scrambled)";
-  else
-     flags += " (don''t add channels)";
-
-  ChanAdd = new cOsdItem(flags.c_str());
+  ChanAdd = new cOsdItem(" ");
   Add(ChanAdd);
 
   ChanNew = new cOsdItem("known Channels:");
@@ -297,6 +274,8 @@ cMenuScanning::cMenuScanning(void) :
      LogMsg[i] = new cOsdItem(" ");
      Add(LogMsg[i]);
      }
+
+  SetChanAdd(wSetup.scanflags);
 }
 
 
@@ -306,26 +285,10 @@ cMenuScanning::~cMenuScanning(void) {
 
 
 void cMenuScanning::SetChanAdd(uint32_t flags) {
-  static std::string s;
+  int lo =  flags & (SCAN_TV | SCAN_RADIO);
+  int hi = (flags & (SCAN_FTA | SCAN_SCRAMBLED)) << 2;
 
-  if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == SCAN_TV)
-     s = "TV only";
-  else if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == SCAN_RADIO)
-     s = "Radio only";
-  else if ((wSetup.scanflags & (SCAN_TV | SCAN_RADIO)) == (SCAN_RADIO | SCAN_TV))
-     s = "TV + Radio";
-  else
-     s = "don''t add channels";
-
-  if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == SCAN_FTA)
-     s += " (Free to Air only)";
-  else if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == SCAN_SCRAMBLED)
-     s += " (Scrambled only)";
-  else if ((wSetup.scanflags & (SCAN_FTA | SCAN_SCRAMBLED)) == (SCAN_FTA | SCAN_SCRAMBLED))
-     s += " (Free to Air + Scrambled)";
-  else
-     s += " (don''t add channels)";
-
+  std::string s = flagslo[lo] + " (" + flagshi[hi] + ")";
   ChanAdd->SetText(s.c_str(), true);
   ChanAdd->Set();
   MenuScanning->Display();
@@ -463,8 +426,7 @@ void cMenuScanning::AddLogMsg(std::string Msg) {
 
 
 void cMenuScanning::AddCategory(std::string category) {
-  category.insert(0, "---------------  ");
-  Add(new cOsdItem(category.c_str()));
+  Add(new cOsdItem(("---------------  " + category).c_str()));
 }
 
 
@@ -580,7 +542,7 @@ bool DoScan(int DVB_Type) {
      }
   timestamp = time(0);
   channelcount = 0;
-  Scanner = new cScanner(ScannerDesc, DVB_Type);
+  Scanner = new cScanner("wirbelscan Scanner", DVB_Type);
   return true;
 }
 
