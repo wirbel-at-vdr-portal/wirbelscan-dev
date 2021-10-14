@@ -329,18 +329,25 @@ void cMenuScanning::SetCounters(int curr_tp, int all_tp) {
 }
 
 
-void cMenuScanning::SetProgress(size_t progress) {
-  static char s[256];
+std::string cMenuScanning::TimeStr(void) {
   time_t t = time(0) - timestamp;
-  if (transponder > 0) {
-     snprintf(s, 256, "Scan: %d%% running %dm%.2dsec (%d/%d)",
-         progress, (int) t/60, (int) t%60, transponder, transponders);
+  return IntToStr(t/60) + 'm' + IntToStr(t%60) + 's';
+}
+
+
+void cMenuScanning::SetProgress(size_t progress) {
+  if (transponder <= 0)
+     progress = lProgress;
+
+  std::string s = "Scan: " + IntToStr(progress) + "% running " +
+                  TimeStr();
+
+  if ((transponder > 0) and (transponders > 0)) {
+     s += " (" + IntToStr(transponder) + '/' + IntToStr(transponders) + ')';
      lProgress = (int) (0.5 + (100.0 * transponder) / transponders);
      }
-  else
-     snprintf(s, 256, "Scan: %d%% running %dm%.2dsec",
-         lProgress, (int) t/60, (int) t%60);
-  Progress->SetText(s, true);
+
+  Progress->SetText(s.c_str(), true);
   Progress->Set();
   if (needs_update) {
      SetStatus(0);
