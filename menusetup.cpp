@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 #include <array>
+#include <algorithm>    // std::min()
 #include <ctime>
 #include <vdr/config.h>
 #include "menusetup.h"
@@ -314,7 +315,7 @@ void cMenuScanning::SetStatus(size_t status) {
   if (Scanner)
      status = Scanner->Status(); //< check that.
 
-  status = constrain(status, 0, (int)st.size()-1);
+  status = std::min(status, st.size()-1);
   s += st[status];
 
   ScanType->SetText(s.c_str(), true);
@@ -368,29 +369,23 @@ void cMenuScanning::SetTransponder(const TChannel* transponder) {
 
 
 void cMenuScanning::SetStr(size_t strength, bool locked) {
-  static char s[256];
+  std::string s;
 
-  if (strength > 100U)
-     dlog(0, "strength = " + IntToStr(strength) + '!');
-
-  if (locked and !strength)
-     snprintf(s, 256, "STR -- [_________] %s", locked?"LOCKED":"");
+  if (locked and (strength == 0))
+     strength = 100;
   else
-  switch(strength) {
-     case  0       : snprintf(s, 256, "STR %-3d%% []           %s", strength, locked?"LOCKED":""); break;
-     case  1 ... 10: snprintf(s, 256, "STR %-3d%% []           %s", strength, locked?"LOCKED":""); break;
-     case 11 ... 20: snprintf(s, 256, "STR %-3d%% [_]          %s", strength, locked?"LOCKED":""); break;
-     case 21 ... 30: snprintf(s, 256, "STR %-3d%% [__]         %s", strength, locked?"LOCKED":""); break;
-     case 31 ... 40: snprintf(s, 256, "STR %-3d%% [___]        %s", strength, locked?"LOCKED":""); break;
-     case 41 ... 50: snprintf(s, 256, "STR %-3d%% [____]       %s", strength, locked?"LOCKED":""); break;
-     case 51 ... 60: snprintf(s, 256, "STR %-3d%% [_____]      %s", strength, locked?"LOCKED":""); break;
-     case 61 ... 70: snprintf(s, 256, "STR %-3d%% [______]     %s", strength, locked?"LOCKED":""); break;
-     case 71 ... 80: snprintf(s, 256, "STR %-3d%% [_______]    %s", strength, locked?"LOCKED":""); break;
-     case 81 ... 90: snprintf(s, 256, "STR %-3d%% [________]   %s", strength, locked?"LOCKED":""); break;
-     default:        snprintf(s, 256, "STR %-3d%% [_________]  %s", strength, locked?"LOCKED":""); break;
-     }
+     strength = std::min(strength, (size_t)100);
 
-  Str->SetText(s, true);
+  std::string t = IntToStr(strength);
+  s = "STR " + t + '%' + std::string(4-t.size(), ' ');
+
+  std::string u((size_t)(0.5 + strength/12.5), '_');
+  s+= '[' + u + ']' + std::string(8-u.size(), ' ');
+
+  if (locked)
+     s += "LOCK";
+
+  Str->SetText(s.c_str(), true);
   Str->Set();
   MenuScanning->Display();
 }
