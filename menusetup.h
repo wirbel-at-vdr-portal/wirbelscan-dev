@@ -30,14 +30,14 @@ public:
   ~cMenuScanning(void);
   virtual void Store(void);
   virtual eOSState ProcessKey(eKeys Key);
-  void SetStatus(int status);
-  void SetProgress(const int progress);
+  void SetStatus(size_t status);
+  void SetProgress(size_t progress);
   void SetCounters(int curr_tp, int all_tp);
   void SetTransponder(const TChannel* transponder); 
-  void SetStr(unsigned strength, bool locked);
-  void SetChan(int count);
+  void SetStr(size_t strength, bool locked);
+  void SetChan(size_t count);
   void SetDeviceInfo(std::string Info, bool update = true);
-  void SetChanAdd(uint32_t flags);
+  void SetChanAdd(size_t flags);
   void AddLogMsg(std::string Msg);
 };
 
