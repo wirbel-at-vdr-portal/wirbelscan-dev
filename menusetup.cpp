@@ -284,7 +284,7 @@ cMenuScanning::~cMenuScanning(void) {
 }
 
 
-void cMenuScanning::SetChanAdd(uint32_t flags) {
+void cMenuScanning::SetChanAdd(size_t flags) {
   int lo =  flags & (SCAN_TV | SCAN_RADIO);
   int hi = (flags & (SCAN_FTA | SCAN_SCRAMBLED)) << 2;
 
@@ -295,7 +295,7 @@ void cMenuScanning::SetChanAdd(uint32_t flags) {
 }
 
 
-void cMenuScanning::SetStatus(int status) {
+void cMenuScanning::SetStatus(size_t status) {
   int type = Scanner?Scanner->DvbType() : wSetup.DVB_Type;
   std::array<const char*,5> st = {
      "STOP","RUN","No device available - exiting!",
@@ -329,7 +329,7 @@ void cMenuScanning::SetCounters(int curr_tp, int all_tp) {
 }
 
 
-void cMenuScanning::SetProgress(const int progress) {
+void cMenuScanning::SetProgress(size_t progress) {
   static char s[256];
   time_t t = time(0) - timestamp;
   if (transponder > 0) {
@@ -360,7 +360,7 @@ void cMenuScanning::SetTransponder(const TChannel* transponder) {
 }
 
 
-void cMenuScanning::SetStr(unsigned strength, bool locked) {
+void cMenuScanning::SetStr(size_t strength, bool locked) {
   static char s[256];
 
   if (strength > 100U)
@@ -389,7 +389,7 @@ void cMenuScanning::SetStr(unsigned strength, bool locked) {
 }
 
 
-void cMenuScanning::SetChan(int count) {
+void cMenuScanning::SetChan(size_t count) {
   static std::string s;
   s = "known Channels: " + IntToStr(channelcount = count);
 
