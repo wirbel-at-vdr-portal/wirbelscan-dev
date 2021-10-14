@@ -21,6 +21,7 @@ private:
   bool log_busy;
   int transponder;
   int transponders;
+  std::string TimeStr(void);
 protected:
   virtual bool StartScan(void);
   virtual bool StopScan(void);
