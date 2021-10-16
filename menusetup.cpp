@@ -253,7 +253,6 @@ eOSState cMenuSettings::ProcessKey(eKeys Key) {
 cMenuScanning::cMenuScanning(void) :
   needs_update(true), log_busy(false), transponder(0), transponders(1) {
   SetHelp(tr("Stop"), tr("Start"), tr("Settings"), "");
-  MenuScanning = this;
 
   wSetup.InitSystems();
 
@@ -285,6 +284,7 @@ cMenuScanning::cMenuScanning(void) :
      Add((LogMsg[i] = new cOsdItem(" ")));
 
   SetChanAdd(wSetup.scanflags);
+  MenuScanning = this;
 }
 
 
@@ -294,13 +294,14 @@ cMenuScanning::~cMenuScanning(void) {
 
 
 void cMenuScanning::SetChanAdd(size_t flags) {
-  int lo =  flags & (SCAN_TV | SCAN_RADIO);
-  int hi = (flags & (SCAN_FTA | SCAN_SCRAMBLED)) << 2;
+  int lo =  flags & 3;
+  int hi = (flags & 12) >> 2;
 
   std::string s = flagslo[lo] + " (" + flagshi[hi] + ")";
   ChanAdd->SetText(s.c_str(), true);
   ChanAdd->Set();
-  MenuScanning->Display();
+  if (MenuScanning)
+     MenuScanning->Display();
 }
 
 
