@@ -54,7 +54,7 @@ cOsdItem*      LogMsg[LOGLEN];
 
 int channelcount = 0;
 size_t lProgress = 0;
-int lStrength = 0;
+size_t lStrength = 0;
 size_t lStatus = 0;
 std::string lTransponder;
 std::string deviceName;

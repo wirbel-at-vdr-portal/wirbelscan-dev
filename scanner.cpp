@@ -4,6 +4,7 @@
  ******************************************************************************/
 #include <string>
 #include <array>
+#include <algorithm>     // std::min()
 #include <vdr/sources.h>
 #include <vdr/device.h>
 #include "scanner.h"
@@ -963,9 +964,7 @@ void cScanner::Action(void) {
              lock = false;
 
           if (lock) {
-             lStrength = dev->SignalStrength();
-             if (lStrength < 0 or lStrength > 100)
-                lStrength = 0;
+             lStrength = std::min((size_t)dev->SignalStrength(), (size_t)100);
              if (MenuScanning)
                 MenuScanning->SetStr(lStrength, lock);
              StateMachine = new cStateMachine(dev, aChannel, useNit, this);

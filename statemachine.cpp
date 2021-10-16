@@ -4,6 +4,7 @@
  ******************************************************************************/
 
 #include <string>
+#include <algorithm>      // std::min()
 #include <vdr/receiver.h>
 #include "tlist.h"
 #include "scanner.h"
@@ -200,11 +201,10 @@ void cStateMachine::Action(void) {
            ScannedTransponders.Add(tp);
 
            if (dvbdevice)
-              lStrength = dev->SignalStrength();
+              lStrength = std::min((size_t)dev->SignalStrength(), (size_t)100);
            else
               lStrength = 100; // non-dvb hardware - no info, assume perfect.
-           if (lStrength < 0 or lStrength > 100)
-              lStrength = 0;
+
            if (MenuScanning)
               MenuScanning->SetStr(lStrength, dev->HasLock(1));
            break;

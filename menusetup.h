@@ -48,7 +48,7 @@ extern cMenuScanning* MenuScanning;
 extern std::string deviceName;
 extern std::string lTransponder;
 extern size_t lProgress;
-extern int lStrength;
+extern size_t lStrength;
 
 void stopScanners(void);
 bool DoScan(int DVB_Type);
