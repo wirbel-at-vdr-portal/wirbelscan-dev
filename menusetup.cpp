@@ -60,6 +60,13 @@ std::string deviceName;
 time_t timestamp;
 
 
+bool ScanAvailable(void) {
+  return wSetup.systems[SCAN_TERRESTRIAL] ||
+         wSetup.systems[SCAN_CABLE] ||
+         wSetup.systems[SCAN_SATELLITE] ||
+         wSetup.systems[SCAN_TERRCABLE_ATSC];
+}
+
 
 /*******************************************************************************
  * class cMenuSettings
@@ -84,10 +91,7 @@ cMenuSettings::cMenuSettings(void) {
   // devices may have changed meanwhile
   wSetup.InitSystems();
 
-  if (! wSetup.systems[SCAN_TERRESTRIAL] &&
-       ! wSetup.systems[SCAN_CABLE] &&
-       ! wSetup.systems[SCAN_SATELLITE] &&
-       ! wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+  if (not ScanAvailable()) {
      AddCategory("NO DEVICES FOUND.");
      return;
      }       
@@ -195,8 +199,7 @@ eOSState cMenuSettings::ProcessKey(eKeys Key) {
         }
      }
 
-  if (! wSetup.systems[SCAN_TERRESTRIAL] and ! wSetup.systems[SCAN_CABLE] and
-      ! wSetup.systems[SCAN_SATELLITE]   and ! wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+  if (not ScanAvailable()) {
      // no devices found; recursive call until we reach SCAN_NO_DEVICE.
      if (wSetup.DVB_Type < SCAN_NO_DEVICE)
         ProcessKey(kRight);
@@ -232,15 +235,11 @@ cMenuScanning::cMenuScanning(void) :
 
   wSetup.InitSystems();
 
-  if (!wSetup.systems[SCAN_TERRESTRIAL] &&
-      !wSetup.systems[SCAN_CABLE] &&
-      !wSetup.systems[SCAN_SATELLITE] &&
-      !wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+  if (not ScanAvailable()) {
      AddCategory("NO DEVICES FOUND.");
      return;
      }
 
-  AddCategory(tr("Status"));
   std::string status(DVB_Types[wSetup.DVB_Type]);
   status += " ";
   if (wSetup.DVB_Type == SCAN_SATELLITE)
@@ -248,34 +247,20 @@ cMenuScanning::cMenuScanning(void) :
   else
      status += country_list[wSetup.CountryIndex].full_name;
 
-  ScanType = new cOsdItem(status.c_str());
-  Add(ScanType);
-
-  DeviceUsed = new cOsdItem("Device:");
-  Add(DeviceUsed);
-  
-  Progress = new cOsdItem("Scan:");
-  Add(Progress);
-
-  CurrTransponder = new cOsdItem(" ");
-  Add(CurrTransponder);
-
-  Str = new cOsdItem("STR");
-  Add(Str);
+  AddCategory(tr("Status"));
+  Add((ScanType        = new cOsdItem(status.c_str()   )));
+  Add((DeviceUsed      = new cOsdItem("Device:"        )));
+  Add((Progress        = new cOsdItem("Scan:"          )));
+  Add((CurrTransponder = new cOsdItem(" "              )));
+  Add((Str             = new cOsdItem("STR"            )));
 
   AddCategory(tr("Channels"));
-
-  ChanAdd = new cOsdItem(" ");
-  Add(ChanAdd);
-
-  ChanNew = new cOsdItem("known Channels:");
-  Add(ChanNew);
+  Add((ChanAdd         = new cOsdItem(" "              )));
+  Add((ChanNew         = new cOsdItem("known Channels:")));
 
   AddCategory(tr("Log Messages"));
-  for(int i=0; i<LOGLEN; i++) {
-     LogMsg[i] = new cOsdItem(" ");
-     Add(LogMsg[i]);
-     }
+  for(int i=0; i<LOGLEN; i++)
+     Add((LogMsg[i] = new cOsdItem(" ")));
 
   SetChanAdd(wSetup.scanflags);
 }
@@ -425,13 +410,6 @@ void cMenuScanning::AddCategory(std::string category) {
 
 
 eOSState cMenuScanning::ProcessKey(eKeys Key) {
-  auto ScanAvailable = [](void) -> bool {
-     return wSetup.systems[SCAN_TERRESTRIAL] ||
-            wSetup.systems[SCAN_CABLE] ||
-            wSetup.systems[SCAN_SATELLITE] ||
-            wSetup.systems[SCAN_TERRCABLE_ATSC];
-     };
-
   if (wSetup.update) {
      SetStatus(4);
      SetChanAdd(wSetup.scanflags);
