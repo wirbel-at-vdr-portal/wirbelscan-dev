@@ -32,6 +32,7 @@ std::array<const char*,17> Symbolrates = {tr("AUTO"),"6900","6875","6111","6250"
 std::array<const char*,5>  Qams        = {tr("AUTO"),"64","128","256",tr("ALL (slow)")};
 std::array<const char*,2>  inversions  = {tr("AUTO/OFF"),tr("AUTO/ON")};
 std::array<const char*,3>  atsc_types  = {"VSB (aerial)","QAM (cable)","VSB + QAM (aerial + cable)"};
+std::array<const char*,5>  st          = {"STOP","RUN","No device available - exiting!","No gen2 device available - trying gen1 device"," "};
 
 std::vector<const char*> SatNames;
 std::vector<const char*> CountryNames;
@@ -298,10 +299,6 @@ void cMenuScanning::SetChanAdd(size_t flags) {
 
 void cMenuScanning::SetStatus(size_t status) {
   int type = Scanner?Scanner->DvbType() : wSetup.DVB_Type;
-  std::array<const char*,5> st = {
-     "STOP","RUN","No device available - exiting!",
-     "No DVB-S2 device available - trying fallback to DVB-S",
-     " "};
   static std::string s;
 
   s = DVB_Types[type];
@@ -311,9 +308,6 @@ void cMenuScanning::SetStatus(size_t status) {
   else
      s += country_list[wSetup.CountryIndex].full_name;
   s += " ";
-
-  if (Scanner)
-     status = Scanner->Status(); //< check that.
 
   status = std::min(status, st.size()-1);
   s += st[status];

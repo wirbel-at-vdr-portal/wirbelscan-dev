@@ -367,7 +367,7 @@ void cScanner::Action(void) {
         aChannel->Hierarchy    = 0;
         if ((dev = GetPreferredDevice(aChannel)) == nullptr) {
            dlog(0, "No DVB-T2 device available - trying fallback to DVB-T");
-           if (MenuScanning) MenuScanning->SetStatus(3);
+           if (MenuScanning) MenuScanning->SetStatus((status = 3));
            aChannel->Modulation   = 64;
            aChannel->DelSys       = 0;
            if ((dev = GetPreferredDevice(aChannel)) == nullptr) {
@@ -548,7 +548,7 @@ void cScanner::Action(void) {
         aChannel->Rolloff      = 35;
         if ((dev = GetPreferredDevice(aChannel)) == nullptr) {
            dlog(0, "No DVB-S2 device available - trying fallback to DVB-S");
-           if (MenuScanning) MenuScanning->SetStatus(3);
+           if (MenuScanning) MenuScanning->SetStatus((status = 3));
            aChannel->Modulation = 2;
            aChannel->DelSys     = 0;
            caps_s2 = 0;
@@ -675,7 +675,7 @@ void cScanner::Action(void) {
   if (deviceName.compare(0, 6, "SAT>IP") == 0)
      isSatip = true;
   if (MenuScanning)
-     MenuScanning->SetStatus(1);
+     MenuScanning->SetStatus((status = 1));
 
   //count channels.
   switch(type) {
