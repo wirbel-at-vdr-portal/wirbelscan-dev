@@ -53,7 +53,7 @@ cOsdItem*      LogMsg[LOGLEN];
 
 
 int channelcount = 0;
-int lProgress = 0;
+size_t lProgress = 0;
 int lStrength = 0;
 size_t lStatus = 0;
 std::string lTransponder;
@@ -347,7 +347,7 @@ void cMenuScanning::SetProgress(size_t progress) {
 
   if ((transponder > 0) and (transponders > 0)) {
      s += " (" + IntToStr(transponder) + '/' + IntToStr(transponders) + ')';
-     lProgress = (int) (0.5 + (100.0 * transponder) / transponders);
+     lProgress = (size_t) (0.5 + (100.0 * transponder) / transponders);
      }
 
   Progress->SetText(s.c_str(), true);

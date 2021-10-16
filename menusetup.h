@@ -47,7 +47,7 @@ public:
 extern cMenuScanning* MenuScanning;
 extern std::string deviceName;
 extern std::string lTransponder;
-extern int lProgress;
+extern size_t lProgress;
 extern int lStrength;
 
 void stopScanners(void);
