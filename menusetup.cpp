@@ -67,6 +67,28 @@ bool ScanAvailable(void) {
          wSetup.systems[SCAN_TERRCABLE_ATSC];
 }
 
+bool CableAvailable(void) {
+  return wSetup.systems[SCAN_CABLE];
+}
+
+bool TerrAvailable(void) {
+  return wSetup.systems[SCAN_TERRESTRIAL];
+}
+
+bool SatAvailable(void) {
+  return wSetup.systems[SCAN_SATELLITE];
+}
+
+bool AtscAvailable(void) {
+  return wSetup.systems[SCAN_TERRCABLE_ATSC];
+}
+
+bool TerrCableAvailable(void) {
+  return wSetup.systems[SCAN_TERRESTRIAL] ||
+         wSetup.systems[SCAN_CABLE] ||
+         wSetup.systems[SCAN_TERRCABLE_ATSC];
+}
+
 
 /*******************************************************************************
  * class cMenuSettings
@@ -125,24 +147,24 @@ cMenuSettings::cMenuSettings(void) {
   Add(new cMenuEditBoolItem(tr("FTA channels"),       &scan_fta));
   Add(new cMenuEditBoolItem(tr("Scrambled channels"), &scan_scrambled));
 
-  if (wSetup.systems[SCAN_CABLE] || wSetup.systems[SCAN_TERRESTRIAL] || wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+  if (TerrCableAvailable()) {
      AddCategory(tr("Cable and Terrestrial"));
      Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex,     CountryNames.size(), CountryNames.data()));
-     if (wSetup.systems[SCAN_CABLE]) {
+     if (CableAvailable()) {
         Add(new cMenuEditStraItem(tr("Cable Inversion"),  &wSetup.DVBC_Inversion,   inversions.size(), inversions.data()));
         Add(new cMenuEditStraItem(tr("Cable Symbolrate"), &wSetup.DVBC_Symbolrate,  Symbolrates.size(), Symbolrates.data()));
         Add(new cMenuEditStraItem(tr("Cable modulation"), &wSetup.DVBC_QAM,         Qams.size(), Qams.data()));
         Add(new cMenuEditIntItem (tr("Cable Network PID"),&wSetup.DVBC_Network_PID, 16, 0xFFFE, "AUTO"));
         }
-     if (wSetup.systems[SCAN_TERRESTRIAL])
+     if (TerrAvailable())
         Add(new cMenuEditStraItem(tr("Terr  Inversion"),  &wSetup.DVBT_Inversion,   inversions.size(), inversions.data()));
 
-     if (wSetup.systems[SCAN_TERRCABLE_ATSC])
+     if (AtscAvailable())
         Add(new cMenuEditStraItem(tr("ATSC  Type"),       &wSetup.ATSC_type,        atsc_types.size(), atsc_types.data()));
 
      }
 
-  if (wSetup.systems[SCAN_SATELLITE]) {
+  if (SatAvailable()) {
      AddCategory(tr("Satellite"));
      Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, SatNames.size(), SatNames.data()));
      Add(new cMenuEditBoolItem(tr("DVB-S2"),           &wSetup.enable_s2));
