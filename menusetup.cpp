@@ -433,6 +433,13 @@ void cMenuScanning::AddCategory(std::string category) {
 
 
 eOSState cMenuScanning::ProcessKey(eKeys Key) {
+  auto ScanAvailable = [](void) -> bool {
+     return wSetup.systems[SCAN_TERRESTRIAL] ||
+            wSetup.systems[SCAN_CABLE] ||
+            wSetup.systems[SCAN_SATELLITE] ||
+            wSetup.systems[SCAN_TERRCABLE_ATSC];
+     };
+
   if (wSetup.update) {
      SetStatus(4);
      SetChanAdd(wSetup.scanflags);
@@ -453,10 +460,7 @@ eOSState cMenuScanning::ProcessKey(eKeys Key) {
            return state;
 
         case kGreen:
-           if (wSetup.systems[SCAN_TERRESTRIAL] ||
-               wSetup.systems[SCAN_CABLE] ||
-               wSetup.systems[SCAN_SATELLITE] ||
-               wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+           if (ScanAvailable()) {
               state=osContinue;
               needs_update = true;
               StartScan();
@@ -464,10 +468,7 @@ eOSState cMenuScanning::ProcessKey(eKeys Key) {
            break;
 
         case kRed:
-           if (wSetup.systems[SCAN_TERRESTRIAL] ||
-               wSetup.systems[SCAN_CABLE] ||
-               wSetup.systems[SCAN_SATELLITE] ||
-               wSetup.systems[SCAN_TERRCABLE_ATSC]) {
+           if (ScanAvailable()) {
               state=osContinue;
               needs_update = true;
               StopScan();
@@ -475,12 +476,8 @@ eOSState cMenuScanning::ProcessKey(eKeys Key) {
            break;
 
         case kYellow:
-           if (wSetup.systems[SCAN_TERRESTRIAL] ||
-               wSetup.systems[SCAN_CABLE] ||
-               wSetup.systems[SCAN_SATELLITE] ||
-               wSetup.systems[SCAN_TERRCABLE_ATSC])
+           if (ScanAvailable())
               return AddSubMenu(new cMenuSettings());
-
         default:
            break;
         }
