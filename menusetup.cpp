@@ -308,9 +308,7 @@ void cMenuScanning::SetStatus(size_t status) {
   else
      s += country_list[wSetup.CountryIndex].full_name;
   s += " ";
-
-  status = std::min(status, st.size()-1);
-  s += st[status];
+  s += st[std::min(status, st.size()-1)];
 
   ScanType->SetText(s.c_str(), true);
   ScanType->Set();
