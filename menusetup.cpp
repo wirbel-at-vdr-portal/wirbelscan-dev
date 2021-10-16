@@ -55,6 +55,7 @@ cOsdItem*      LogMsg[LOGLEN];
 int channelcount = 0;
 int lProgress = 0;
 int lStrength = 0;
+size_t lStatus = 0;
 std::string lTransponder;
 std::string deviceName;
 time_t timestamp;
@@ -321,6 +322,7 @@ void cMenuScanning::SetStatus(size_t status) {
   ScanType->SetText(s.c_str(), true);
   ScanType->Set();
   MenuScanning->Display();
+  lStatus = status;
 }
 
 
@@ -351,8 +353,8 @@ void cMenuScanning::SetProgress(size_t progress) {
   Progress->SetText(s.c_str(), true);
   Progress->Set();
   if (needs_update) {
-     SetStatus(0);
-     SetDeviceInfo("", false);
+     SetStatus(lStatus);
+     SetDeviceInfo(deviceName, false);
      needs_update = false;
      }
   MenuScanning->Display();
