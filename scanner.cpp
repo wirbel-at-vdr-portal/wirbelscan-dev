@@ -221,7 +221,7 @@ void cScanner::Action(void) {
   thisChannel = 0;
   initialTransponders = 0;
   dev = nullptr;
-  status = 1;
+  if (MenuScanning) MenuScanning->SetStatus((status = 1));
   dlog(3, "wirbelscan version " + std::string(WIRBELSCAN_VERSION) +
           " @ VDR " + std::string(VDRVERSION));
 
