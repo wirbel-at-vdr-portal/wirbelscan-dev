@@ -16,8 +16,6 @@
 #include "scanner.h"
 #include "common.h"
 
-#define LOGLEN 8
-
 using namespace COUNTRY;
 extern cScanner* Scanner;
 
@@ -42,14 +40,6 @@ std::array<std::string, 4> flagshi = {"don\'t add channels", "Free to Air", "Scr
 
 
 cMenuScanning* MenuScanning    = nullptr;   // pointer to actual menu
-cOsdItem*      DeviceUsed      = nullptr;
-cOsdItem*      Progress        = nullptr;
-cOsdItem*      CurrTransponder = nullptr;
-cOsdItem*      Str             = nullptr;
-cOsdItem*      ChanAdd         = nullptr;
-cOsdItem*      ChanNew         = nullptr;
-cOsdItem*      ScanType        = nullptr;
-cOsdItem*      LogMsg[LOGLEN];
 
 
 int channelcount = 0;
@@ -271,7 +261,7 @@ cMenuScanning::cMenuScanning(void) :
 
   AddCategory(tr("Status"));
   Add((ScanType        = new cOsdItem(status.c_str()   )));
-  Add((DeviceUsed      = new cOsdItem("Device:"        )));
+  Add((DevName         = new cOsdItem("Device:"        )));
   Add((Progress        = new cOsdItem("Scan:"          )));
   Add((CurrTransponder = new cOsdItem(" "              )));
   Add((Str             = new cOsdItem("STR"            )));
@@ -281,7 +271,7 @@ cMenuScanning::cMenuScanning(void) :
   Add((ChanNew         = new cOsdItem("known Channels:")));
 
   AddCategory(tr("Log Messages"));
-  for(int i=0; i<LOGLEN; i++)
+  for(size_t i=0; i<LOGLEN; i++)
      Add((LogMsg[i] = new cOsdItem(" ")));
 
   SetChanAdd(wSetup.scanflags);
@@ -410,8 +400,8 @@ void cMenuScanning::SetDeviceName(std::string Name, bool update) {
      lDeviceName = Name;
 
   s += lDeviceName;
-  DeviceUsed->SetText(s.c_str(), true);
-  DeviceUsed->Set();
+  DevName->SetText(s.c_str(), true);
+  DevName->Set();
   Display();
 }
 
@@ -419,7 +409,7 @@ void cMenuScanning::SetDeviceName(std::string Name, bool update) {
 void cMenuScanning::AddLogMsg(std::string Msg) {
   if (log_busy) return;
   log_busy = true;
-  for(int i=0; i<LOGLEN-1; i++) {
+  for(size_t i=0; i<LOGLEN-1; i++) {
      LogMsg[i]->SetText(LogMsg[i+1]->Text(), true);    
      LogMsg[i]->Set();
      }

@@ -17,6 +17,15 @@ class TChannel;
  ******************************************************************************/
 class cMenuScanning : public cMenuSetupPage {
 private:
+  static constexpr size_t LOGLEN = 8;
+  cOsdItem* DevName;
+  cOsdItem* Progress;
+  cOsdItem* CurrTransponder;
+  cOsdItem* Str;
+  cOsdItem* ChanAdd;
+  cOsdItem* ChanNew;
+  cOsdItem* ScanType;
+  cOsdItem* LogMsg[LOGLEN];
   bool needs_update;
   bool log_busy;
   int transponder;
