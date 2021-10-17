@@ -200,10 +200,7 @@ void cStateMachine::Action(void) {
            dlog(4, "ScannedTransponders.Add: '" + s + "'");
            ScannedTransponders.Add(tp);
 
-           if (dvbdevice)
-              lStrength = std::min((size_t)dev->SignalStrength(), (size_t)100);
-           else
-              lStrength = 100; // non-dvb hardware - no info, assume perfect.
+           lStrength = std::min((size_t)dev->SignalStrength(), (size_t)100);
 
            if (MenuScanning)
               MenuScanning->SetStr(lStrength, dev->HasLock(1));
