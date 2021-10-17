@@ -383,7 +383,7 @@ void cMenuScanning::SetStr(size_t strength, bool locked) {
   s = "STR " + t + '%' + std::string(4-t.size(), ' ');
 
   std::string u((size_t)(0.5 + strength/12.5), '_');
-  s+= '[' + u + ']' + std::string(8-u.size(), ' ');
+  s+= '[' + u + ']' + std::string(9-u.size(), ' ');
 
   if (locked)
      s += "LOCK";
