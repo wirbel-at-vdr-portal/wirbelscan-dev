@@ -57,7 +57,7 @@ size_t lProgress = 0;
 size_t lStrength = 0;
 size_t lStatus = 0;
 std::string lTransponder;
-std::string deviceName;
+std::string lDeviceName;
 time_t timestamp;
 
 
@@ -252,7 +252,7 @@ eOSState cMenuSettings::ProcessKey(eKeys Key) {
  * class cMenuScanning
  ******************************************************************************/
 cMenuScanning::cMenuScanning(void) :
-  needs_update(true), log_busy(false), transponder(0), transponders(1) {
+  needs_update(false), log_busy(false), transponder(0), transponders(1) {
   SetHelp(tr("Stop"), tr("Start"), tr("Settings"), "");
 
   wSetup.InitSystems();
@@ -285,6 +285,8 @@ cMenuScanning::cMenuScanning(void) :
      Add((LogMsg[i] = new cOsdItem(" ")));
 
   SetChanAdd(wSetup.scanflags);
+  SetStatus(lStatus);
+  SetDeviceName(lDeviceName, false);
   MenuScanning = this;
 }
 
@@ -301,8 +303,7 @@ void cMenuScanning::SetChanAdd(size_t flags) {
   std::string s = flagslo[lo] + " (" + flagshi[hi] + ")";
   ChanAdd->SetText(s.c_str(), true);
   ChanAdd->Set();
-  if (MenuScanning)
-     MenuScanning->Display();
+  Display();
 }
 
 
@@ -321,7 +322,7 @@ void cMenuScanning::SetStatus(size_t status) {
 
   ScanType->SetText(s.c_str(), true);
   ScanType->Set();
-  MenuScanning->Display();
+  Display();
   lStatus = status;
 }
 
@@ -354,10 +355,10 @@ void cMenuScanning::SetProgress(size_t progress) {
   Progress->Set();
   if (needs_update) {
      SetStatus(lStatus);
-     SetDeviceInfo(deviceName, false);
+     SetDeviceName(lDeviceName, false);
      needs_update = false;
      }
-  MenuScanning->Display();
+  Display();
 }
 
 
@@ -366,7 +367,7 @@ void cMenuScanning::SetTransponder(const TChannel* transponder) {
   ((TChannel*) transponder)->PrintTransponder(s);
   CurrTransponder->SetText(s.c_str(), true);
   CurrTransponder->Set();
-  MenuScanning->Display();
+  Display();
 }
 
 
@@ -389,7 +390,7 @@ void cMenuScanning::SetStr(size_t strength, bool locked) {
 
   Str->SetText(s.c_str(), true);
   Str->Set();
-  MenuScanning->Display();
+  Display();
 }
 
 
@@ -399,19 +400,19 @@ void cMenuScanning::SetChan(size_t count) {
 
   ChanNew->SetText(s.c_str(), true);
   ChanNew->Set();
-  MenuScanning->Display();
+  Display();
 }
 
 
-void cMenuScanning::SetDeviceInfo(std::string Info, bool update) {
+void cMenuScanning::SetDeviceName(std::string Name, bool update) {
   std::string s("Device ");
   if (update)
-     deviceName = Info;
+     lDeviceName = Name;
 
-  s += deviceName;
+  s += lDeviceName;
   DeviceUsed->SetText(s.c_str(), true);
   DeviceUsed->Set();
-  MenuScanning->Display();
+  Display();
 }
 
 
@@ -424,7 +425,7 @@ void cMenuScanning::AddLogMsg(std::string Msg) {
      }
   LogMsg[LOGLEN - 1]->SetText(Msg.c_str(), true);
   LogMsg[LOGLEN - 1]->Set();
-  MenuScanning->Display();
+  Display();
   log_busy = false;
 }
 

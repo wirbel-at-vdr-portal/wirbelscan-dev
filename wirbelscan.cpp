@@ -21,7 +21,7 @@ extern int channelcount;     // menusetup.c
 extern int nextTransponders; // scanfilter.c
 extern cScanner* Scanner;
 
-const char* WIRBELSCAN_VERSION        = "2021.10.09";
+const char* WIRBELSCAN_VERSION        = "2021.10.xx";
 const char* WIRBELSCAN_DESCRIPTION    = "DVB channel scan for VDR";
 const char* WIRBELSCAN_MAINMENUENTRY  = nullptr; /* main menu -> use wirbelscancontrol plugin */
 cPluginWirbelscan* thisPlugin;
@@ -202,7 +202,7 @@ bool cPluginWirbelscan::Service(const char* id, void* Data) {
         else
            s->status = StatusStopped;
         memset(s->curr_device, 0, 256);
-        strcpy(s->curr_device, deviceName.length()? deviceName.c_str():"none");
+        strcpy(s->curr_device, lDeviceName.size()? lDeviceName.c_str():"none");
         memset(s->transponder, 0, 256);
         strcpy(s->transponder, lTransponder.length()? lTransponder.c_str():"none");
         s->progress = s->status == StatusScanning?lProgress:0;

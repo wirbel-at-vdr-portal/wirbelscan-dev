@@ -344,10 +344,10 @@ void cScanner::Action(void) {
            roAuto    = 0;
            s2Support = 1;
            }
-        deviceName = dev->DeviceName();
-        dlog(3, "frontend " + deviceName);     
+        lDeviceName = dev->DeviceName();
+        dlog(3, "frontend " + lDeviceName);     
         if (MenuScanning)
-           MenuScanning->SetDeviceInfo(deviceName);
+           MenuScanning->SetDeviceName(lDeviceName);
         break;
         }
      case SCAN_TERRESTRIAL: {
@@ -397,10 +397,10 @@ void cScanner::Action(void) {
            gAuto     = 0;
            t2Support = 1;
            }
-        deviceName = dev->DeviceName();
-        dlog(3, "frontend " + deviceName);     
+        lDeviceName = dev->DeviceName();
+        dlog(3, "frontend " + lDeviceName);     
         if (MenuScanning)
-           MenuScanning->SetDeviceInfo(deviceName);
+           MenuScanning->SetDeviceName(lDeviceName);
 
         if (invAuto)
            caps_inversion = 999;
@@ -487,10 +487,10 @@ void cScanner::Action(void) {
            invAuto   = 0;
            modAuto   = 0;
            }  
-        deviceName = dev->DeviceName();
-        dlog(3, "frontend " + deviceName);
+        lDeviceName = dev->DeviceName();
+        dlog(3, "frontend " + lDeviceName);
         if (MenuScanning)
-           MenuScanning->SetDeviceInfo(deviceName);
+           MenuScanning->SetDeviceName(lDeviceName);
 
         if (invAuto)
            caps_inversion = 999;
@@ -576,10 +576,10 @@ void cScanner::Action(void) {
            s2Support = 1;
            }
         if (caps_s2) s2Support = 1;
-        deviceName = dev->DeviceName();
-        dlog(3, "frontend " + deviceName);
+        lDeviceName = dev->DeviceName();
+        dlog(3, "frontend " + lDeviceName);
         if (MenuScanning)
-           MenuScanning->SetDeviceInfo(deviceName);
+           MenuScanning->SetDeviceName(lDeviceName);
 
         caps_inversion = 999;
         if (crAuto)
@@ -636,10 +636,10 @@ void cScanner::Action(void) {
            vsbSupport = 1;
            qamSupport = 1;
            }
-        deviceName = dev->DeviceName();
-        dlog(3, "frontend " + deviceName);
+        lDeviceName = dev->DeviceName();
+        dlog(3, "frontend " + lDeviceName);
         if (MenuScanning)
-           MenuScanning->SetDeviceInfo(deviceName);
+           MenuScanning->SetDeviceName(lDeviceName);
 
         if (invAuto)
            caps_inversion = 999;
@@ -674,7 +674,7 @@ void cScanner::Action(void) {
         return;
      } // end switch type
 
-  if (deviceName.compare(0, 6, "SAT>IP") == 0)
+  if (lDeviceName.compare(0, 6, "SAT>IP") == 0)
      isSatip = true;
   if (MenuScanning)
      MenuScanning->SetStatus((status = 1));

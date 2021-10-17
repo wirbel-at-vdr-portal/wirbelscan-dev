@@ -37,7 +37,7 @@ public:
   void SetTransponder(const TChannel* transponder); 
   void SetStr(size_t strength, bool locked);
   void SetChan(size_t count);
-  void SetDeviceInfo(std::string Info, bool update = true);
+  void SetDeviceName(std::string Name, bool update = true);
   void SetChanAdd(size_t flags);
   void AddLogMsg(std::string Msg);
 };
@@ -45,7 +45,7 @@ public:
 
 
 extern cMenuScanning* MenuScanning;
-extern std::string deviceName;
+extern std::string lDeviceName;
 extern std::string lTransponder;
 extern size_t lProgress;
 extern size_t lStrength;
