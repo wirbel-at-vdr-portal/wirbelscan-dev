@@ -377,4 +377,5 @@ VDR Plugin 'wirbelscan' Revision History
     GUI.
 * menusetup.cpp
   - in cMenuScanning::SetStatus(), protect st using constrain
-
+* satellites.dat
+  - regen with updated generator on LFS, now 152 sats.
