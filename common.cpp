@@ -633,6 +633,9 @@ bool TChannel::ValidSatIf() {
   else
      f -= f < Setup.LnbSLOF ? Setup.LnbFrequLo : Setup.LnbFrequHi;
 
+  if (f < 0)
+     f *= -1;
+
   if (f < 950 or f > 2150) {
      dlog(0, "transponder (" +
              Source + ", " + IntToStr(Frequency) + ", " + Polarization +

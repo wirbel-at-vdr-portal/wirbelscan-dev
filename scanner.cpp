@@ -533,6 +533,15 @@ void cScanner::Action(void) {
         choose_satellite(satellite, this_channellist);
 
         /* find a dvb-s2 capable device using *some* channel */
+        size_t ch = 0;
+        for(size_t i=0; i<sat_list[this_channellist].item_count; i++) {
+           aChannel->Frequency = sat_list[this_channellist].items[i].intermediate_frequency;
+           if (aChannel->ValidSatIf()) {
+              ch = i;
+              break;
+              }
+           }
+
         char p[] = {'H','V','L','R'};
         aChannel = new TChannel;
         aChannel->Name         = "???";
@@ -541,8 +550,8 @@ void cScanner::Action(void) {
         aChannel->OrbitalPos   = aChannel->West ?
                                   BCDtoDecimal(0x3600) - BCDtoDecimal(sat_list[this_channellist].orbital_position) :
                                                          BCDtoDecimal(sat_list[this_channellist].orbital_position);
-        aChannel->Frequency    = sat_list[this_channellist].items[0].intermediate_frequency;
-        aChannel->Polarization = p[sat_list[this_channellist].items[0].polarization];
+        aChannel->Frequency    = sat_list[this_channellist].items[ch].intermediate_frequency;
+        aChannel->Polarization = p[sat_list[this_channellist].items[ch].polarization];
         aChannel->Symbolrate   = 27500;
         aChannel->FEC          = 2;
         aChannel->Modulation   = 5;
