@@ -533,17 +533,18 @@ void cScanner::Action(void) {
         choose_satellite(satellite, this_channellist);
 
         /* find a dvb-s2 capable device using *some* channel */
+        char p[] = {'H','V','L','R'};
+        aChannel = new TChannel;
         size_t ch = 0;
         for(size_t i=0; i<sat_list[this_channellist].item_count; i++) {
            aChannel->Frequency = sat_list[this_channellist].items[i].intermediate_frequency;
+           aChannel->Polarization = p[sat_list[this_channellist].items[i].polarization];
            if (aChannel->ValidSatIf()) {
               ch = i;
               break;
               }
            }
 
-        char p[] = {'H','V','L','R'};
-        aChannel = new TChannel;
         aChannel->Name         = "???";
         aChannel->Source       = sat_list[this_channellist].source_id;
         aChannel->West         = sat_list[this_channellist].west_east_flag == WEST_FLAG;
