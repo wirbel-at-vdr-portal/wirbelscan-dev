@@ -4,6 +4,7 @@
  ******************************************************************************/
 #pragma once
 #include <string>
+#include <array>
 #include <linux/types.h>
 #include <sys/ioctl.h>
 #include <vdr/diseqc.h>
@@ -228,6 +229,7 @@ public:
   int scan_remove_invalid;
   int scan_update_existing;
   int scan_append_new;
+  std::array<std::string,8> preferred;
 public:
   cMySetup(void);
   void InitSystems(void);

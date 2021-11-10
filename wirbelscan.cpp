@@ -118,6 +118,13 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   else if (name == "ri")               wSetup.scan_remove_invalid  = constrain(std::stoi(Value), 0, 1);
   else if (name == "ue")               wSetup.scan_update_existing = constrain(std::stoi(Value), 0, 1);
   else if (name == "an")               wSetup.scan_append_new      = constrain(std::stoi(Value), 0, 1);
+  else if (name == "preferred") {
+     std::stringstream ss(Value);
+     std::string s;
+     size_t i = 0;
+     while((i < wSetup.preferred.size()) and std::getline(ss, s, ';'))
+        wSetup.preferred[i++] = s;
+     }
   else return false;
   return true;
 }
@@ -125,6 +132,10 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
 using namespace WIRBELSCAN_SERVICE;
 
 void cPluginWirbelscan::StoreSetup(void) {
+  std::string preferred;
+  for(auto s:wSetup.preferred)
+     preferred += s + ';';
+
   if (wSetup.DVB_Type > 5)
      wSetup.DVB_Type = (int) G(wSetup.user[1],3,29);
 
@@ -147,6 +158,7 @@ void cPluginWirbelscan::StoreSetup(void) {
   SetupStore("ri",              wSetup.scan_remove_invalid);
   SetupStore("ue",              wSetup.scan_update_existing);
   SetupStore("an",              wSetup.scan_append_new);
+  SetupStore("preferred",       preferred.c_str());
   Setup.Save();
 }
 
