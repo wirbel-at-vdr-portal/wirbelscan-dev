@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-10-10 12:05+0200\n"
+"POT-Creation-Date: 2021-11-17 14:39+0100\n"
 "PO-Revision-Date: 2010-03-02 23:56+0100\n"
 "Last-Translator: Diego Pierotto <vdr-italian@tiscali.it>\n"
 "Language-Team:  <vdr@linuxtv.org>\n"
@@ -69,6 +69,9 @@ msgstr "Cavo e terrestre"
 msgid "Country"
 msgstr "Paese"
 
+msgid "Cable Device"
+msgstr ""
+
 msgid "Cable Inversion"
 msgstr "Inversione cavo"
 
@@ -81,14 +84,23 @@ msgstr "Modulazione cavo"
 msgid "Cable Network PID"
 msgstr ""
 
+msgid "Terr  Device"
+msgstr ""
+
 msgid "Terr  Inversion"
 msgstr "Inversione terrestre"
+
+msgid "ATSC  Device"
+msgstr ""
 
 msgid "ATSC  Type"
 msgstr ""
 
 msgid "Satellite"
 msgstr "Satellite"
+
+msgid "Sat Device"
+msgstr ""
 
 msgid "DVB-S2"
 msgstr "DVB-S2"

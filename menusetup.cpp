@@ -86,10 +86,17 @@ bool TerrCableAvailable(void) {
  ******************************************************************************/
 class cMenuSettings : public cMenuSetupPage {
 private:
+  typedef struct {
+    std::vector<const char*> names;
+    int index;
+    } cMap;
+  cMap map[4];
   int scan_tv;
   int scan_radio;
   int scan_fta;
   int scan_scrambled;
+  std::vector<std::string> DeviceNames;
+  void AddDevice(cDevice* dev, char s, const char* cstr, int index);
 protected:
   void AddCategory(std::string category);
   void Store(void);
@@ -107,7 +114,26 @@ cMenuSettings::cMenuSettings(void) {
   if (not ScanAvailable()) {
      AddCategory("NO DEVICES FOUND.");
      return;
-     }       
+     }
+
+  DeviceNames.reserve(1+cDevice::NumDevices());
+  DeviceNames.push_back("AUTO");
+
+  for(int i=0; i<4; i++) {
+     map[i].index = 0;
+     map[i].names.reserve(1+cDevice::NumDevices());
+     map[i].names.push_back(DeviceNames[0].c_str());
+     }
+
+  for(int i=0; i<cDevice::NumDevices(); i++) {
+     auto dev = cDevice::GetDevice(i);
+     DeviceNames.push_back(DeviceName(dev));
+     auto cstr = DeviceNames.back().c_str();
+     AddDevice(dev, 'A', cstr, i);
+     AddDevice(dev, 'T', cstr, i);
+     AddDevice(dev, 'S', cstr, i);
+     AddDevice(dev, 'C', cstr, i);
+     }
 
   scan_tv        = (wSetup.scanflags & SCAN_TV       ) > 0;
   scan_radio     = (wSetup.scanflags & SCAN_RADIO    ) > 0;
@@ -142,21 +168,25 @@ cMenuSettings::cMenuSettings(void) {
      AddCategory(tr("Cable and Terrestrial"));
      Add(new cMenuEditStraItem(tr("Country"),             &wSetup.CountryIndex,     CountryNames.size(), CountryNames.data()));
      if (CableAvailable()) {
+        Add(new cMenuEditStraItem(tr("Cable Device"),     &map[dmap['C']].index,    map[dmap['C']].names.size(), map[dmap['C']].names.data()));
         Add(new cMenuEditStraItem(tr("Cable Inversion"),  &wSetup.DVBC_Inversion,   inversions.size(), inversions.data()));
         Add(new cMenuEditStraItem(tr("Cable Symbolrate"), &wSetup.DVBC_Symbolrate,  Symbolrates.size(), Symbolrates.data()));
         Add(new cMenuEditStraItem(tr("Cable modulation"), &wSetup.DVBC_QAM,         Qams.size(), Qams.data()));
         Add(new cMenuEditIntItem (tr("Cable Network PID"),&wSetup.DVBC_Network_PID, 16, 0xFFFE, "AUTO"));
         }
-     if (TerrAvailable())
+     if (TerrAvailable()) {
+        Add(new cMenuEditStraItem(tr("Terr  Device"),     &map[dmap['T']].index,    map[dmap['T']].names.size(), map[dmap['T']].names.data()));
         Add(new cMenuEditStraItem(tr("Terr  Inversion"),  &wSetup.DVBT_Inversion,   inversions.size(), inversions.data()));
-
-     if (AtscAvailable())
+        }
+     if (AtscAvailable()) {
+        Add(new cMenuEditStraItem(tr("ATSC  Device"),     &map[dmap['A']].index,    map[dmap['A']].names.size(), map[dmap['A']].names.data()));
         Add(new cMenuEditStraItem(tr("ATSC  Type"),       &wSetup.ATSC_type,        atsc_types.size(), atsc_types.data()));
-
+        }
      }
 
   if (SatAvailable()) {
      AddCategory(tr("Satellite"));
+     Add(new cMenuEditStraItem(tr("Sat Device"),       &map[dmap['S']].index, map[dmap['S']].names.size(), map[dmap['S']].names.data()));
      Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, SatNames.size(), SatNames.data()));
      Add(new cMenuEditBoolItem(tr("DVB-S2"),           &wSetup.enable_s2));
      }
@@ -173,12 +203,25 @@ void cMenuSettings::Store(void) {
   wSetup.scanflags |= scan_radio    ?SCAN_RADIO    :0;
   wSetup.scanflags |= scan_scrambled?SCAN_SCRAMBLED:0;
   wSetup.scanflags |= scan_fta      ?SCAN_FTA      :0;
+  wSetup.preferred[dmap['A']] = map[dmap['A']].names[map[dmap['A']].index];
+  wSetup.preferred[dmap['T']] = map[dmap['T']].names[map[dmap['T']].index];
+  wSetup.preferred[dmap['S']] = map[dmap['S']].names[map[dmap['S']].index];
+  wSetup.preferred[dmap['C']] = map[dmap['C']].names[map[dmap['C']].index];
   wSetup.update = true;
 }
 
 
 void cMenuSettings::AddCategory(std::string category) {
   Add(new cOsdItem(("---------------  " + category).c_str()));
+}
+
+
+void cMenuSettings::AddDevice(cDevice* dev, char s, const char* cstr, int index) {
+  if (dev->ProvidesSource(cSource(s,"?").Code())) {
+     map[dmap[s]].names.push_back(cstr);
+     if (wSetup.preferred[dmap[s]] == cstr)
+        map[dmap[s]].index = 1 + index;
+     }
 }
 
 
