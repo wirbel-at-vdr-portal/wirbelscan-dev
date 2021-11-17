@@ -67,8 +67,24 @@ static int device_is_preferred(TChannel* Channel, std::string name, bool secondG
   return preferred;
 }
 
+
+cDevice* DefaultDevice(TChannel* Channel) {
+  std::string preferred = wSetup.preferred[dmap[*(Channel->Source.c_str())]];
+
+  for(int i=0; i<cDevice::NumDevices(); i++) {
+     auto dev = cDevice::GetDevice(i);
+     if (DeviceName(dev) == preferred)
+        return dev;
+     }
+  return nullptr;
+}
+
+
 cDevice* GetPreferredDevice(TChannel* Channel) {
-  cDevice* dev = nullptr;
+  cDevice* dev = DefaultDevice(Channel);
+
+  if (dev) return dev;
+
   int preferred = 0;
   int pref_device = -1;
   std::string name;

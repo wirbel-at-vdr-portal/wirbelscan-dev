@@ -5,6 +5,7 @@
 #pragma once
 #include <string>
 #include <array>
+#include <map>
 #include <linux/types.h>
 #include <sys/ioctl.h>
 #include <vdr/diseqc.h>
@@ -235,7 +236,7 @@ public:
   void InitSystems(void);
 };
 extern cMySetup wSetup;
-
+extern std::map<char,int> dmap;
 
 /*******************************************************************************
  * generic functions

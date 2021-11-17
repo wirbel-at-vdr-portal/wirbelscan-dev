@@ -78,6 +78,7 @@ void cMySetup::InitSystems(void) {
 }
 
 cMySetup wSetup;
+std::map<char,int> dmap = {{'A',0},{'T',1},{'S',2},{'C',3}};
 
 
 /*******************************************************************************
