@@ -775,3 +775,9 @@ bool GetSatCapabilities(cDevice* dev, bool* CodeRate, bool* Modulation, bool* Ro
   *DvbS2            = cap & FE_CAN_2G_MODULATION;
   return cap != FE_IS_STUPID;
 }
+
+std::string DeviceName(cDevice* dev) {
+  auto name = dev->DeviceName(); // !! cString, keep it like this.
+  return std::to_string(dev->DeviceNumber()) + ": " + *name;
+}
+

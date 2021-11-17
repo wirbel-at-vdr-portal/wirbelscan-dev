@@ -273,3 +273,4 @@ bool GetTerrCapabilities (cDevice* dev, bool* CodeRate, bool* Modulation, bool* 
 bool GetCableCapabilities(cDevice* dev, bool* Modulation, bool* Inversion);
 bool GetAtscCapabilities (cDevice* dev, bool* Modulation, bool* Inversion, bool* VSB, bool* QAM);
 bool GetSatCapabilities  (cDevice* dev, bool* CodeRate, bool* Modulation, bool* RollOff, bool* DvbS2);
+std::string DeviceName(cDevice* dev);
