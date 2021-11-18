@@ -119,11 +119,9 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   else if (name == "ue")               wSetup.scan_update_existing = constrain(std::stoi(Value), 0, 1);
   else if (name == "an")               wSetup.scan_append_new      = constrain(std::stoi(Value), 0, 1);
   else if (name == "preferred") {
-     std::stringstream ss(Value);
-     std::string s;
-     size_t i = 0;
-     while((i < wSetup.preferred.size()) and std::getline(ss, s, ';'))
-        wSetup.preferred[i++] = s;
+     auto items = SplitStr(Value,';');
+     for(size_t i=0; i<std::min(items.size(),wSetup.preferred.size()); i++)
+        wSetup.preferred[i] = items[i];
      }
   else return false;
   return true;
@@ -388,17 +386,7 @@ const char** cPluginWirbelscan::SVDRPHelpPages(void) {
 
 // process svdrp commands.
 cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option, int& ReplyCode) {
-  auto uppercase = [](std::string& s) { for(auto& c:s) c = std::toupper(c); };
-  auto split = [](const std::string s, const char delim) {
-     std::stringstream ss(s);
-     std::vector<std::string> result;
-     std::string i;
-     while(std::getline(ss, i, delim))
-        result.push_back(i);
-     return result;
-     };
-  std::string cmd(Command);
-  uppercase(cmd);
+  std::string cmd(UpperCase(Command));
 
   if      (cmd == "S_TERR" ) { return DoScan(wSetup.DVB_Type = SCAN_TERRESTRIAL)   ? "DVB-T scan started"     : "Could not start DVB-T scan.";    }
   else if (cmd == "S_CABL" ) { return DoScan(wSetup.DVB_Type = SCAN_CABLE)         ? "DVB-C scan started"     : "Could not start DVB-C scan.";    }
@@ -409,7 +397,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
 
   else if (cmd == "SETUP") {
      std::vector<std::string> items;
-     if (Option and *Option) items = split(Option, ':');
+     if (Option and *Option) items = SplitStr(Option, ':');
 
      bool valid = items.size() == 12;
      for(auto i:items)

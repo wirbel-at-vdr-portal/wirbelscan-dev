@@ -3,7 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #pragma once
-#include "ThreadBase.h" // ThreadBase
+#include <repfunc.h>
 
 class cDevice;
 class cDvbDevice;

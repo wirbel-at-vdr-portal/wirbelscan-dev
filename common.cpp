@@ -5,14 +5,10 @@
 #include <thread>               // std::this_thread
 #include <string>
 #include <iostream>
-#include <iomanip>              // std::setfill,std::setw
 #include <algorithm>            // std::min
 #include <sstream>              // std::stringstream
-#include <chrono>               // std::chrono::milliseconds
 #include <ctime>                // time_t, strftime
-#include <cctype>               // std::isprint
 #include <syslog.h>             // syslog()
-#include <sys/stat.h>           // stat()
 #include <linux/dvb/frontend.h> // fe_status_t, dvb_frontend_info
 #include <linux/dvb/version.h>  // DVB_API_VERSION, DVB_API_VERSION_MINOR
 #include <vdr/device.h>         // cDevice
@@ -117,49 +113,9 @@ void _log(const char* function, int line, const int level, std::string msg) {
 }
 
 void hexdump(std::string intro, const unsigned char* buf, size_t len) {
-  if (wSetup.verbosity < 3)
-    return;
-
-  std::string hex(size_t n, size_t digits);
-  std::stringstream ss;
-  std::string s;
-  size_t addr_len = hex(len,2).size();
-
-  if (buf == nullptr)
-     len = 0;
-
-  if (intro.size() < 48)
-     s = std::string(48 - intro.size(), '=');
-
-  ss << "\t===================== " << intro << " " << s << std::endl
-     << "\tlen = " << len << std::endl;
-
-  for(size_t i=0; i<len; i++) {
-     size_t r = i % 16;
-     unsigned char c = *(buf + i);
-
-     if (r == 0) {
-        if (i) ss << "\n";
-        ss << "\t" << hex((i/16)*16, addr_len) << ": ";
-        s = "                ";
-        }
-
-     ss << hex(c, 2) << ' ';
-     if (std::isprint(c) == 0)
-        c = 32;
-     s[i % 16] = c;
-     if (r == 15)
-        ss << "; " << s;
-     if (i == len-1) {
-        size_t n = len % 16;
-        if (n > 0)
-           ss << std::string((16-n)*3, ' ') << "; " << s;
-        }
+  if (wSetup.verbosity >= 3) {
+     HexDump(intro, buf, len, true);
      }
-
-  ss << std::endl << "\t" << std::string(71, '=') << std::endl;
-
-  std::cerr << ss.str() << std::endl;
 }
 
 
@@ -184,12 +140,6 @@ int IOCTL(int fd, int cmd, void* data) {
 }
 
 
-bool FileExists(std::string aFile) {
-  struct stat Stat;
-  return stat(aFile.c_str(), &Stat) == 0;
-}
-
-
 int dvbc_modulation(int index) {
   switch(index) {
      case 0:   return 256;
@@ -198,6 +148,7 @@ int dvbc_modulation(int index) {
      default:  return 999;
      }
 }
+
 
 int dvbc_symbolrate(int index) {
   switch(index) {
@@ -512,7 +463,7 @@ void TChannel::PrintTransponder(std::string& dest) {
   else
      ss << "  ";
 
-  ss << FloatToStr((source == 'S')?i:i/1000.0, 8, 2) << " MHz";
+  ss << FloatToStr((source == 'S')?i:i/1000.0, 8, 2, false) << " MHz";
 
   if ((source == 'C') or (source == 'S')) {
      i = Symbolrate;
@@ -644,38 +595,6 @@ bool TChannel::ValidSatIf() {
      return false;
      }
   return true;
-}
-
-void mSleep(size_t ms) {
-  std::this_thread::sleep_for(std::chrono::milliseconds(ms));
-}
-
-std::string IntToStr(int n, size_t digits) {
-  std::stringstream ss;
-  if (n < 0) {
-     n *= -1;
-     ss << '-';
-     digits = std::min(digits,digits-1);
-     }
-  ss << std::setfill('0') << std::setw(digits) << n;
-  return ss.str();
-}
-
-std::string hex(size_t n, size_t digits) {
-  std::stringstream ss;
-  ss << std::uppercase << std::setfill('0') << std::hex << std::setw(digits) << n;
-  return ss.str();
-}
-
-std::string IntToHex(size_t n, size_t digits) {
-  return "0x" + hex(n, digits);
-}
-  
-std::string FloatToStr(double f, size_t width, size_t precision) {
-  std::stringstream ss;
-  ss.precision(precision);
-  ss << std::fixed << std::setfill(' ') << std::setw(width) << f;
-  return ss.str();
 }
 
 cDvbDevice* GetDvbDevice(cDevice* d) {

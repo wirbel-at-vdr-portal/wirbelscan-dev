@@ -9,6 +9,7 @@
 #include <linux/types.h>
 #include <sys/ioctl.h>
 #include <vdr/diseqc.h>
+#include <repfunc.h>
 #include "tlist.h"
 
 #define SCAN_TERRESTRIAL        0 /* DVB-T/T2                */
@@ -243,11 +244,6 @@ extern std::map<char,int> dmap;
  ******************************************************************************/
 void hexdump(std::string intro, const unsigned char* buf, size_t len);
 int  IOCTL(int fd, int cmd, void* data);
-bool FileExists(std::string aFile);
-void mSleep(size_t ms);
-std::string IntToStr(int n, size_t digits = 0);
-std::string IntToHex(size_t n, size_t digits = 0);
-std::string FloatToStr(double f, size_t width = 5, size_t precision = 2);
 
 template<class T> inline void DeleteNullptr(T*& aClass) {
   T* temp = aClass;
@@ -255,12 +251,6 @@ template<class T> inline void DeleteNullptr(T*& aClass) {
   delete temp;
 }
 
-template<class T> inline T BCDtoDecimal(T bcd) {
-  T result = 0;
-  for(T scale=1; bcd; scale*=10,bcd>>=4)
-     result += scale * (bcd & 15);
-  return result;
-}
 
 cDvbDevice* GetDvbDevice(cDevice* d);
 int dvbc_modulation(int index);

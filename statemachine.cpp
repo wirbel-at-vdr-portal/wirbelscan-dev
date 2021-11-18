@@ -598,7 +598,7 @@ void cStateMachine::Action(void) {
 
               if (wSetup.verbosity > 5)
                  dlog(0, "NIT: cell_id "   + IntToStr  (NitData.cell_frequency_links[i].cell_id) +
-                         ", frequency "    + FloatToStr(NitData.cell_frequency_links[i].frequency/1e6, 7, 3) +
+                         ", frequency "    + FloatToStr(NitData.cell_frequency_links[i].frequency/1e6, 7, 3, false) +
                          "MHz network_id " + IntToStr  (NitData.cell_frequency_links[i].network_id));
               t.Source       = 'T';
               t.Frequency    = NitData.cell_frequency_links[i].frequency;
@@ -637,7 +637,7 @@ void cStateMachine::Action(void) {
                  dlog(5, "NIT:    cell_id_extension " +
                          IntToStr(NitData.cell_frequency_links[i].subcells[j].cell_id_extension) +
                          ", frequency " +
-                         FloatToStr(NitData.cell_frequency_links[i].subcells[j].transposer_frequency/1e6, 7, 3) +
+                         FloatToStr(NitData.cell_frequency_links[i].subcells[j].transposer_frequency/1e6, 7, 3, false) +
                          "MHz");
                  t.Frequency = NitData.cell_frequency_links[i].subcells[j].transposer_frequency;
                  t.Bandwidth = t.Frequency <= 226500000 ? 7 : 8;

@@ -3,7 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #pragma once
-#include "ThreadBase.h"
+#include <repfunc.h>
 
 /*******************************************************************************
  * forward decls

@@ -368,7 +368,7 @@ void cMenuScanning::SetCounters(int curr_tp, int all_tp) {
 
 std::string cMenuScanning::TimeStr(void) {
   time_t t = time(0) - timestamp;
-  return IntToStr(t/60) + 'm' + IntToStr(t%60) + 's';
+  return IntToStr(t/60) + 'm' + IntToStr(t%60,2,false,'0') + 's';
 }
 
 

@@ -133,7 +133,7 @@ $(SOFILE): $(OBJS)
 ifeq ($(CXX),@g++)
 	@echo -e "${GN} LINK $(SOFILE)${RST}"
 endif
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@
+	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ -lrepfunc
 
 install-lib: $(SOFILE)
 	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)

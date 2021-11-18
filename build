@@ -2,12 +2,7 @@
 
 HOSTNAME=$(env | grep HOSTNAME | cut -d= -f2 | cut -d. -f1)
 
-if [[ "$HOSTNAME" = "wgs13" ]]
-then
-   CC="g++ -std=c++0x"
-else
-   CC="g++ -std=c++11"
-fi
+CC="g++ -std=c++11"
 
 #CCOPTS="-g -O3 -Wall -Wextra -Wno-unused-parameter -Werror=overloaded-virtual -Wno-parentheses -Wfatal-errors -fPIC -fstack-protector-all -D_FORTIFY_SOURCE=2 -DPLUGIN_NAME_I18N='"wirbelscan"' -D_GNU_SOURCE" 
 CCOPTS="-g -O3 -Wall -Wextra -Wno-unused-parameter -Werror=overloaded-virtual -Wno-parentheses -Wfatal-errors -fPIC -DPLUGIN_NAME_I18N='"wirbelscan"' -D_GNU_SOURCE" 
@@ -52,7 +47,7 @@ done
 rm -f $LIB
 echo -e "\033[1;34m/*  $LIB  */\033[0m"
 echo "$CC $CCOPTS -shared $OBJS -o $LIB"
-$CC $CCOPTS -shared $OBJS -o $LIB
+$CC $CCOPTS -shared $OBJS -o $LIB -lrepfunc
 if [ ! -f $OBJ ]
 then
   echo -e "\033[0;31mERROR: did not link..\033[0m"

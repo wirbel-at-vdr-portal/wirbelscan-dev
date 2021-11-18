@@ -768,7 +768,7 @@ void cScanner::Action(void) {
                    if (bvdr < 11)
                       dlog(4, "Scanning " + IntToStr(bvdr) + "MHz frequencies...");
                    else
-                      dlog(4, "Scanning " + FloatToStr(bvdr/1000.0,1,2) + "MHz frequencies...");
+                      dlog(4, "Scanning " + FloatToStr(bvdr/1000.0,1,2,false) + "MHz frequencies...");
                    }
                 this_bandwidth = bvdr;
                 }
@@ -796,7 +796,7 @@ void cScanner::Action(void) {
                 dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3) +
+                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3, false) +
                         "MHz: skipped (already known transponder)");
                    thisChannel++;
                    Progress();
@@ -840,7 +840,7 @@ void cScanner::Action(void) {
                 dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, FloatToStr(aChannel->Frequency/1e3, 1, 3) +
+                   dlog(4, FloatToStr(aChannel->Frequency/1e3, 1, 3, false) +
                         "MHz: skipped (already known transponder)");
                    thisChannel++;
                    Progress();
@@ -895,7 +895,7 @@ void cScanner::Action(void) {
                    }
                 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, FloatToStr(aChannel->Frequency/1e0, 1, 3) +
+                   dlog(4, FloatToStr(aChannel->Frequency/1e0, 1, 3, false) +
                         ": skipped (already known transponder)");
                    thisChannel++;
                    continue;
@@ -946,7 +946,7 @@ void cScanner::Action(void) {
                 dlog(4, s);
 
                 if (known_transponder(aChannel, false)) {
-                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3) +
+                   dlog(4, FloatToStr(aChannel->Frequency/1e6, 1, 3, false) +
                         "MHz M" + IntToStr(this_atsc) + ": skipped (already known transponder)");
                    thisChannel++;
                    Progress();

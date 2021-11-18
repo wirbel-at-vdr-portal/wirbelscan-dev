@@ -729,7 +729,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               if ((west_flag != west) or ( abs(BCDtoDecimal(sd->getOrbitalPosition()) - orbital) > 2 )) {
                  char c = west_flag?'W':'E';
                  dlog(4, "Skipping transportStreamDescriptor for S" +
-                          FloatToStr(BCDtoDecimal(sd->getOrbitalPosition())/10.0, 1, 1) + c);
+                          FloatToStr(BCDtoDecimal(sd->getOrbitalPosition())/10.0, 1, 1, false) + c);
                  continue;
                  }
 

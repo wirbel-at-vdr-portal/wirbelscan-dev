@@ -32,6 +32,7 @@ Requirements:
 ------------------------------------------------------------------------
  - VDR Version >= 1.7.x (choose latest, if unshure)
  - developer versions of plugin: vdr >= 2.3.1
+ - librepfunc >= 1.0.0 (https://github.com/wirbel-at-vdr-portal/librepfunc)
 
 Installation:
 ------------------------------------------------------------------------
