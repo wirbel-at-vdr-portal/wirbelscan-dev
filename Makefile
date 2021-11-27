@@ -16,7 +16,22 @@ PWD = $(shell pwd)
 PLUGIN = $(shell basename $(PWD) | cut -d- -f1)
 CPPSRC = $(wildcard *.cpp)
 OBJS   = $(CPPSRC:%.cpp=%.o)
-#OBJS  = $(shell ls *.cpp | sed -e 's/\.cpp/\.o/g')
+LDFLAGS?=
+
+#/******************************************************************************
+# * dependencies, add variables here, and checks in target check_dependencies
+# *****************************************************************************/
+LIBREPFUNC=librepfunc
+LIBREPFUNC_MINVERSION=1.1.0
+
+
+# /* require either PKG_CONFIG_PATH to be set, or, a working pkg-config */
+HAVE_LIBREPFUNC           =$(shell if pkg-config --exists                                   $(LIBREPFUNC); then echo "1"; else echo "0"; fi )
+HAVE_LIBREPFUNC_MINVERSION=$(shell if pkg-config --atleast-version=$(LIBREPFUNC_MINVERSION) $(LIBREPFUNC); then echo "1"; else echo "0"; fi )
+
+
+
+
 
 DISTFILES = $(CPPSRC) $(wildcard *.h) $(wildcard *.dat) po
 DISTFILES+= build COPYING HISTORY Makefile README SERVICES.html
@@ -52,13 +67,12 @@ PACKAGE = vdr-$(ARCHIVE)
 SOFILE = libvdr-$(PLUGIN).so
 
 ### Includes and Defines (add further entries here):
-INCLUDES +=
-
+INCLUDES += $(shell pkg-config --cflags $(LIBREPFUNC))
 DEFINES += -DPLUGIN_NAME_I18N='"$(PLUGIN)"'
-
+LDFLAGS += $(shell pkg-config --libs $(LIBREPFUNC)) 
 
 ### The main target:
-all: $(SOFILE) i18n
+all: check_dependencies $(SOFILE) i18n
 
 
 #/******************************************************************************
@@ -122,7 +136,7 @@ $(I18Npot): $(wildcard *.cpp)
 $(I18Nmsgs): $(DESTDIR)$(LOCDIR)/%/LC_MESSAGES/vdr-$(PLUGIN).mo: $(PODIR)/%.mo
 	install -D -m644 $< $@
 
-.PHONY: i18n
+.PHONY: i18n check_dependencies
 i18n: $(I18Nmo) $(I18Npot)
 
 install-i18n: $(I18Nmsgs)
@@ -133,7 +147,7 @@ $(SOFILE): $(OBJS)
 ifeq ($(CXX),@g++)
 	@echo -e "${GN} LINK $(SOFILE)${RST}"
 endif
-	$(CXX) $(CXXFLAGS) $(LDFLAGS) -shared $(OBJS) -o $@ -lrepfunc
+	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@ $(LDFLAGS)
 
 install-lib: $(SOFILE)
 	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
@@ -152,3 +166,17 @@ clean:
 	@-rm -f $(SOFILE) $(SOFILE).$(APIVERSION)
 	@-rm -f $(PODIR)/*.mo $(PODIR)/*.pot
 	@-rm -f $(OBJS) $(DEPFILE) *.so *.tgz core* *~
+
+
+#/******************************************************************************
+# * dependencies, check them here and provide message to user.
+# *****************************************************************************/
+check_dependencies:
+ifeq ($(HAVE_LIBREPFUNC),0)
+	@echo "ERROR: not found: $(LIBREPFUNC) >= $(LIBREPFUNC_MINVERSION)"
+	exit 1
+endif
+ifeq ($(HAVE_LIBREPFUNC_MINVERSION),0)
+	@echo "ERROR: dependency $(LIBREPFUNC) older than $(LIBREPFUNC_MINVERSION)"
+	exit 1
+endif
