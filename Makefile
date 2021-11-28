@@ -22,7 +22,7 @@ LDFLAGS?=
 # * dependencies, add variables here, and checks in target check_dependencies
 # *****************************************************************************/
 LIBREPFUNC=librepfunc
-LIBREPFUNC_MINVERSION=1.1.0
+LIBREPFUNC_MINVERSION=1.0.0
 
 
 # /* require either PKG_CONFIG_PATH to be set, or, a working pkg-config */
