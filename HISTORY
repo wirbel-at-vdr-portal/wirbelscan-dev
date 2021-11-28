@@ -358,7 +358,7 @@ VDR Plugin 'wirbelscan' Revision History
   - convert as much as possible to std::string, std::stringstream
   - bump version
 
-2021-10-10+
+2021-11-28
 -------------------------------------------------------------------------------
 * wirbelscan.cpp
   - found old bug: invalid country or satellite settings in setup.conf could
@@ -375,7 +375,27 @@ VDR Plugin 'wirbelscan' Revision History
     but was different in common.c/cpp. Restore it.
     Similarly, wSetup.logFile == 3 is logging to stderr, make it avail from
     GUI.
+  - remove uppercase() and split() and use librepfunc
 * menusetup.cpp
   - in cMenuScanning::SetStatus(), protect st using constrain
 * satellites.dat
   - regen with updated generator on LFS, now 152 sats.
+* scanner.cpp
+  - now choose the first sat device, which supports any item in scanlist.
+    Otherwise, with mixed Ku-band and C-band items in list, no device may be
+    found.
+* statemachine.cpp
+  - show signal strength also for satip, no longer assuming lock = 100%.
+    The satip plugin added signal strength long time ago.
+* common.{h,cpp}
+  - TChannel::ValidSatIf() takes care of spectral inversion case
+  - hexdump() is now a wrapper to librepfunc's HexDump()
+  - FileExists(), IntToStr(), IntToHex(), FloatToStr(),
+    mSleep(), BCDtoDecimal()
+    have been moved to librepfunc (https://github.com/wirbel-at-vdr-portal/librepfunc)
+* ThreadBase.h
+  - delete file and use librepfunc
+* Makefile
+  - check availability and version of librepfunc and link to it.
+* New: preferred device per scan type, ie. sat, cable,..
+* bump version.
