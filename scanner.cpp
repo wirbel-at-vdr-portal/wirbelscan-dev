@@ -553,6 +553,7 @@ void cScanner::Action(void) {
         aChannel = new TChannel;
         size_t ch = 0;
         for(size_t i=0; i<sat_list[this_channellist].item_count; i++) {
+           aChannel->Source = sat_list[this_channellist].source_id;
            aChannel->Frequency = sat_list[this_channellist].items[i].intermediate_frequency;
            aChannel->Polarization = p[sat_list[this_channellist].items[i].polarization];
            if (aChannel->ValidSatIf()) {
