@@ -399,3 +399,8 @@ VDR Plugin 'wirbelscan' Revision History
   - check availability and version of librepfunc and link to it.
 * New: preferred device per scan type, ie. sat, cable,..
 * bump version.
+
+2021-12-11
+-------------------------------------------------------------------------------
+* scanner.cpp
+  - satellite fix: ValidSatIf() needs source to be set
