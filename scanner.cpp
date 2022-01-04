@@ -377,7 +377,7 @@ void cScanner::Action(void) {
         aChannel->Frequency    = 474;
         aChannel->Inversion    = 999;
         aChannel->Bandwidth    = 8;
-        aChannel->FEC          = 2;
+        aChannel->FEC          = 23;
         aChannel->Modulation   = 256;
         aChannel->DelSys       = 1;
         aChannel->Transmission = 8;
@@ -571,7 +571,7 @@ void cScanner::Action(void) {
         aChannel->Frequency    = sat_list[this_channellist].items[ch].intermediate_frequency;
         aChannel->Polarization = p[sat_list[this_channellist].items[ch].polarization];
         aChannel->Symbolrate   = 27500;
-        aChannel->FEC          = 2;
+        aChannel->FEC          = 23;
         aChannel->Modulation   = 5;
         aChannel->DelSys       = 1;
         aChannel->Rolloff      = 35;
