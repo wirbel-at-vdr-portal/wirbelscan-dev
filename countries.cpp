@@ -370,7 +370,6 @@ int choose_country(std::string country,
      case SE:     //      SWEDEN
      case SI:     //      SLOVENIA
      case SK:     //      SLOVAKIA
-     case SK:     //      SLOVAKIA
      case TW:     //      TAIWAN, DVB-T w. ATSC freq list (thanks for freqlist to mkrufky)
      case VN:     //      VIET NAM
      case AU:     //      AUSTRALIA, DVB-T w. 7MHz step
