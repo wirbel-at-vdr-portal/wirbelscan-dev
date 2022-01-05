@@ -135,23 +135,22 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
         preferred   = device_is_preferred(Channel, name, gen2);
         pref_device = i;
         }
-     switch (preferred) {
-        case 0: // device known to have probs. usable anyway..
-           dlog(4, "usable :-|");
+     switch(preferred) {
+        case 0:
+           dlog(4, "device known to have probs. usable anyway..");
            break;
-        case 1: // device w/o problems
-           dlog(4, "good :-)");
+        case 1:
+           dlog(4, "device has no gen2 delsys support.");
            break;
-        case 2: // perfect device found. stop scanning
-           dlog(4, "very good :-))");
-           return (dev);
-           break;
+        case 2:
+           dlog(4, "device has gen2 delsys support.");
+           return dev;
         default:;
         }
      }
   if (pref_device >= 0) {
      dev = cDevice::GetDevice(pref_device);
-     return (dev);
+     return dev;
      }
   return nullptr;
 }
