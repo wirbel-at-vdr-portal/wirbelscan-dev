@@ -19,6 +19,7 @@ enum channellist_t {
   DVBC_FR                 = 9,
   DVBC_BR                 = 10,
   ISDBT_6MHZ              = 11,
+  DVBT_EU_BAND3           = 12,
   USERLIST                = 999
 };
 

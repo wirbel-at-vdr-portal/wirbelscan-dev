@@ -334,31 +334,45 @@ int choose_country(std::string country,
    * choose DVB or ATSC frontend type
    */
   switch(txt_to_country(country)) {
+     case AD:     //      ANDORRA
      case AT:     //      AUSTRIA
+     case AX:     //      ÅLAND ISLANDS
      case BE:     //      BELGIUM
+     case BG:     //      BULGARIA
      case CH:     //      SWITZERLAND
+     case CO:     //      COLOMBIA
      case CZ:     //      CZECH REPUBLIC
      case DE:     //      GERMANY
      case DK:     //      DENMARK
+     case EE:     //      ESTONIA
      case ES:     //      SPAIN
      case FR:     //      FRANCE
      case FI:     //      FINLAND
      case GB:     //      UNITED KINGDOM
      case GR:     //      GREECE
-     case HR:     //      CROATIA 
      case HK:     //      HONG KONG
+     case HR:     //      CROATIA
+     case HU:     //      HUNGARY
+     case IE:     //      IRELAND
      case IL:     //      ISRAEL
      case IS:     //      ICELAND
      case IT:     //      ITALY
+     case LT:     //      LITHUANIA
      case LU:     //      LUXEMBOURG
      case LV:     //      LATVIA
      case NL:     //      NETHERLANDS
      case NO:     //      NORWAY
      case NZ:     //      NEW ZEALAND
      case PL:     //      POLAND
+     case PT:     //      PORTUGAL
+     case RO:     //      ROMANIA
+     case RU:     //      RUSSIAN FEDERATION
      case SE:     //      SWEDEN
+     case SI:     //      SLOVENIA
+     case SK:     //      SLOVAKIA
      case SK:     //      SLOVAKIA
      case TW:     //      TAIWAN, DVB-T w. ATSC freq list (thanks for freqlist to mkrufky)
+     case VN:     //      VIET NAM
      case AU:     //      AUSTRALIA, DVB-T w. 7MHz step
         switch(dvb) {    
            case SCAN_CABLE:
@@ -403,26 +417,36 @@ int choose_country(std::string country,
    */
   switch(txt_to_country(country)) {
      //**********DVB freq lists*******************************************//
+     case AD:     //      ANDORRA
      case AT:     //      AUSTRIA
+     case AX:     //      ÅLAND ISLANDS
      case BE:     //      BELGIUM
+     case BG:     //      BULGARIA
      case CH:     //      SWITZERLAND
+     case CO:     //      COLOMBIA
+     case CZ:     //      CZECH REPUBLIC
      case DE:     //      GERMANY
      case DK:     //      DENMARK
+     case EE:     //      ESTONIA
      case ES:     //      SPAIN
      case GR:     //      GREECE
      case HR:     //      CROATIA
+     case HU:     //      HUNGARY
      case HK:     //      HONG KONG
+     case IE:     //      IRELAND
      case IL:     //      ISRAEL
      case IS:     //      ICELAND
-     case IT:     //      ITALY
+     case LT:     //      LITHUANIA
      case LU:     //      LUXEMBOURG
      case LV:     //      LATVIA
      case NL:     //      NETHERLANDS
      case NO:     //      NORWAY
      case NZ:     //      NEW ZEALAND
-     case PL:     //      POLAND
-     case SE:     //      SWEDEN
+     case PT:     //      PORTUGAL
+     case RO:     //      ROMANIA
+     case SI:     //      SLOVENIA
      case SK:     //      SLOVAKIA
+     case VN:     //      VIET NAM
         switch(dvb) {
            case SCAN_CABLE:
               channellist = DVBC_QAM;
@@ -430,11 +454,26 @@ int choose_country(std::string country,
               break;
            default:
               channellist = DVBT_DE;
-              info("DVB-T Europe");
+              info("DVB-T/T2 Europe");
               break;
            }
         break;
-     case CZ:     //      CZECH REPUBLIC
+     // see: THE USE OF BAND III IN EUROPE
+     case IT:     //      ITALY
+     case PL:     //      POLAND
+     case SE:     //      SWEDEN
+     case RU:     //      RUSSIAN FEDERATION
+        switch(dvb) {
+           case SCAN_CABLE:
+              channellist = DVBC_QAM;
+              info("DVB-C");
+              break;
+           default:
+              channellist = DVBT_EU_BAND3;
+              info("DVB-T/T2 Europe w. Bd III");
+              break;
+           }
+        break;
      case FI:     //      FINLAND
         switch(dvb) {
            case SCAN_CABLE:
@@ -443,7 +482,7 @@ int choose_country(std::string country,
               break;
            default:
               channellist = DVBT_DE;
-              info("DVB-T Europe");
+              info("DVB-T/T2 Europe");
               break;
            }
         break;
@@ -455,7 +494,7 @@ int choose_country(std::string country,
               break;
            default:
               channellist = DVBT_FR;
-              info("DVB-T FR");
+              info("DVB-T/T2 FR");
               break;
            }
         break;
@@ -467,7 +506,7 @@ int choose_country(std::string country,
               break;
            default:
               channellist = DVBT_GB;
-              info("DVB-T GB");
+              info("DVB-T/T2 GB");
               break;
            }
         break;
@@ -478,7 +517,7 @@ int choose_country(std::string country,
               break;
            default:
               channellist = DVBT_AU;
-              info("DVB-T AU");
+              info("DVB-T/T2 AU");
               break;
            }
         break;
@@ -561,22 +600,27 @@ int base_offset(int channel, int channellist) {
            case 21 ... 59: return  306000000;
            default:        return  SKIP_CHANNEL;
            }
-     case DVBT_FR:  //FRANCE, +/- offset 166kHz & +offset 332kHz & +offset 498kHz
-     case DVBT_GB:  //UNITED KINGDOM, +/- offset
+     case DVBT_EU_BAND3:
         switch(channel) {
-         //case  5 ... 12: return  142500000; // VHF unused in FRANCE, skip those in offset loop
+           case  5 ... 12: return  142500000; // VHF band III
            case 21 ... 69: return  306000000;
            default:        return  SKIP_CHANNEL;
            }
+     case DVBT_FR:  //FRANCE, +/- offset 166kHz & +offset 332kHz & +offset 498kHz, ch 21-49
+        switch(channel) {
+           case 21 ... 49: return  306000000;
+           default:        return  SKIP_CHANNEL;
+           }
+     case DVBT_GB:  //UNITED KINGDOM, +/- offset
+        switch(channel) {
+           case 21 ... 55: return  306000000;
+           default:        return  SKIP_CHANNEL;
+           }
      case DVBC_QAM: //EUROPE
+     case DVBC_FI:  //FINLAND, QAM128
         switch(channel) {
            case  0:
            case  5 ... 98: return   74000000;
-           default:        return  SKIP_CHANNEL;
-           }
-     case DVBC_FI:  //FINLAND, QAM128
-        switch(channel) {
-           case  1 ... 90: return  138000000;
            default:        return  SKIP_CHANNEL;
            }
      case DVBC_FR:  //FRANCE, needs user response.
@@ -607,6 +651,7 @@ int freq_step(int channel, int channellist) {
      case DVBT_DE:
      case DVBT_FR:
      case DVBT_GB:
+     case DVBT_EU_BAND3:
         switch(channel) { // dvb-t europe, 7MHz VHF ch5..12, all other 8MHz
            case  5 ... 12:    return 7000000;
            case 21 ... 69:    return 8000000;
@@ -693,10 +738,7 @@ int freq_offset(int channel, int channellist, int index) {
      case DVBT_GB:
         switch(channel) {
            case  5 ... 12: //VHF channels
-             switch(index) {
-                case NO_OFFSET:     return 0;       //no offset
-                default:            return STOP_OFFSET_LOOP;
-                }
+             return STOP_OFFSET_LOOP; //VHF channels not used in GB
            default: //UHF channels
              switch(index) {
                 case NO_OFFSET:     return 0;       //center freq
@@ -727,6 +769,7 @@ int freq_offset(int channel, int channellist, int index) {
                  }
            }
      case DVBC_QAM:
+     case DVBC_FI:
         switch(channel) {
            case 0:
               switch(index) {
