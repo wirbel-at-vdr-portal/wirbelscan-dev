@@ -38,15 +38,6 @@ static unsigned int chan_to_freq(int channel, int channellist) {
 }
 
 
-std::string GetDelsys2(TChannel* Channel) {
-  if (Channel->Source[0] == 'S')
-     return "S1";
-  if (Channel->Source[0] == 'T')
-     return "S1";
-  return "NONE";
-}
-
-
 static int device_is_preferred(TChannel* Channel, std::string name, bool secondGen) {
   int preferred = 1; // no preferrence
 
@@ -88,7 +79,6 @@ cDevice* GetPreferredDevice(TChannel* Channel) {
   int preferred = 0;
   int pref_device = -1;
   std::string name;
-  std::string delsys2(GetDelsys2(Channel));
   TChannel ch2nd;
   bool gen2 = false;
 
