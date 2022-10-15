@@ -49,7 +49,7 @@ std::string satellite_to_full_name(size_t idx) {
   for(size_t i=0; i<SAT_COUNT(sat_list); i++)
      if (idx == sat_list[i].id)
         return sat_list[i].full_name;
-  warning("SATELLITE CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.");
+  warning("SATELLITE CODE NOT DEFINED. PLEASE RE-CHECK WHETHER YOU TYPED CORRECTLY.");
   mSleep(5000);
   return "??";
 }

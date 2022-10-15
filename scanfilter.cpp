@@ -800,7 +800,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  continue;
 
               SI::S2SatelliteDeliverySystemDescriptor * sd = (SI::S2SatelliteDeliverySystemDescriptor *) d;
-              #if 0                                                               //i have no idea wether i need the scrambling index and if so for what.., 0 is default anyway.
+              #if 0                                                               //i have no idea whether i need the scrambling index and if so for what.., 0 is default anyway.
               int scrambling_sequence_index = (sd->getScramblingSequenceSelector()) ? sd->getScramblingSequenceIndex() : 0;
               #endif
               int DVBS_backward_compatibility = sd->getBackwardsCompatibilityIndicator();
@@ -810,7 +810,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  // if this transponder isn't already marked as known.
                  //
                  }
-                 // now we should re-check wether this s2 transponder is really known//
+                 // now we should re-check whether this s2 transponder is really known//
               } // end SI::S2SatelliteDeliverySystemDescriptorTag
               break;
 

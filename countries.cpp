@@ -1144,7 +1144,7 @@ std::string country_to_full_name(size_t idx) {
   for(size_t i=0; i<country_count(); i++)
      if (idx == country_list[i].id)
         return country_list[i].full_name;
-  warning("COUNTRY CODE NOT DEFINED. PLEASE RE-CHECK WETHER YOU TYPED CORRECTLY.");
+  warning("COUNTRY CODE NOT DEFINED. PLEASE RE-CHECK WHETHER YOU TYPED CORRECTLY.");
   mSleep(5000);
   return "GERMANY"; // defaults to DVB-t de_DE
 }
