@@ -43,8 +43,8 @@ typedef struct {
   const char* CountryVersion;                    // country ID list version
   const char* SatVersion;                        // satellite ID list version
   const char* UserVersion;                       // user transponder api version, 0.0.5-pre12b or higher.
-  const char* reserved2;                         // reserved, dont use.
-  const char* reserved3;                         // reserved, dont use.
+  const char* reserved2;                         // reserved, do not use.
+  const char* reserved3;                         // reserved, do not use.
 } cWirbelscanInfo;
 
 /* --- wirbelscan_DoCmd ------------------------------------------------------
@@ -82,8 +82,8 @@ typedef struct {
   uint16_t numChannels;                          // current number of (all) channels, including those which are new. meaningless, if (status != StatusScanning)
   uint16_t newChannels;                          // number of channels found during this scan. meaningless, if (status != StatusScanning)
   uint16_t nextTransponders;                     // number of transponders still to be scanned from NIT on this transponder. meaningless, if (status != StatusScanning)
-  uint16_t reserved2;                            // reserved, dont use.
-  uint16_t reserved3;                            // reserved, dont use.
+  uint16_t reserved2;                            // reserved, do not use.
+  uint16_t reserved3;                            // reserved, do not use.
 } cWirbelscanStatus;
 
 /* --- wirbelscan_GetSetup, wirbelscan_SetSetup ------------------------------
@@ -102,7 +102,7 @@ typedef struct {
   uint16_t SatId;                                // the id according to satellite, found in list,         see wirbelscan_GetSat
   uint32_t scanflags;                            // bitwise flag of wanted channels: TV = (1 << 0), RADIO = (1 << 1), FTA = (1 << 2), SCRAMBLED = (1 << 4), HDTV = (1 << 5)
   uint16_t ATSC_type;                            // VSB = 0, QAM = 1, both VSB+QAM = 2
-  uint16_t stuffing[6];                          // dont use.
+  uint16_t stuffing[6];                          // do not use.
 } cWirbelscanScanSetup;
 
 /* --- wirbelscan_GetCountry, wirbelscan_GetSat ------------------------------
@@ -235,4 +235,4 @@ class cUserTransponder {
 };
 
 
-} /* end of namespace, dont touch */
+} /* end of namespace, do not touch */
