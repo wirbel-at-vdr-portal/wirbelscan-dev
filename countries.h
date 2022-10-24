@@ -43,7 +43,8 @@ int choose_country(std::string country,
 int txt_to_country(std::string id);
 std::string country_to_short_name(size_t idx);
 std::string country_to_full_name(size_t idx);
-
+std::string country_to_alpha3(size_t idx);
+std::string Alpha3(void);
 
 int base_offset(int channel, int channellist);
 int freq_step  (int channel, int channellist);

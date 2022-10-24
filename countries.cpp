@@ -307,6 +307,7 @@ enum country_t {
   ZW
 };
 
+std::string alpha3;
 
 
 /*******************************************************************************
@@ -329,6 +330,8 @@ int choose_country(std::string country,
      mSleep(10000);
      }
   info("using settings for '" + country_to_full_name(txt_to_country(country)) + "'");
+
+  alpha3 = country_to_alpha3(country);
 
   /*
    * choose DVB or ATSC frontend type
@@ -1147,6 +1150,26 @@ std::string country_to_full_name(size_t idx) {
   warning("COUNTRY CODE NOT DEFINED. PLEASE RE-CHECK WHETHER YOU TYPED CORRECTLY.");
   mSleep(5000);
   return "GERMANY"; // defaults to DVB-t de_DE
+}
+
+
+/*******************************************************************************
+ * convert index to alpha3
+ ******************************************************************************/
+std::string country_to_alpha3(size_t idx) {
+  for(size_t i=0; i<country_count(); i++)
+     if (idx == country_list[i].id)
+        return country_list[i].alpha3;
+  warning("COULD NOT FIND ALPHA-3");
+  return "DEU"; // defaults to DVB-t de_DE
+}
+
+
+/*******************************************************************************
+ * returns alpha3 for current choosen country
+ ******************************************************************************/
+std::string Alpha3(void) {
+  return alpha3;
 }
 
 
