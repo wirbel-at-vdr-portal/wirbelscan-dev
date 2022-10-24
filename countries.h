@@ -27,6 +27,7 @@ typedef struct cCountry {
   const char* short_name;
   size_t      id;
   const char* full_name;
+  const char* alpha3;
 } _country;
 
 extern struct cCountry country_list[];
