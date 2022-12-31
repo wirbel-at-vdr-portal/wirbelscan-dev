@@ -293,5 +293,197 @@ enum service_type_code {
   };
 
 
+
+/* Well, sorting the following #defines is a nightmare.
+ * This happens, if some spec allows for *private* data. :-(
+ *
+ * At least a quarter of those companies was not able to proper enter their details
+ * into the dvb application form.
+ *
+ * Let's try our best to find useful identifiers for them..
+ */
+// private_data_specifier codes
+#define private_data_specifier_Reserved         0x00000000 // Reserved
+#define private_data_specifier_SES              0x00000001 // SES
+#define private_data_specifier_BskyB_1          0x00000002 // BskyB 1 - 3
+#define private_data_specifier_BskyB_2          0x00000003 // BskyB 1 - 3
+#define private_data_specifier_BskyB_3          0x00000004 // BskyB 1 - 3
+#define private_data_specifier_ARD_ZDF_ORF      0x00000005 // ARD, ZDF, ORF
+#define private_data_specifier_Nokia            0x00000006 // Nokia Multimedia Network Terminals
+#define private_data_specifier_AT_Entertain     0x00000007 // AT Entertainment Ltd.
+#define private_data_specifier_TV_Cabo          0x00000008 // TV Cabo Portugal
+#define private_data_specifier_Nagra_1          0x00000009 // Nagravision SA – Kudelski 1 - 5
+#define private_data_specifier_Nagra_2          0x0000000A // Nagravision SA – Kudelski 1 - 5
+#define private_data_specifier_Nagra_3          0x0000000B // Nagravision SA – Kudelski 1 - 5
+#define private_data_specifier_Nagra_4          0x0000000C // Nagravision SA – Kudelski 1 - 5
+#define private_data_specifier_Nagra_5          0x0000000D // Nagravision SA – Kudelski 1 - 5
+#define private_data_specifier_Valvision        0x0000000E // Valvision SA
+#define private_data_specifier_Quiero           0x0000000F // Quiero Televisión
+#define private_data_specifier_TPS_1            0x00000010 // La Télévision Par Satellite (TPS)
+#define private_data_specifier_Echostar         0x00000011 // Echostar Communications
+#define private_data_specifier_Telia            0x00000012 // Telia AB
+#define private_data_specifier_Viasat           0x00000013 // Viasat
+#define private_data_specifier_Boxer_TV         0x00000014 // Boxer TV Access
+#define private_data_specifier_MediaKabel       0x00000015 // MediaKabel
+#define private_data_specifier_Casema           0x00000016 // Casema
+#define private_data_specifier_Humax            0x00000017 // Humax Electronics Co. Ltd .
+#define private_data_specifier_Neotion          0x00000018 // Neotion SA
+#define private_data_specifier_Singapore        0x00000019 // Singapore Digital Terrestrial Television
+#define private_data_specifier_TDF              0x0000001A // Télédiffusion de France (TDF)
+#define private_data_specifier_Intellibyte      0x0000001B // Intellibyte Inc.
+#define private_data_specifier_DTS              0x0000001C // Digital Theater Systems Ltd
+#define private_data_specifier_Finlux           0x0000001D // Finlux Ltd.
+#define private_data_specifier_Sagem            0x0000001E // Sagem SA
+#define private_data_specifier_BCTI             0x0000001F // Beijing Compunicate Technology Inc
+#define private_data_specifier_Lyonnaise_1      0x00000020 // Lyonnaise Cable 1 - 4
+#define private_data_specifier_Lyonnaise_2      0x00000021 // Lyonnaise Cable 1 - 4
+#define private_data_specifier_Lyonnaise_3      0x00000022 // Lyonnaise Cable 1 - 4
+#define private_data_specifier_Lyonnaise_4      0x00000023 // Lyonnaise Cable 1 - 4
+#define private_data_specifier_Metronic         0x00000024 // Metronic
+#define private_data_specifier_MTV              0x00000025 // MTV Europe
+#define private_data_specifier_Pansonic         0x00000026 // Pansonic
+#define private_data_specifier_Mentor           0x00000027 // Mentor Data System, Inc .
+#define private_data_specifier_EACEM            0x00000028 // EACEM
+#define private_data_specifier_NorDig           0x00000029 // NorDig
+#define private_data_specifier_Intelsis         0x0000002A // Intelsis Sistemas Inteligentes S.A .
+#define private_data_specifier_DTV_HVGY         0x0000002B // DTV haber ve Gorsel yayýncilik
+#define private_data_specifier_ADS              0x0000002D // Alpha Digital Synthesis S.A.
+#define private_data_specifier_THOMSON          0x0000002E // THOMSON
+#define private_data_specifier_Conax            0x0000002F // Conax A.S.
+#define private_data_specifier_Telenor          0x00000030 // Telenor
+#define private_data_specifier_TeleDenmark      0x00000031 // TeleDenmark
+#define private_data_specifier_Foxtel_1         0x00000032 // Foxtel Management
+#define private_data_specifier_InOutTV_1        0x00000033 // InOutTV
+#define private_data_specifier_InOutTV_2        0x00000034 // InOutTV SA (2)
+#define private_data_specifier_EON              0x00000035 // Europe Online Networks S.A .
+#define private_data_specifier_CanalPlus_1      0x00000036 // Groupe Canal+
+#define private_data_specifier_FreeView         0x00000037 // FreeView (NZ)
+#define private_data_specifier_OTE              0x00000038 // OTE
+#define private_data_specifier_Polsat           0x00000039 // Telewizja Polsat
+#define private_data_specifier_arena            0x0000003A // arena Sport Rechte und Marketing GmbH
+#define private_data_specifier_Wyplay           0x0000003B // Wyplay SAS
+#define private_data_specifier_ITAD             0x0000003D // Interactive Technologies AD
+#define private_data_specifier_TKMK             0x0000003E // T-Kábel Magyarország Kft.
+#define private_data_specifier_ITI_Neo_1        0x0000003F // ITI Neovision
+#define private_data_specifier_CiPlus           0x00000040 // CI Plus LLP
+#define private_data_specifier_FTO              0x00000041 // France Telecom Orange
+#define private_data_specifier_CanalPlus_4      0x00000046 // Canal+ Luxembourg S.ar.l -- STRANGE. Not clear, if 0x0046xxxx is actually meant
+#define private_data_specifier_ComHem           0x00000050 // Com Hem ab
+#define private_data_specifier_Sentech          0x000000A0 // Sentech
+#define private_data_specifier_TechniSat        0x000000A1 // TechniSat Digital GmbH
+#define private_data_specifier_LogiWays         0x000000A2 // LogiWays
+#define private_data_specifier_EFG              0x000000A3 // EFG
+#define private_data_specifier_CanalPlus_2      0x000000A4 // CANAL+ INTERNATIONAL
+#define private_data_specifier_CanalPlus_3      0x000000A5 // Canal+ Cyfrowy
+#define private_data_specifier_ITI_Neo_2        0x000000B0 // ITI Neovision Sp. z.o.o.
+#define private_data_specifier_BetaTechnik      0x000000BE // BetaTechnik
+#define private_data_specifier_NDS              0x000000C0 // NDS France
+#define private_data_specifier_Dolby            0x000000D0 // Dolby Laboratories Inc.
+#define private_data_specifier_ExpressVu        0x000000E0 // ExpressVu Inc.
+#define private_data_specifier_FTCD             0x000000F0 // France Telecom, CNES and DGA (STENTOR)
+#define private_data_specifier_OpenTV_1         0x00000100 // OpenTV
+#define private_data_specifier_MediaBroadcast   0x00000110 // Media Broadcast GmbH
+#define private_data_specifier_Eutelsat_1       0x0000013F // Eutelsat S.A. (1)
+#define private_data_specifier_Eltrona          0x00000140 // Eltrona-Interdiffusion S.A.
+#define private_data_specifier_Loewe            0x00000150 // Loewe Opta GmbH
+#define private_data_specifier_Triax            0x00000160 // Triax A/S
+#define private_data_specifier_DTAG             0x00000170 // Deutsche Telekom AG
+#define private_data_specifier_EAB              0x00000180 // EAB - Ericsson AB
+#define private_data_specifier_Samsung          0x00000190 // Samsung Electronics (UK) Ltd
+#define private_data_specifier_RCS_RDS          0x000001A0 // RCS&RDS
+#define private_data_specifier_ORS_1            0x000001B0 // ORS comm GmbH & Co KG
+#define private_data_specifier_ORS_2            0x000001B1 // Österreichische Rundfunksender GmbH & Co KG
+#define private_data_specifier_MITxperts        0x000001B2 // MIT-xperts GmbH
+#define private_data_specifier_Eutelsat_2       0x0000055F // Eutelsat S.A. (2)
+#define private_data_specifier_UPC_1            0x00000600 // UPC 1 - 2
+#define private_data_specifier_UPC_2            0x00000601 // UPC 1 - 2
+#define private_data_specifier_UPC_3            0x00000602 // UPC Broadband Holding Services BV
+#define private_data_specifier_UPC_4            0x00000603 // UPC Broadband Holding Services BV
+#define private_data_specifier_Liberty          0x00000604 // Liberty Global Operations B.V.
+#define private_data_specifier_WISI             0x00000A2B // WISI
+#define private_data_specifier_Ortikon          0x00000ACE // Ortikon Interactive Oy
+#define private_data_specifier_Zenterio         0x00000AD0 // Zenterio AB
+#define private_data_specifier_Inview           0x00000AF0 // Inview Technology Ltd
+#define private_data_specifier_SlovakTelecom_1  0x00000B00 // Slovak Telecom, a.s
+#define private_data_specifier_Technicolor      0x00000B10 // Technicolor
+#define private_data_specifier_TPS_2            0x00001000 // La Télévision Par Satellite (TPS )
+#define private_data_specifier_TPSA             0x000010F0 // TP S.A.
+#define private_data_specifier_UCConnect        0x00002000 // UC-Connect
+#define private_data_specifier_ARX              0x00002004 // ARX Communications LLC
+#define private_data_specifier_CRA              0x00002046 // Communications Regulatory Agency
+#define private_data_specifier_Brunei           0x00002060 // Radio Televisyen Brunei
+#define private_data_specifier_Myanma           0x00002068 // Myanma Radio and Television
+#define private_data_specifier_ANAC             0x00002084 // ANAC - National Communications Authority
+#define private_data_specifier_Colombia         0x000020AA // Comision Nacional de Television de Colombia
+#define private_data_specifier_GNCC             0x0000210C // Georgian National Communications Commission (GNCC)
+#define private_data_specifier_EETT             0x0000212C // EETT
+#define private_data_specifier_Vodafone         0x00002160 // Vodafone Iceland
+#define private_data_specifier_Indonesia        0x00002168 // Ministry of Communication and Information Technology of the Republic of Indonesia
+#define private_data_specifier_HACA             0x00002180 // HACA
+#define private_data_specifier_MYTV             0x000021CA // MYTV
+#define private_data_specifier_CE               0x000021EC // Communications électroniques
+#define private_data_specifier_BTP              0x00002213 // Bureau Telecommunicatie en Post
+#define private_data_specifier_ANSP             0x0000224F // Autorida Nacional de los Servicios Publicos
+#define private_data_specifier_NICTA            0x00002256 // NICTA
+#define private_data_specifier_OEC              0x00002268 // Office of Electronic Communications
+#define private_data_specifier_RTRN             0x00002283 // RTRN
+#define private_data_specifier_JPETIV           0x000022B0 // JP Emisiona Tehnika i Veze
+#define private_data_specifier_Seychelles       0x000022B2 // Seychelles Broadcasting Corporation
+#define private_data_specifier_SlovakTelecom_2  0x000022BF // Telecommunications office of the Slovak republic
+#define private_data_specifier_Slovenia         0x000022C1 // DTT - Slovenia Digital Terrestrial Television
+#define private_data_specifier_SouthAfrica      0x000022C6 // DTT - South African Digital Terrestrial Television
+#define private_data_specifier_Hungarian        0x000022C7 // DTT- Hungarian Digital Terrestrial Television
+#define private_data_specifier_SIALattelecom    0x000022C8 // SIA Lattelecom
+#define private_data_specifier_IrishDTT         0x000022CE // DTT - Irish Digital Terrestrial Television
+#define private_data_specifier_PortugalDTT      0x000022CF // DTT- Portugal Digital Terrestrial Television
+#define private_data_specifier_Spain            0x000022D4 // Spanish Broadcasting Regulator
+#define private_data_specifier_MoICT            0x000022EC // Ministry of ICT
+#define private_data_specifier_Sweden           0x000022F1 // Swedish Broadcasting Regulator
+#define private_data_specifier_NBTC             0x000022FC // Office of National Broadcasting and Telecommunications Commission
+#define private_data_specifier_TRA_UAE          0x00002310 // Telecommunications Regulatory Authority (TRA) UAE
+#define private_data_specifier_Uganda           0x00002320 // Uganda Commuications Commission
+#define private_data_specifier_ITC              0x0000233A // Independent Television Commission
+#define private_data_specifier_OotR             0x00002372 // Office of the Regulator
+#define private_data_specifier_Sky              0x00002B00 // Sky Network Television Limited
+#define private_data_specifier_Australian       0x00003200 // Australian Terrestrial Television Networks
+#define private_data_specifier_DigiTV           0x0000333A // Digital TV Group
+#define private_data_specifier_NewsDatacom      0x00006000 // News Datacom
+#define private_data_specifier_NDC_1            0x00006001 // NDC 1 - 6
+#define private_data_specifier_NDC_2            0x00006002 // NDC 1 - 6
+#define private_data_specifier_NDC_3            0x00006003 // NDC 1 - 6
+#define private_data_specifier_NDC_4            0x00006004 // NDC 1 - 6
+#define private_data_specifier_NDC_5            0x00006005 // NDC 1 - 6
+#define private_data_specifier_NDC_6            0x00006006 // NDC 1 - 6
+#define private_data_specifier_Irdeto           0x00362275 // Irdeto
+#define private_data_specifier_NTL              0x004E544C // NTL
+#define private_data_specifier_SciAtlanta_1     0x00532D41 // Scientific Atlanta
+#define private_data_specifier_VOO              0x00564F4F // VOO (Tecteo)
+#define private_data_specifier_RhoneVision      0x00600000 // Rhône Vision Cable
+#define private_data_specifier_OpenMedia        0x414F4D53 // Alliance for Open Media
+#define private_data_specifier_Foxtel_2         0x41555300 // Foxtel Management
+#define private_data_specifier_China            0x41565356 // Audio Video Coding Standard Workgroup of China
+#define private_data_specifier_NCDIL_1          0x44414E59 // News Datacom (IL) 1
+#define private_data_specifier_NCDIL_2          0x46524549 // News Datacom (IL) 1
+#define private_data_specifier_BBC_1            0x46534154 // BBC
+#define private_data_specifier_BBC_2            0x46536174 // BBC
+#define private_data_specifier_FreeTV           0x46545600 // FreeTV 1 - 33
+#define private_data_specifier_FOXTEL_1         0x46585431 // FOXTEL Management Pty Ltd
+#define private_data_specifier_FOXTEL_2         0x4658544C // FOXTEL Management Pty Ltd
+#define private_data_specifier_KabelDeutschland 0x4A4F4A4F // Kabel Deutschland
+#define private_data_specifier_OpenTV_4F_00     0x4F545600 // OpenTV 1 - 256
+#define private_data_specifier_OpenTV_4F_FF     0x4F5456FF // OpenTV 1 - 256
+#define private_data_specifier_Philips_50_00    0x50484900 // Philips DVS 1 - 256
+#define private_data_specifier_Philips_50_FF    0x50484900 // Philips DVS 1 - 256
+#define private_data_specifier_SciAtlanta_2     0x53415053 // Scientific Atlanta
+#define private_data_specifier_StarGuide        0x5347444E // StarGuide Digital Networks
+#define private_data_specifier_GkWare           0x53475255 // GkWare e.K.
+#define private_data_specifier_Via              0x56444700 // Vía Digital
+#define private_data_specifier_VideoLAN         0x564C414e // VideoLAN
+#define private_data_specifier_TechnoTrend      0x564F564F // TechnoTrend AG
+#define private_data_specifier_Bertelsmann      0xBBBBBBBB // Bertelsmann Broadband Group
+#define private_data_specifier_eventIS          0xE0E0E0E0 // eventIS
+#define private_data_specifier_ECCA             0xECCA0001 // ECCA (European Cable Communications Association)
+#define private_data_specifier_FTC              0xFCFCFCFC // France Telecom
+
 /************* do not touch ***************/
 } //end of namespace
