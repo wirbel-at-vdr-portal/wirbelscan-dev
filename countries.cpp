@@ -331,7 +331,7 @@ int choose_country(std::string country,
      }
   info("using settings for '" + country_to_full_name(txt_to_country(country)) + "'");
 
-  alpha3 = country_to_alpha3(country);
+  alpha3 = country_to_alpha3(txt_to_country(country));
 
   /*
    * choose DVB or ATSC frontend type
