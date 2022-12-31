@@ -647,7 +647,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
   if (wSetup.verbosity > 5)
      hexdump(__PRETTY_FUNCTION__, Data, Length);
 
-  uint32_t PrivateDataSpecifier = 0;
+  uint32_t PrivateDataSpecifier = SI_EXT::private_data_specifier_Reserved;
+
   SI::NIT::TransportStream ts;
   for(SI::Loop::Iterator it; nit.transportStreamLoop.getNext(ts, it);) {
      SI::Descriptor* d;
