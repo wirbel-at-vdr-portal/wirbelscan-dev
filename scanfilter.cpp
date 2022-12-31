@@ -647,6 +647,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
   if (wSetup.verbosity > 5)
      hexdump(__PRETTY_FUNCTION__, Data, Length);
 
+  uint32_t PrivateDataSpecifier = 0;
   SI::NIT::TransportStream ts;
   for(SI::Loop::Iterator it; nit.transportStreamLoop.getNext(ts, it);) {
      SI::Descriptor* d;
@@ -1136,9 +1137,42 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               break;
            case SI::FrequencyListDescriptorTag:
               break; // already handled
-           case SI::PrivateDataSpecifierDescriptorTag:
-              break; // not usable
+           case SI::PrivateDataSpecifierDescriptorTag: {
+              SI::PrivateDataSpecifierDescriptor* pds = (SI::PrivateDataSpecifierDescriptor*) d;
+              uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
+
+              if (pdsv != PrivateDataSpecifier) {
+                 dlog(4, "New private data specifier in second NIT loop, reading private data as 0x" +
+                          IntToHex(pdsv,8));
+                 PrivateDataSpecifier = pdsv;
+                 }
+              } // PrivateDataSpecifierDescriptorTag
+              break;
            case 0x80 ... 0xFE:
+              switch(PrivateDataSpecifier) {
+                 case SI_EXT::private_data_specifier_Singapore: {
+                    /* Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
+                    switch((unsigned) d->getDescriptorTag()) {
+                       default:;
+                       }
+                    }
+                    break;
+                 case SI_EXT::private_data_specifier_EACEM: {
+                    /* CSA-Signalling-Profile3.4 (France) */
+                    switch((unsigned) d->getDescriptorTag()) {
+                       default:;
+                       }
+                    }
+                    break;
+                 case SI_EXT::private_data_specifier_NorDig: {
+                    /* NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
+                    switch((unsigned) d->getDescriptorTag()) {
+                       default:;
+                       }
+                    }
+                    break;
+                 default:;
+                 }
               break; // user defined 
            default:
               dlog(5, "   NIT: unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
