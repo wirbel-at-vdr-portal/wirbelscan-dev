@@ -608,9 +608,9 @@ int base_offset(int channel, int channellist) {
            case 21 ... 69: return  306000000;
            default:        return  SKIP_CHANNEL;
            }
-     case DVBT_FR:  //FRANCE, +/- offset 166kHz & +offset 332kHz & +offset 498kHz, ch 21-49
+     case DVBT_FR:  //FRANCE, +/- offset 166kHz & +offset 332kHz & +offset 498kHz
         switch(channel) {
-           case 21 ... 49: return  306000000;
+           case 21 ... 69: return  306000000;
            default:        return  SKIP_CHANNEL;
            }
      case DVBT_GB:  //UNITED KINGDOM, +/- offset
