@@ -1160,6 +1160,25 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case SI_EXT::private_data_specifier_Singapore: {
                     /* Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
                     switch((unsigned) d->getDescriptorTag()) {
+                       case SI_SINGAPORE::LogicalChannelDescriptorTag: {
+                          SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
+                          SI_SINGAPORE::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.getVisibleServiceFlag()) {
+                                //int lcn = LogicalChannel.getLogicalChannelNumber();
+                                //int sid = LogicalChannel.getServiceId();
+                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+                                }
+                             }
+                          }
+                          break;
+                       case SI_SINGAPORE::LogicalChannelDescriptorV2Tag: {
+                          /* When both Logical Channel Descriptor version 1 and version 2 are broadcasted
+                           * within one Original Network ID, the DVB-T2 IRD supporting both descriptors
+                           * *shall* only sort according to the version 2 (higher priority).
+                           */
+                          }
+                          break;
                        default:;
                        }
                     }
@@ -1167,6 +1186,18 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case SI_EXT::private_data_specifier_EACEM: {
                     /* CSA-Signalling-Profile3.4 (France) */
                     switch((unsigned) d->getDescriptorTag()) {
+                       case SI_EACEM::LogicalChannelDescriptorTag: {
+                          SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
+                          SI_EACEM::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.getVisibleServiceFlag()) {
+                                //int lcn = LogicalChannel.getLogicalChannelNumber();
+                                //int sid = LogicalChannel.getServiceId();
+                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+                                }
+                             }
+                          }
+                          break;
                        default:;
                        }
                     }
@@ -1174,6 +1205,25 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case SI_EXT::private_data_specifier_NorDig: {
                     /* NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
                     switch((unsigned) d->getDescriptorTag()) {
+                       case SI_NORDIG::LogicalChannelDescriptorTag: {
+                          SI_NORDIG::LogicalChannelDescriptor* lcd = (SI_NORDIG::LogicalChannelDescriptor*) d;
+                          SI_NORDIG::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.getVisibleServiceFlag()) {
+                                //int lcn = LogicalChannel.getLogicalChannelNumber();
+                                //int sid = LogicalChannel.getServiceId();
+                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+                                }
+                             }
+                          }
+                          break;
+                       case SI_NORDIG::LogicalChannelDescriptorV2Tag: {
+                          /* When both Logical Channel Descriptor version 1 and version 2 are broadcasted
+                           * within one Original Network ID, the IRD supporting both descriptors
+                           * *shall* only sort according to the version 2 (higher priority).
+                           */
+                          }
+                          break;
                        default:;
                        }
                     }
