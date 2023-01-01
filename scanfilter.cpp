@@ -1143,13 +1143,19 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
 
               if (pdsv != PrivateDataSpecifier) {
-                 dlog(4, "New private data specifier in second NIT loop, reading private data as 0x" +
-                          IntToHex(pdsv,8));
+                 dlog(4, "Second NIT loop: New private data specifier " + IntToHex(pdsv,8));
                  PrivateDataSpecifier = pdsv;
                  }
               } // PrivateDataSpecifierDescriptorTag
               break;
            case 0x80 ... 0xFE:
+              /* Private Descriptors 0x80 ... 0xFE.
+               * Descriptors 0x80 ... 0xFE are not part of the DVB SI specs (for any SI table, not only NIT).
+               * Each of them is defined *only* in the context of it's preceeding private data specifier.
+               *
+               * Including one of those without checking the current value of the private data specifier
+               * is a serious bug.
+               */
               switch(PrivateDataSpecifier) {
                  case SI_EXT::private_data_specifier_Singapore: {
                     /* Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
