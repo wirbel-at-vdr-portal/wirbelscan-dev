@@ -1162,9 +1162,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_SINGAPORE::LogicalChannelDescriptorTag: {
                           SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
-                          SI_SINGAPORE::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.getVisibleServiceFlag()) {
+                          SI_SINGAPORE::LogicalChannel lc;
+                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(lc, it);) {
+                             if (lc.Visible()) {
                                 //int lcn = LogicalChannel.getLogicalChannelNumber();
                                 //int sid = LogicalChannel.getServiceId();
                                 //data.LCNs.insert(std::pair<int, int>(sid, lcn));
@@ -1188,9 +1188,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_EACEM::LogicalChannelDescriptorTag: {
                           SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
-                          SI_EACEM::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.getVisibleServiceFlag()) {
+                          SI_EACEM::LogicalChannel lc;
+                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(lc, it);) {
+                             if (lc.Visible()) {
                                 //int lcn = LogicalChannel.getLogicalChannelNumber();
                                 //int sid = LogicalChannel.getServiceId();
                                 //data.LCNs.insert(std::pair<int, int>(sid, lcn));
@@ -1207,9 +1207,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_NORDIG::LogicalChannelDescriptorTag: {
                           SI_NORDIG::LogicalChannelDescriptor* lcd = (SI_NORDIG::LogicalChannelDescriptor*) d;
-                          SI_NORDIG::LogicalChannelDescriptor::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->logicalChannelLoop.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.getVisibleServiceFlag()) {
+                          SI_NORDIG::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.Visible()) {
                                 //int lcn = LogicalChannel.getLogicalChannelNumber();
                                 //int sid = LogicalChannel.getServiceId();
                                 //data.LCNs.insert(std::pair<int, int>(sid, lcn));

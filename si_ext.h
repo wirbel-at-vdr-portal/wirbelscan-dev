@@ -498,97 +498,157 @@ enum private_data_specifier_codes : std::uint32_t {
 /*******************************************************************************
  * Private descriptors
  ******************************************************************************/
-
+#include <string>
 #include <libsi/section.h>
 #include <libsi/descriptor.h>
 
 
+/*******************************************************************************
+ * class LogicalChannel
+ ******************************************************************************/
+class LogicalChannel : public SI::LoopElement {
+public:
+  virtual int ServiceId() const             = 0;
+  virtual int LCN() const                   = 0;
+  virtual int LCN_Minor() const             = 0;
+  virtual bool Visible() const              = 0;
+  virtual int getLength();
+protected:
+  virtual void Parse()                      = 0;
+};
+
+/*******************************************************************************
+ * class LogicalChannelList
+ ******************************************************************************/
+class LogicalChannelList : public SI::LoopElement {
+public:
+  int ONID;
+  int TID;
+  int ListId;
+  std::string Name;
+  std::string CountryCode;
+  SI::StructureLoop<LogicalChannel> LogicalChannels;
+  virtual int getLength() = 0;
+protected:
+  virtual void Parse() = 0; 
+};
+
+/*******************************************************************************
+ * class LogicalChannelDescriptor
+ ******************************************************************************/
+class LogicalChannelDescriptor : public SI::Descriptor {
+protected:
+  virtual void Parse() = 0;
+};
+
+/*******************************************************************************
+ * class LogicalChannelDescriptorV2
+ ******************************************************************************/
+class LogicalChannelDescriptorV2 : public SI::Descriptor {
+public:
+  SI::StructureLoop<LogicalChannelList> LogicalChannelLists;
+protected:
+  virtual void Parse() = 0;
+};
+
+/*******************************************************************************
+ * forward decls
+ ******************************************************************************/
+namespace SI_EACEM  { class LogicalChannel; }
+namespace SI_EACEM  { class LogicalChannelDescriptor; }
+namespace SI_NORDIG { class LogicalChannel; }
+namespace SI_NORDIG { class LogicalChannelDescriptorV2; }
+struct item_logical_channel;
+
 /******************************************************************************/
-namespace SI_SINGAPORE {
+namespace SI_SINGAPORE { /* 0x19 */
 
 enum DescriptorTag {
   LogicalChannelDescriptorTag   = 0x83,
   LogicalChannelDescriptorV2Tag = 0x87,
 };
 
-struct item_logical_channel;
-
-class LogicalChannelDescriptor : public SI::Descriptor {
-public:
-  class LogicalChannel : public SI::LoopElement {
-    public:
-      int getServiceId() const;
-      int getVisibleServiceFlag() const;
-      int getLogicalChannelNumber() const;
-      virtual int getLength();
-    protected:
-      virtual void Parse();
-    private:
-      const item_logical_channel* s;
-    };
-  SI::StructureLoop<LogicalChannel> logicalChannelLoop;
-protected:
-  virtual void Parse();
-};
+typedef SI_EACEM::LogicalChannel LogicalChannel;
+typedef SI_EACEM::LogicalChannelDescriptor LogicalChannelDescriptor;
+typedef SI_NORDIG::LogicalChannelDescriptorV2 LogicalChannelDescriptorV2;
 
 } // end of namespace SI_SINGAPORE
 
 
 /******************************************************************************/
-namespace SI_EACEM {
+namespace SI_EACEM { /* 0x28 */
 
 enum DescriptorTag {
-  LogicalChannelDescriptorTag = 0x83,
+  LogicalChannelDescriptorTag            = 0x83,
+  HdSimulcastLogicalChannelDescriptorTag = 0x88,
 };
 
-struct item_logical_channel;
-
-class LogicalChannelDescriptor : public SI::Descriptor {
+class LogicalChannel : public ::LogicalChannel {
 public:
-  class LogicalChannel : public SI::LoopElement {
-    public:
-      int getServiceId() const;
-      int getVisibleServiceFlag() const;
-      int getLogicalChannelNumber() const;
-      virtual int getLength();
-    protected:
-      virtual void Parse();
-    private:
-      const item_logical_channel* s;
-    };
-  SI::StructureLoop<LogicalChannel> logicalChannelLoop;
+LogicalChannel(){}
+  int ONID;
+  int TID;
+  bool HdSimulcast;
+  int ServiceId()    const;
+  virtual int LCN()  const;
+  int LCN_Minor()    const;
+  bool Visible()     const;
+  int getLength();
 protected:
-  virtual void Parse();
+  void Parse();
+  const item_logical_channel* s;
 };
+
+class LogicalChannelDescriptor : public ::LogicalChannelDescriptor {
+public:
+  SI::StructureLoop<LogicalChannel> LogicalChannels;
+protected:
+  void Parse();
+};
+
+typedef LogicalChannelDescriptor HdSimulcastLogicalChannelDescriptor;
 
 } // end of namespace SI_EACEM 
 
 /******************************************************************************/
-namespace SI_NORDIG {
+namespace SI_NORDIG { /* 0x29 */
 
 enum DescriptorTag {
   LogicalChannelDescriptorTag   = 0x83,
   LogicalChannelDescriptorV2Tag = 0x87,
 };
 
-struct item_logical_channel;
-
-class LogicalChannelDescriptor : public SI::Descriptor {
+class LogicalChannel : public SI_EACEM::LogicalChannel {
 public:
-  class LogicalChannel : public SI::LoopElement {
-    public:
-      int getServiceId() const;
-      int getVisibleServiceFlag() const;
-      int getLogicalChannelNumber() const;
-      virtual int getLength();
-    protected:
-      virtual void Parse();
-    private:
-      const item_logical_channel* s;
-    };
-  SI::StructureLoop<LogicalChannel> logicalChannelLoop;
+  int LCN() const;
+};
+
+class LogicalChannelDescriptor : public ::LogicalChannelDescriptor {
+public:
+  SI::StructureLoop<LogicalChannel> Loop;
 protected:
-  virtual void Parse();
+  void Parse();
+};
+
+class LogicalChannelList : public ::LogicalChannelList {
+public:
+  int ONID;
+  int TID;
+  int ListId;
+  std::string Name;
+  std::string CountryCode;
+  SI::StructureLoop<SI_EACEM::LogicalChannelDescriptor> LogicalChannels;
+  int getLength();
+public:
+  void Parse();
+private:
+};
+
+class LogicalChannelDescriptorV2 : public ::LogicalChannelDescriptorV2 {
+public:
+  SI::StructureLoop<LogicalChannelList> Loop;
+protected:
+  void Parse();
 };
 
 } // end of namespace SI_NORDIG
