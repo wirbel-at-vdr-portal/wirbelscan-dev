@@ -1142,6 +1142,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               SI::PrivateDataSpecifierDescriptor* pds = (SI::PrivateDataSpecifierDescriptor*) d;
               uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
 
+              //hexdump("SI::PrivateDataSpecifierDescriptorTag", d->getData().getData(), d->getLength());
+
               if (pdsv != PrivateDataSpecifier) {
                  dlog(4, "Second NIT loop: New private data specifier " + IntToHex(pdsv,8));
                  PrivateDataSpecifier = pdsv;
@@ -1158,16 +1160,29 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                */
               switch(PrivateDataSpecifier) {
                  case SI_EXT::private_data_specifier_Singapore: {
-                    /* Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
+                    /* 0x19: Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_SINGAPORE::LogicalChannelDescriptorTag: {
                           SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
-                          SI_SINGAPORE::LogicalChannel lc;
-                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(lc, it);) {
-                             if (lc.Visible()) {
-                                //int lcn = LogicalChannel.getLogicalChannelNumber();
-                                //int sid = LogicalChannel.getServiceId();
-                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+
+                          SI_SINGAPORE::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.Visible()) {
+                                struct TChannelListItem item;
+                                item.network_id          = nit.getNetworkId();
+                                item.original_network_id = ts.getOriginalNetworkId();
+                                item.transport_stream_id = ts.getTransportStreamId();
+                                item.service_id          = LogicalChannel.ServiceId();
+                                item.channel_list_id     = 100000; /* invalid */
+                                item.HD_simulcast        = false;
+                                item.LCN                 = LogicalChannel.LCN();
+                                item.LCN_minor           = -1; /* invalid */
+
+                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                      ", TSID:" + IntToStr(item.transport_stream_id) +
+                                      ", SID:"  + IntToStr(item.service_id) +
+                                      ", LID:"  + IntToStr(item.channel_list_id) +
+                                      ", LCN:"  + IntToStr(item.LCN));
                                 }
                              }
                           }
@@ -1184,16 +1199,30 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     }
                     break;
                  case SI_EXT::private_data_specifier_EACEM: {
-                    /* CSA-Signalling-Profile3.4 (France) */
+                    /* 0x28: CSA-Signalling-Profile3.4 (France) */
                     switch((unsigned) d->getDescriptorTag()) {
-                       case SI_EACEM::LogicalChannelDescriptorTag: {
+                       case SI_EACEM::LogicalChannelDescriptorTag: // fall-through */
+                       case SI_EACEM::HdSimulcastLogicalChannelDescriptorTag {
                           SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
-                          SI_EACEM::LogicalChannel lc;
-                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(lc, it);) {
-                             if (lc.Visible()) {
-                                //int lcn = LogicalChannel.getLogicalChannelNumber();
-                                //int sid = LogicalChannel.getServiceId();
-                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+
+                          SI_EACEM::LogicalChannel LogicalChannel;
+                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
+                             if (LogicalChannel.Visible()) {
+                                struct TChannelListItem item;
+                                item.network_id          = nit.getNetworkId();
+                                item.original_network_id = ts.getOriginalNetworkId();
+                                item.transport_stream_id = ts.getTransportStreamId();
+                                item.service_id          = LogicalChannel.ServiceId();
+                                item.channel_list_id     = 100000; /* invalid */
+                                item.HD_simulcast        = (d->getDescriptorTag() == SI_EACEM::HdSimulcastLogicalChannelDescriptorTag);
+                                item.LCN                 = LogicalChannel.LCN();
+                                item.LCN_minor           = -1; /* invalid */
+
+                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                      ", TSID:" + IntToStr(item.transport_stream_id) +
+                                      ", SID:"  + IntToStr(item.service_id) +
+                                      ", LID:"  + IntToStr(item.channel_list_id) +
+                                      ", LCN:"  + IntToStr(item.LCN));
                                 }
                              }
                           }
@@ -1203,16 +1232,29 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     }
                     break;
                  case SI_EXT::private_data_specifier_NorDig: {
-                    /* NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
+                    /* 0x29: NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_NORDIG::LogicalChannelDescriptorTag: {
                           SI_NORDIG::LogicalChannelDescriptor* lcd = (SI_NORDIG::LogicalChannelDescriptor*) d;
+
                           SI_NORDIG::LogicalChannel LogicalChannel;
                           for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
                              if (LogicalChannel.Visible()) {
-                                //int lcn = LogicalChannel.getLogicalChannelNumber();
-                                //int sid = LogicalChannel.getServiceId();
-                                //data.LCNs.insert(std::pair<int, int>(sid, lcn));
+                                struct TChannelListItem item;
+                                item.network_id          = nit.getNetworkId();
+                                item.original_network_id = ts.getOriginalNetworkId();
+                                item.transport_stream_id = ts.getTransportStreamId();
+                                item.service_id          = LogicalChannel.ServiceId();
+                                item.channel_list_id     = 100000; /* invalid */
+                                item.HD_simulcast        = false;
+                                item.LCN                 = LogicalChannel.LCN();
+                                item.LCN_minor           = -1; /* invalid */
+
+                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                      ", TSID:" + IntToStr(item.transport_stream_id) +
+                                      ", SID:"  + IntToStr(item.service_id) +
+                                      ", LID:"  + IntToStr(item.channel_list_id) +
+                                      ", LCN:"  + IntToStr(item.LCN));
                                 }
                              }
                           }
@@ -1222,9 +1264,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                            * within one Original Network ID, the IRD supporting both descriptors
                            * *shall* only sort according to the version 2 (higher priority).
                            */
+                          hexdump("SI_NORDIG::LogicalChannelDescriptorV2Tag", d->getData().getData(), d->getLength());
                           }
                           break;
-                       default:;
+                       default:
+                          hexdump("SI_NORDIG unknown descriptor:", d->getData().getData(), d->getLength());
                        }
                     }
                     break;

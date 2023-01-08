@@ -510,7 +510,6 @@ class LogicalChannel : public SI::LoopElement {
 public:
   virtual int ServiceId() const { return -1;    }
   virtual int LCN() const       { return -1;    }
-  virtual int LCN_Minor() const { return -1;    }
   virtual bool Visible() const  { return false; }
   virtual int getLength()       { return 0;     }
 protected:
@@ -522,8 +521,6 @@ protected:
  ******************************************************************************/
 class LogicalChannelList : public SI::LoopElement {
 public:
-  int ONID;
-  int TID;
   int ListId;
   std::string Name;
   std::string CountryCode;
@@ -586,12 +583,9 @@ enum DescriptorTag {
 class LogicalChannel : public ::LogicalChannel {
 public:
 LogicalChannel(){}
-  int ONID;
-  int TID;
   bool HdSimulcast;
   int ServiceId()    const;
   virtual int LCN()  const;
-  int LCN_Minor()    const;
   bool Visible()     const;
   int getLength();
 protected:
@@ -632,8 +626,6 @@ protected:
 
 class LogicalChannelList : public ::LogicalChannelList {
 public:
-  int ONID;
-  int TID;
   int ListId;
   std::string Name;
   std::string CountryCode;

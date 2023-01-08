@@ -96,6 +96,17 @@ struct TNitData {
   TList<TChannel*> transport_streams;
 };
 
+struct TChannelListItem {
+  uint16_t network_id;
+  uint16_t original_network_id;
+  uint16_t transport_stream_id;
+  uint16_t service_id;
+  int channel_list_id;
+  bool HD_simulcast;
+  int LCN;
+  int LCN_minor;
+};
+
 struct sdtservice {
   uint16_t transport_stream_id;
   uint16_t original_network_id;

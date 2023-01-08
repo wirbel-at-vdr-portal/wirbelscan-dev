@@ -63,10 +63,6 @@ int LogicalChannel::LCN() const {
   return ((uint16_t) HILO(s->logical_channel_number) ) & 0x3FF;
 }
 
-int LogicalChannel::LCN_Minor() const {
-  return -1;
-}
-
 bool LogicalChannel::Visible() const {
   return s->visible_service_flag > 0;
 }
@@ -172,11 +168,9 @@ void LogicalChannelList::Parse() {
     u_char descriptor_length        :8;
   };
 
-  ONID = TID = 0;
-  ListId = 100000;
-
   const desc_part1* part1 = data.getData<const desc_part1>();
   data.addOffset(sizeof(desc_part1));
+  ListId = part1->channel_list_id;
 
   { /* get list name with correct character encoding. */
   SI::String str;
