@@ -508,13 +508,13 @@ enum private_data_specifier_codes : std::uint32_t {
  ******************************************************************************/
 class LogicalChannel : public SI::LoopElement {
 public:
-  virtual int ServiceId() const             = 0;
-  virtual int LCN() const                   = 0;
-  virtual int LCN_Minor() const             = 0;
-  virtual bool Visible() const              = 0;
-  virtual int getLength();
+  virtual int ServiceId() const { return -1;    }
+  virtual int LCN() const       { return -1;    }
+  virtual int LCN_Minor() const { return -1;    }
+  virtual bool Visible() const  { return false; }
+  virtual int getLength()       { return 0;     }
 protected:
-  virtual void Parse()                      = 0;
+  virtual void Parse()          {}
 };
 
 /*******************************************************************************
