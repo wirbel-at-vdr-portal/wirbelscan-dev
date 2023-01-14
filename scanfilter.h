@@ -4,6 +4,7 @@
  ******************************************************************************/
 #pragma once
 #include <string>
+#include <vector>         // std::vector<>
 #include <cstdint>        // uint{8.16,32}_t
 #include <vdr/thread.h>   // cCondWait
 #include <vdr/sections.h> // cSectionSyncer
