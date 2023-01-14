@@ -1173,10 +1173,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.original_network_id = ts.getOriginalNetworkId();
                                 item.transport_stream_id = ts.getTransportStreamId();
                                 item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* invalid */
+                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255 */
                                 item.HD_simulcast        = false;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
+                                data.ChannelListItems.push_back(item);
 
                                 dlog(5, "ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
@@ -1213,10 +1214,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.original_network_id = ts.getOriginalNetworkId();
                                 item.transport_stream_id = ts.getTransportStreamId();
                                 item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* invalid */
+                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255. (No v2 yet in EACEM, but anyhow) */
                                 item.HD_simulcast        = (int) d->getDescriptorTag() == (int) SI_EACEM::HdSimulcastLogicalChannelDescriptorTag;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
+                                data.ChannelListItems.push_back(item);
 
                                 dlog(5, "ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
@@ -1245,10 +1247,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.original_network_id = ts.getOriginalNetworkId();
                                 item.transport_stream_id = ts.getTransportStreamId();
                                 item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* invalid */
+                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255 */
                                 item.HD_simulcast        = false;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
+                                data.ChannelListItems.push_back(item);
 
                                 dlog(5, "ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +

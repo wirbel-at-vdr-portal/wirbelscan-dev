@@ -87,15 +87,6 @@ struct TFrequencyListItem {
   uint32_t frequency;
 };
 
-struct TNitData {
-  int OrbitalPos;
-  bool West;
-  TList<TFrequencyListItem> frequency_list;
-  TList<TCell> cell_frequency_links;
-  TList<TServiceListItem> service_types;
-  TList<TChannel*> transport_streams;
-};
-
 struct TChannelListItem {
   uint16_t network_id;
   uint16_t original_network_id;
@@ -105,6 +96,16 @@ struct TChannelListItem {
   bool HD_simulcast;
   int LCN;
   int LCN_minor;
+};
+
+struct TNitData {
+  int OrbitalPos;
+  bool West;
+  TList<TFrequencyListItem> frequency_list;
+  TList<TCell> cell_frequency_links;
+  TList<TServiceListItem> service_types;
+  TList<TChannel*> transport_streams;
+  std::vector<TChannelListItem> ChannelListItems;
 };
 
 struct sdtservice {
