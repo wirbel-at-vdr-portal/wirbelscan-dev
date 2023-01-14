@@ -1166,7 +1166,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                           SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
 
                           SI_SINGAPORE::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
+                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(LogicalChannel, it);) {
                              if (LogicalChannel.Visible()) {
                                 struct TChannelListItem item;
                                 item.network_id          = nit.getNetworkId();
@@ -1201,12 +1201,12 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                  case SI_EXT::private_data_specifier_EACEM: {
                     /* 0x28: CSA-Signalling-Profile3.4 (France) */
                     switch((unsigned) d->getDescriptorTag()) {
-                       case SI_EACEM::LogicalChannelDescriptorTag: // fall-through */
-                       case SI_EACEM::HdSimulcastLogicalChannelDescriptorTag {
+                       case SI_EACEM::LogicalChannelDescriptorTag: /* fall-through */
+                       case SI_EACEM::HdSimulcastLogicalChannelDescriptorTag: {
                           SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
 
                           SI_EACEM::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
+                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(LogicalChannel, it);) {
                              if (LogicalChannel.Visible()) {
                                 struct TChannelListItem item;
                                 item.network_id          = nit.getNetworkId();
@@ -1214,7 +1214,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.transport_stream_id = ts.getTransportStreamId();
                                 item.service_id          = LogicalChannel.ServiceId();
                                 item.channel_list_id     = 100000; /* invalid */
-                                item.HD_simulcast        = (d->getDescriptorTag() == SI_EACEM::HdSimulcastLogicalChannelDescriptorTag);
+                                item.HD_simulcast        = (int) d->getDescriptorTag() == (int) SI_EACEM::HdSimulcastLogicalChannelDescriptorTag;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
 
