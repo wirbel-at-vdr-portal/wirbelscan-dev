@@ -153,9 +153,11 @@ int LogicalChannel::LCN() const {
 
 void LogicalChannelDescriptorV2::Parse() {
   Loop.setData(data+sizeof(descr_generic), getLength()-sizeof(descr_generic));
+  //Loop.Parse();
 }
 
 void LogicalChannelList::Parse() {
+dlog(5, std::string(__PRETTY_FUNCTION__));
   struct desc_part1 {
     u_char channel_list_id          :8;
     u_char channel_list_name_length :8;
@@ -188,11 +190,18 @@ void LogicalChannelList::Parse() {
   CountryCode[2] = part2->country_code_2;
   data.addOffset(sizeof(desc_part2));
 
+  length = 6 + part1->channel_list_name_length + part2->descriptor_length;
+
   LogicalChannels.setData(data,
                           getLength() -
                           sizeof(desc_part1) -
                           part1->channel_list_name_length -
                           sizeof(desc_part2));
+}
+
+int LogicalChannelList::getLength() {
+  dlog(5, "length = " + IntToStr(length));
+  return length;
 }
 
 } // end of namespace SI_NORDIG

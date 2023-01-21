@@ -525,9 +525,9 @@ public:
   std::string Name;
   std::string CountryCode;
   SI::StructureLoop<LogicalChannel> LogicalChannels;
-  virtual int getLength() = 0;
+  virtual int getLength()       { return 0; }
 protected:
-  virtual void Parse() = 0; 
+  virtual void Parse()          {} 
 };
 
 /*******************************************************************************
@@ -619,7 +619,7 @@ public:
 
 class LogicalChannelDescriptor : public ::LogicalChannelDescriptor {
 public:
-  SI::StructureLoop<LogicalChannel> Loop;
+  SI::StructureLoop<LogicalChannel> LogicalChannels;
 protected:
   void Parse();
 };
@@ -629,17 +629,18 @@ public:
   int ListId;
   std::string Name;
   std::string CountryCode;
-  SI::StructureLoop<SI_EACEM::LogicalChannelDescriptor> LogicalChannels;
+  SI::StructureLoop<SI_EACEM::LogicalChannel> LogicalChannels;
   int getLength();
 public:
   void Parse();
 private:
+  int length;
 };
 
 class LogicalChannelDescriptorV2 : public ::LogicalChannelDescriptorV2 {
 public:
   SI::StructureLoop<LogicalChannelList> Loop;
-protected:
+  void Assign(const unsigned char* d, size_t n) { data.assign(d, n, false); }
   void Parse();
 };
 

@@ -10,6 +10,7 @@
 #include <libsi/descriptor.h>
 #include "scanfilter.h"
 #include "si_ext.h"
+#include "countries.h"         // COUNTRY::Alpha3()
 
 
 /*******************************************************************************
@@ -1142,10 +1143,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               SI::PrivateDataSpecifierDescriptor* pds = (SI::PrivateDataSpecifierDescriptor*) d;
               uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
 
-              //hexdump("SI::PrivateDataSpecifierDescriptorTag", d->getData().getData(), d->getLength());
-
               if (pdsv != PrivateDataSpecifier) {
-                 dlog(4, "Second NIT loop: New private data specifier " + IntToHex(pdsv,8));
+                 dlog(5, "Second NIT loop: New private data specifier " + IntToHex(pdsv,2));
                  PrivateDataSpecifier = pdsv;
                  }
               } // PrivateDataSpecifierDescriptorTag
@@ -1158,126 +1157,10 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                * Including one of those without checking the current value of the private data specifier
                * is a serious bug.
                */
-              switch(PrivateDataSpecifier) {
-                 case SI_EXT::private_data_specifier_Singapore: {
-                    /* 0x19: Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
-                    switch((unsigned) d->getDescriptorTag()) {
-                       case SI_SINGAPORE::LogicalChannelDescriptorTag: {
-                          SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
 
-                          SI_SINGAPORE::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.Visible()) {
-                                struct TChannelListItem item;
-                                item.network_id          = nit.getNetworkId();
-                                item.original_network_id = ts.getOriginalNetworkId();
-                                item.transport_stream_id = ts.getTransportStreamId();
-                                item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255 */
-                                item.HD_simulcast        = false;
-                                item.LCN                 = LogicalChannel.LCN();
-                                item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
 
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
-                                      ", TSID:" + IntToStr(item.transport_stream_id) +
-                                      ", SID:"  + IntToStr(item.service_id) +
-                                      ", LID:"  + IntToStr(item.channel_list_id) +
-                                      ", LCN:"  + IntToStr(item.LCN));
-                                }
-                             }
-                          }
-                          break;
-                       case SI_SINGAPORE::LogicalChannelDescriptorV2Tag: {
-                          /* When both Logical Channel Descriptor version 1 and version 2 are broadcasted
-                           * within one Original Network ID, the DVB-T2 IRD supporting both descriptors
-                           * *shall* only sort according to the version 2 (higher priority).
-                           */
-                          }
-                          break;
-                       default:;
-                       }
-                    }
-                    break;
-                 case SI_EXT::private_data_specifier_EACEM: {
-                    /* 0x28: CSA-Signalling-Profile3.4 (France) */
-                    switch((unsigned) d->getDescriptorTag()) {
-                       case SI_EACEM::LogicalChannelDescriptorTag: /* fall-through */
-                       case SI_EACEM::HdSimulcastLogicalChannelDescriptorTag: {
-                          SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
 
-                          SI_EACEM::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->LogicalChannels.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.Visible()) {
-                                struct TChannelListItem item;
-                                item.network_id          = nit.getNetworkId();
-                                item.original_network_id = ts.getOriginalNetworkId();
-                                item.transport_stream_id = ts.getTransportStreamId();
-                                item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255. (No v2 yet in EACEM, but anyhow) */
-                                item.HD_simulcast        = (int) d->getDescriptorTag() == (int) SI_EACEM::HdSimulcastLogicalChannelDescriptorTag;
-                                item.LCN                 = LogicalChannel.LCN();
-                                item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
-
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
-                                      ", TSID:" + IntToStr(item.transport_stream_id) +
-                                      ", SID:"  + IntToStr(item.service_id) +
-                                      ", LID:"  + IntToStr(item.channel_list_id) +
-                                      ", LCN:"  + IntToStr(item.LCN));
-                                }
-                             }
-                          }
-                          break;
-                       default:;
-                       }
-                    }
-                    break;
-                 case SI_EXT::private_data_specifier_NorDig: {
-                    /* 0x29: NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
-                    switch((unsigned) d->getDescriptorTag()) {
-                       case SI_NORDIG::LogicalChannelDescriptorTag: {
-                          SI_NORDIG::LogicalChannelDescriptor* lcd = (SI_NORDIG::LogicalChannelDescriptor*) d;
-
-                          SI_NORDIG::LogicalChannel LogicalChannel;
-                          for(SI::Loop::Iterator it; lcd->Loop.getNext(LogicalChannel, it);) {
-                             if (LogicalChannel.Visible()) {
-                                struct TChannelListItem item;
-                                item.network_id          = nit.getNetworkId();
-                                item.original_network_id = ts.getOriginalNetworkId();
-                                item.transport_stream_id = ts.getTransportStreamId();
-                                item.service_id          = LogicalChannel.ServiceId();
-                                item.channel_list_id     = 100000; /* v2 list IDs: 0..255 */
-                                item.HD_simulcast        = false;
-                                item.LCN                 = LogicalChannel.LCN();
-                                item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
-
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
-                                      ", TSID:" + IntToStr(item.transport_stream_id) +
-                                      ", SID:"  + IntToStr(item.service_id) +
-                                      ", LID:"  + IntToStr(item.channel_list_id) +
-                                      ", LCN:"  + IntToStr(item.LCN));
-                                }
-                             }
-                          }
-                          break;
-                       case SI_NORDIG::LogicalChannelDescriptorV2Tag: {
-                          /* When both Logical Channel Descriptor version 1 and version 2 are broadcasted
-                           * within one Original Network ID, the IRD supporting both descriptors
-                           * *shall* only sort according to the version 2 (higher priority).
-                           */
-                          hexdump("SI_NORDIG::LogicalChannelDescriptorV2Tag", d->getData().getData(), d->getLength());
-                          }
-                          break;
-                       default:
-                          hexdump("SI_NORDIG unknown descriptor:", d->getData().getData(), d->getLength());
-                       }
-                    }
-                    break;
-                 default:;
-                 }
-              break; // user defined 
+              break; // 0x80 ... 0xFE, user defined 
            default:
               dlog(5, "   NIT: unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
            }
