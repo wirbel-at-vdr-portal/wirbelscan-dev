@@ -47,6 +47,7 @@ cMySetup::cMySetup(void) {
   scan_remove_invalid  = false;
   scan_update_existing = false;
   scan_append_new      = true;
+  ParseLCN             = false;
 }
 
 void cMySetup::InitSystems(void) {

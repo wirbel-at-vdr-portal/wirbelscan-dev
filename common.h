@@ -231,6 +231,7 @@ public:
   int scan_remove_invalid;
   int scan_update_existing;
   int scan_append_new;
+  bool ParseLCN;
   std::array<std::string,5> preferred;
 public:
   cMySetup(void);
