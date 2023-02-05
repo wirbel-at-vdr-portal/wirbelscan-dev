@@ -1260,7 +1260,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                           } // SI_SINGAPORE::LogicalChannelDescriptorV2Tag
                           break;
                        default:
-                          hexdump("SI_SINGAPORE unknown descriptor:", d->getData().getData(), d->getLength());
+                          hexdump("SI_SINGAPORE unknown descriptor " + IntToHex(d->getDescriptorTag(),2),
+                                  d->getData().getData(), d->getLength());
                        }
                     }
                     break;
@@ -1306,7 +1307,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                           }
                           break;
                        default:
-                          hexdump("SI_EACEM unknown descriptor:", d->getData().getData(), d->getLength());
+                          hexdump("SI_EACEM unknown descriptor " + IntToHex(d->getDescriptorTag(),2),
+                                  d->getData().getData(), d->getLength());
                        }
                     }
                     break;
@@ -1407,7 +1409,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                           } // SI_NORDIG::LogicalChannelDescriptorV2Tag
                           break;
                        default:
-                          hexdump("SI_NORDIG unknown descriptor:", d->getData().getData(), d->getLength());
+                          hexdump("SI_NORDIG unknown descriptor " + IntToHex(d->getDescriptorTag(),2),
+                                  d->getData().getData(), d->getLength());
                        }
                     }
                     break;
