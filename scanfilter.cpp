@@ -1143,10 +1143,10 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               SI::PrivateDataSpecifierDescriptor* pds = (SI::PrivateDataSpecifierDescriptor*) d;
               uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
 
-              if (pdsv != PrivateDataSpecifier) {
+              if (pdsv != PrivateDataSpecifier)
                  dlog(5, "Second NIT loop: New private data specifier " + IntToHex(pdsv,2));
-                 PrivateDataSpecifier = pdsv;
-                 }
+
+              PrivateDataSpecifier = pdsv;
               } // PrivateDataSpecifierDescriptorTag
               break;
            case 0x80 ... 0xFE:
@@ -1158,11 +1158,16 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                * is a serious bug.
                */
 
+              if (not wSetup.ParseLCN)
+                 break;
+
               switch(PrivateDataSpecifier) {
                  case SI_EXT::private_data_specifier_Singapore: {
                     /* 0x19: Draft IDA-MDA TS DVB-T2 IRD i1r2 Mar14 (Singapore) */
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_SINGAPORE::LogicalChannelDescriptorTag: {
+                          hexdump("SI_SINGAPORE::LogicalChannelDescriptor", d->getData().getData(), d->getLength());
+
                           SI_SINGAPORE::LogicalChannelDescriptor* lcd = (SI_SINGAPORE::LogicalChannelDescriptor*) d;
 
                           SI_SINGAPORE::LogicalChannel LogicalChannel;
@@ -1179,7 +1184,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN_minor           = -1; /* invalid */
                                 data.ChannelListItems.push_back(item);
 
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                dlog(5, "logical channel"
+                                      ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
                                       ", LID:"  + IntToStr(item.channel_list_id) +
@@ -1193,9 +1199,68 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                            * within one Original Network ID, the DVB-T2 IRD supporting both descriptors
                            * *shall* only sort according to the version 2 (higher priority).
                            */
-                          }
+
+                          hexdump("SI_SINGAPORE::LogicalChannelDescriptorV2", d->getData().getData(), d->getLength());
+                          
+                          const unsigned char* C = (d->getData().getData()) + 2;
+                          for(int len=d->getLength()-2; len>0; ) {
+                             int channel_list_id = *C++;
+                             int channel_list_name_length = *C++;
+                             if (wSetup.verbosity > 4) {
+                                std::string channel_list_name;
+                                channel_list_name.reserve(1 + channel_list_name_length);
+                                for(int i=0; i<channel_list_name_length; i++)
+                                   channel_list_name += *C++;
+                                dlog(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
+                                }
+                             else
+                                C += channel_list_name_length;
+
+                             std::string country_code;
+                             country_code.reserve(1 + 3);
+                             for(int i=0; i<3; i++)
+                                country_code += std::toupper(*C++);
+
+                             int descriptor_length = *C++;
+                             len -= 6 + channel_list_name_length;
+
+                             if (country_code != COUNTRY::Alpha3()) {
+                                // We found a neighboring countries logical channel list.
+                                len -= descriptor_length;
+                                C   += descriptor_length;
+                                dlog(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
+                                continue;
+                                }
+
+                             for(int i=0; i<descriptor_length; i+=4, len-=4) {
+                                struct TChannelListItem item;
+                                item.network_id          = nit.getNetworkId();
+                                item.original_network_id = ts.getOriginalNetworkId();
+                                item.transport_stream_id = ts.getTransportStreamId();
+                                item.service_id          = (*C << 8) | *(C+1); C+=2;
+                                item.channel_list_id     = channel_list_id;
+                                item.HD_simulcast        = false;
+
+                                uint8_t u8 = *C++;
+                                bool visible = (u8 & 0x80) > 0;
+
+                                item.LCN                 = ((u8 & 0x3) << 8) | *C++;
+                                item.LCN_minor           = -1; /* invalid */
+                                if (visible) {
+                                   dlog(5, "logical channel"
+                                         ", ONID:" + IntToStr(item.original_network_id) +
+                                         ", TSID:" + IntToStr(item.transport_stream_id) +
+                                         ", SID:"  + IntToStr(item.service_id) +
+                                         ", LID:"  + IntToStr(item.channel_list_id) +
+                                         ", LCN:"  + IntToStr(item.LCN));
+                                   data.ChannelListItems.push_back(item);
+                                   }
+                                } // LCN loop
+                             } // byte loop
+                          } // SI_SINGAPORE::LogicalChannelDescriptorV2Tag
                           break;
-                       default:;
+                       default:
+                          hexdump("SI_SINGAPORE unknown descriptor:", d->getData().getData(), d->getLength());
                        }
                     }
                     break;
@@ -1204,6 +1269,16 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_EACEM::LogicalChannelDescriptorTag: /* fall-through */
                        case SI_EACEM::HdSimulcastLogicalChannelDescriptorTag: {
+                          bool HD_simulcast = (int) d->getDescriptorTag() == (int) SI_EACEM::HdSimulcastLogicalChannelDescriptorTag;
+
+                          if (wSetup.verbosity >= 3) {
+                             std::string name("LogicalChannelDescriptor");
+                             if (HD_simulcast)
+                                name.insert(0, "HdSimulcast");
+
+                             hexdump("SI_EACEM::" + name, d->getData().getData(), d->getLength());
+                             }
+
                           SI_EACEM::LogicalChannelDescriptor* lcd = (SI_EACEM::LogicalChannelDescriptor*) d;
 
                           SI_EACEM::LogicalChannel LogicalChannel;
@@ -1215,12 +1290,13 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.transport_stream_id = ts.getTransportStreamId();
                                 item.service_id          = LogicalChannel.ServiceId();
                                 item.channel_list_id     = 100000; /* v2 list IDs: 0..255. (No v2 yet in EACEM, but anyhow) */
-                                item.HD_simulcast        = (int) d->getDescriptorTag() == (int) SI_EACEM::HdSimulcastLogicalChannelDescriptorTag;
+                                item.HD_simulcast        = HD_simulcast;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
                                 data.ChannelListItems.push_back(item);
 
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                dlog(5, "logical channel"
+                                      ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
                                       ", LID:"  + IntToStr(item.channel_list_id) +
@@ -1229,7 +1305,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                              }
                           }
                           break;
-                       default:;
+                       default:
+                          hexdump("SI_EACEM unknown descriptor:", d->getData().getData(), d->getLength());
                        }
                     }
                     break;
@@ -1237,6 +1314,8 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     /* 0x29: NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_NORDIG::LogicalChannelDescriptorTag: {
+                          hexdump("SI_NORDIG::LogicalChannelDescriptor", d->getData().getData(), d->getLength());
+
                           SI_NORDIG::LogicalChannelDescriptor* lcd = (SI_NORDIG::LogicalChannelDescriptor*) d;
 
                           SI_NORDIG::LogicalChannel LogicalChannel;
@@ -1252,137 +1331,80 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
                                 data.ChannelListItems.push_back(item);
-
-                                dlog(5, "ONID:" + IntToStr(item.original_network_id) +
+                                dlog(5, "logical channel"
+                                      ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
                                       ", LID:"  + IntToStr(item.channel_list_id) +
                                       ", LCN:"  + IntToStr(item.LCN));
                                 }
                              }
-                    /*      }
+                          }
                           break;
                        case SI_NORDIG::LogicalChannelDescriptorV2Tag: {
-                     */
                           /* When both Logical Channel Descriptor version 1 and version 2 are broadcasted
                            * within one Original Network ID, the IRD supporting both descriptors
                            * *shall* only sort according to the version 2 (higher priority).
                            */
 
-                          const unsigned char testdata[] = {
-                            0x87, // descriptor_tag     8 uimsbf, 0x87
+                          hexdump("SI_NORDIG::LogicalChannelDescriptorV2", d->getData().getData(), d->getLength());
+                          
+                          const unsigned char* C = (d->getData().getData()) + 2;
+                          for(int len=d->getLength()-2; len>0; ) {
+                             int channel_list_id = *C++;
+                             int channel_list_name_length = *C++;
+                             if (wSetup.verbosity > 4) {
+                                std::string channel_list_name;
+                                channel_list_name.reserve(1 + channel_list_name_length);
+                                for(int i=0; i<channel_list_name_length; i++)
+                                   channel_list_name += *C++;
+                                dlog(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
+                                }
+                             else
+                                C += channel_list_name_length;
 
-                               1 + // channel_list_id
-                               1 + // channel_list_name_length
-                               7 + // channel_list_name
-                               3 + // country_code
-                               1 + // descriptor_length
-                               5 * 4 + // number_of_services * 4
+                             std::string country_code;
+                             country_code.reserve(1 + 3);
+                             for(int i=0; i<3; i++)
+                                country_code += std::toupper(*C++);
 
-                               1 + // channel_list_id
-                               1 + // channel_list_name_length
-                               7 + // channel_list_name
-                               3 + // country_code
-                               1 + // descriptor_length
-                               3 * 4 // number_of_services * 4
+                             int descriptor_length = *C++;
+                             len -= 6 + channel_list_name_length;
 
-                               ,    // descriptor_length  8 uimsbf
-                                1,                                   // channel_list_id            8 uimbsf
-                                7,                                   // channel_list_name_length   8 uimbsf
-                                'L', 'i', 's', 't', ' ', '#', '1',   // channel_list_name          Nx8 uimbsf
-                                'D', 'E', 'U',                       // country_code              24 uimbsf
-                                5 * 4,
-                                   (0xABCD >> 8), 0xABCD & 0xFF, // service_id             16 uimbsf
-                                   0x80 |  // visible_service_flag    1 bslbf
-                                   0x7C |  // reserved_future_use     5
-                                   (0x0200 >> 8), 0x1000 & 0xFF,// logical_channel_number 10 uimbsf
+                             if (country_code != COUNTRY::Alpha3()) {
+                                // We found a neighboring countries logical channel list.
+                                len -= descriptor_length;
+                                C   += descriptor_length;
+                                dlog(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
+                                continue;
+                                }
 
-                                   (0xABCE >> 8), 0xABCE & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (0x0100 >> 8), 0x0100 & 0xFF,// logical_channel_number 10 uimbsf
+                             for(int i=0; i<descriptor_length; i+=4, len-=4) {
+                                struct TChannelListItem item;
+                                item.network_id          = nit.getNetworkId();
+                                item.original_network_id = ts.getOriginalNetworkId();
+                                item.transport_stream_id = ts.getTransportStreamId();
+                                item.service_id          = (*C << 8) | *(C+1); C+=2;
+                                item.channel_list_id     = channel_list_id;
+                                item.HD_simulcast        = false;
 
-                                   (0xABCF >> 8), 0xABCF & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (0x0010 >> 8), 0x0010 & 0xFF,// logical_channel_number 10 uimbsf
+                                uint8_t u8 = *C++;
+                                bool visible = (u8 & 0x80) > 0;
 
-                                   (0xABD0 >> 8), 0xABD0 & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (0x0001 >> 8), 0x0001 & 0xFF,// logical_channel_number 10 uimbsf
-
-                                   (0xDEAD >> 8), 0xDEAD & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (0xFFFF >> 8), 0xFFFF & 0xFF,// logical_channel_number 10 uimbsf
-
-                                1,                                   // channel_list_id            8 uimbsf
-                                7,                                   // channel_list_name_length   8 uimbsf
-                                'L', 'i', 's', 't', ' ', '#', '2',   // channel_list_name          Nx8 uimbsf
-                                'D', 'E', 'U',                       // country_code              24 uimbsf
-                                3 * 4,
-                                   (100 >> 8), 100 & 0xFF, // service_id             16 uimbsf
-                                   0x80 |  // visible_service_flag    1 bslbf
-                                   0x7C |  // reserved_future_use     5
-                                   (3 >> 8), 3 & 0xFF,// logical_channel_number 10 uimbsf
-
-                                   (101 >> 8), 101 & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (4 >> 8), 4 & 0xFF,// logical_channel_number 10 uimbsf
-
-                                   (102 >> 8), 102 & 0xFF, // service_id             16 uimbsf                   
-                                   0x80 |  // visible_service_flag    1 bslbf                                                    
-                                   0x7C |  // reserved_future_use     5                                                      
-                                   (5 >> 8), 5 & 0xFF // logical_channel_number 10 uimbsf
-
-                            };
-
-                          SI_NORDIG::LogicalChannelDescriptorV2 d2, *lcd2 = &d2;
-                          d2.Assign(testdata, sizeof(testdata));
-                          d2.CheckParse();
-                          hexdump("SI_NORDIG::LogicalChannelDescriptorV2", d2.getData().getData(), d2.getLength());
-                          int i=0;
-
-dlog(5, std::string("LogicalChannelLists.isValid() = ") + std::string(d2.LogicalChannelLists.isValid()?"true":"false"));
-
-                          SI_NORDIG::LogicalChannelList lcl;
-                          for(SI::Loop::Iterator it; lcd2->LogicalChannelLists.getNext(lcl, it);) {
-dlog(5, "PING " + IntToStr(i++));
-                        //   if (lcl.CountryCode != COUNTRY::Alpha3()) {
-                        //      dlog(5, "Ignoring logical channel list for " + lcl.CountryCode +
-                        //              ", current CountryCode is " +
-                        //              COUNTRY::Alpha3());
-                        //      continue;
-                        //      }
-                        //
-                        //   dlog(5, "Logical channel list '" + lcl.Name + "' " + IntToStr(lcl.ListId) + ":");
-                        //
-                        //  SI_EACEM::LogicalChannel LogicalChannel;
-                        //   for(SI::Loop::Iterator it; lcl.LogicalChannels.getNext(LogicalChannel, it);) {
-                        //      if (LogicalChannel.Visible()) {
-                        //         struct TChannelListItem item;
-                        //         item.network_id          = nit.getNetworkId();
-                        //         item.original_network_id = ts.getOriginalNetworkId();
-                        //         item.transport_stream_id = ts.getTransportStreamId();
-                        //         item.service_id          = LogicalChannel.ServiceId();
-                        //         item.channel_list_id     = lcl.ListId;
-                        //         item.HD_simulcast        = false;
-                        //         item.LCN                 = LogicalChannel.LCN();
-                        //         item.LCN_minor           = -1;
-                        //         data.ChannelListItems.push_back(item);
-                        //
-                        //         dlog(5, "ONID:" + IntToStr(item.original_network_id) +
-                        //               ", TSID:" + IntToStr(item.transport_stream_id) +
-                        //               ", SID:"  + IntToStr(item.service_id) +
-                        //               ", LID:"  + IntToStr(item.channel_list_id) +
-                        //               ", LCN:"  + IntToStr(item.LCN));
-                        //         }
-                        //      }
-                             }
-                          }
-                          Sleep(10);
+                                item.LCN                 = ((u8 & 0x3) << 8) | *C++;
+                                item.LCN_minor           = -1; /* invalid */
+                                if (visible) {
+                                   dlog(5, "logical channel"
+                                         ", ONID:" + IntToStr(item.original_network_id) +
+                                         ", TSID:" + IntToStr(item.transport_stream_id) +
+                                         ", SID:"  + IntToStr(item.service_id) +
+                                         ", LID:"  + IntToStr(item.channel_list_id) +
+                                         ", LCN:"  + IntToStr(item.LCN));
+                                   data.ChannelListItems.push_back(item);
+                                   }
+                                } // LCN loop
+                             } // byte loop
+                          } // SI_NORDIG::LogicalChannelDescriptorV2Tag
                           break;
                        default:
                           hexdump("SI_NORDIG unknown descriptor:", d->getData().getData(), d->getLength());
@@ -1392,7 +1414,7 @@ dlog(5, "PING " + IntToStr(i++));
                  default:;
                  } // switch(PrivateDataSpecifier)
 
-              break; // 0x80 ... 0xFE, user defined 
+              break; // 0x80 ... 0xFE, user defined
            default:
               dlog(5, "   NIT: unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
            }
