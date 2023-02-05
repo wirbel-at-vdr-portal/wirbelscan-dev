@@ -1268,7 +1268,6 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                            * within one Original Network ID, the IRD supporting both descriptors
                            * *shall* only sort according to the version 2 (higher priority).
                            */
-                          //hexdump("SI_NORDIG::LogicalChannelDescriptorV2Tag", d->getData().getData(), d->getLength());
 
                           const unsigned char testdata[] = {
                             0x87, // descriptor_tag     8 uimsbf, 0x87
@@ -1342,13 +1341,14 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
                           SI_NORDIG::LogicalChannelDescriptorV2 d2, *lcd2 = &d2;
                           d2.Assign(testdata, sizeof(testdata));
-                          d2.Parse();
+                          d2.CheckParse();
                           hexdump("SI_NORDIG::LogicalChannelDescriptorV2", d2.getData().getData(), d2.getLength());
                           int i=0;
 
+dlog(5, std::string("LogicalChannelLists.isValid() = ") + std::string(d2.LogicalChannelLists.isValid()?"true":"false"));
 
                           SI_NORDIG::LogicalChannelList lcl;
-                          for(SI::Loop::Iterator it; lcd2->Loop.getNext(lcl, it);) {
+                          for(SI::Loop::Iterator it; lcd2->LogicalChannelLists.getNext(lcl, it);) {
 dlog(5, "PING " + IntToStr(i++));
                         //   if (lcl.CountryCode != COUNTRY::Alpha3()) {
                         //      dlog(5, "Ignoring logical channel list for " + lcl.CountryCode +
@@ -1382,6 +1382,7 @@ dlog(5, "PING " + IntToStr(i++));
                         //      }
                              }
                           }
+                          Sleep(10);
                           break;
                        default:
                           hexdump("SI_NORDIG unknown descriptor:", d->getData().getData(), d->getLength());

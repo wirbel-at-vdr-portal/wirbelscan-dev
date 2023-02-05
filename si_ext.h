@@ -517,44 +517,11 @@ protected:
 };
 
 /*******************************************************************************
- * class LogicalChannelList
- ******************************************************************************/
-class LogicalChannelList : public SI::LoopElement {
-public:
-  int ListId;
-  std::string Name;
-  std::string CountryCode;
-  SI::StructureLoop<LogicalChannel> LogicalChannels;
-  virtual int getLength()       { return 0; }
-protected:
-  virtual void Parse()          {} 
-};
-
-/*******************************************************************************
- * class LogicalChannelDescriptor
- ******************************************************************************/
-class LogicalChannelDescriptor : public SI::Descriptor {
-protected:
-  virtual void Parse() = 0;
-};
-
-/*******************************************************************************
- * class LogicalChannelDescriptorV2
- ******************************************************************************/
-class LogicalChannelDescriptorV2 : public SI::Descriptor {
-public:
-  SI::StructureLoop<LogicalChannelList> LogicalChannelLists;
-protected:
-  virtual void Parse() = 0;
-};
-
-/*******************************************************************************
  * forward decls
  ******************************************************************************/
 namespace SI_EACEM  { class LogicalChannel; }
 namespace SI_EACEM  { class LogicalChannelDescriptor; }
 namespace SI_NORDIG { class LogicalChannel; }
-namespace SI_NORDIG { class LogicalChannelDescriptorV2; }
 struct item_logical_channel;
 
 /******************************************************************************/
@@ -567,7 +534,6 @@ enum DescriptorTag {
 
 typedef SI_EACEM::LogicalChannel LogicalChannel;
 typedef SI_EACEM::LogicalChannelDescriptor LogicalChannelDescriptor;
-typedef SI_NORDIG::LogicalChannelDescriptorV2 LogicalChannelDescriptorV2;
 
 } // end of namespace SI_SINGAPORE
 
@@ -593,7 +559,7 @@ protected:
   const item_logical_channel* s;
 };
 
-class LogicalChannelDescriptor : public ::LogicalChannelDescriptor {
+class LogicalChannelDescriptor : public SI::Descriptor {
 public:
   SI::StructureLoop<LogicalChannel> LogicalChannels;
 protected:
@@ -617,30 +583,10 @@ public:
   int LCN() const;
 };
 
-class LogicalChannelDescriptor : public ::LogicalChannelDescriptor {
+class LogicalChannelDescriptor : public SI::Descriptor {
 public:
   SI::StructureLoop<LogicalChannel> LogicalChannels;
 protected:
-  void Parse();
-};
-
-class LogicalChannelList : public ::LogicalChannelList {
-public:
-  int ListId;
-  std::string Name;
-  std::string CountryCode;
-  SI::StructureLoop<SI_EACEM::LogicalChannel> LogicalChannels;
-  int getLength();
-public:
-  void Parse();
-private:
-  int length;
-};
-
-class LogicalChannelDescriptorV2 : public ::LogicalChannelDescriptorV2 {
-public:
-  SI::StructureLoop<LogicalChannelList> Loop;
-  void Assign(const unsigned char* d, size_t n) { data.assign(d, n, false); }
   void Parse();
 };
 
