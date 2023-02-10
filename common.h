@@ -6,6 +6,7 @@
 #include <string>
 #include <array>
 #include <map>
+#include <utility> // std::move
 #include <linux/types.h>
 #include <sys/ioctl.h>
 #include <vdr/diseqc.h>
@@ -253,7 +254,11 @@ template<class T> inline void DeleteNullptr(T*& aClass) {
 }
 
 // NOTE: this might go later to librepfunc as well.
-template<class T> void AppendToVector(std::vector<T>& Dest, std::vector<T>& Tail) {
+template<class T> void AppendToVector(std::vector<T>& Dest, std::vector<T>& Tail, bool move = false) {
+  if (move and Dest.empty()) {
+     Dest = std::move(Tail);
+     return;
+     }
   Dest.reserve(Dest.size() + Tail.size());
   Dest.insert(std::end(Dest), std::begin(Tail), std::end(Tail));
 };

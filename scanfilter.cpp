@@ -3,6 +3,7 @@
  * See the README file for copyright information and how to reach the author.
  ******************************************************************************/
 #include <string>
+#include <vector>              // std::vector<>
 #include <iostream>
 #include <cmath>               // round()
 #include <vdr/device.h>        // cDevice
@@ -26,6 +27,7 @@ extern TNitData NitData;
 TChannels NewChannels;
 TChannels NewTransponders;
 TChannels ScannedTransponders;
+std::vector<TChannelListItem> ChannelListItems;
 
 int nextTransponders;
 
@@ -1182,7 +1184,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.HD_simulcast        = false;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
+                                ChannelListItems.push_back(item);
 
                                 dlog(5, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
@@ -1253,7 +1255,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                          ", SID:"  + IntToStr(item.service_id) +
                                          ", LID:"  + IntToStr(item.channel_list_id) +
                                          ", LCN:"  + IntToStr(item.LCN));
-                                   data.ChannelListItems.push_back(item);
+                                   ChannelListItems.push_back(item);
                                    }
                                 } // LCN loop
                              } // byte loop
@@ -1294,7 +1296,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.HD_simulcast        = HD_simulcast;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
+                                ChannelListItems.push_back(item);
 
                                 dlog(5, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
@@ -1332,7 +1334,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.HD_simulcast        = false;
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
-                                data.ChannelListItems.push_back(item);
+                                ChannelListItems.push_back(item);
                                 dlog(5, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
@@ -1402,7 +1404,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                          ", SID:"  + IntToStr(item.service_id) +
                                          ", LID:"  + IntToStr(item.channel_list_id) +
                                          ", LCN:"  + IntToStr(item.LCN));
-                                   data.ChannelListItems.push_back(item);
+                                   ChannelListItems.push_back(item);
                                    }
                                 } // LCN loop
                              } // byte loop
