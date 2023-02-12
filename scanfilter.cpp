@@ -576,7 +576,35 @@ void swap(TFrequencyListItem& a, TFrequencyListItem& b) {
   memcpy(&b, &c, sizeof(TFrequencyListItem));
 }
 
+/* std::sort */
+bool TChannelListItem::operator < (const TChannelListItem& rhs) {
+  if (channel_list_id != rhs.channel_list_id)
+     return channel_list_id < rhs.channel_list_id;
 
+  if (original_network_id != rhs.original_network_id)
+     return original_network_id < rhs.original_network_id;
+
+  if (transport_stream_id != rhs.transport_stream_id)
+     return transport_stream_id < rhs.transport_stream_id;
+
+  if (service_id != rhs.service_id)
+     return service_id < rhs.service_id;
+
+  if (HD_simulcast != rhs.HD_simulcast)
+     return HD_simulcast;
+
+  return false;
+}
+
+/* std::unique */
+bool TChannelListItem::operator == (const TChannelListItem& rhs) {
+  return
+    ( channel_list_id     == rhs.channel_list_id     ) and
+    ( original_network_id == rhs.original_network_id ) and
+    ( transport_stream_id == rhs.transport_stream_id ) and
+    ( service_id          == rhs.service_id          ) and
+    ( HD_simulcast        == rhs.HD_simulcast        );
+}
 
 
 void cNitScanner::ParseCellFrequencyLinks(uint16_t network_id, const unsigned char* Data, TList<TCell>& list) {

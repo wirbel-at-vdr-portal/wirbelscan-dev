@@ -96,6 +96,8 @@ struct TChannelListItem {
   bool HD_simulcast;
   int LCN;
   int LCN_minor;
+  bool operator <(const TChannelListItem& rhs);
+  bool operator==(const TChannelListItem& rhs);
 };
 
 struct TNitData {
