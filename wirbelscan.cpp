@@ -118,6 +118,7 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   else if (name == "ri")               wSetup.scan_remove_invalid  = constrain(std::stoi(Value), 0, 1);
   else if (name == "ue")               wSetup.scan_update_existing = constrain(std::stoi(Value), 0, 1);
   else if (name == "an")               wSetup.scan_append_new      = constrain(std::stoi(Value), 0, 1);
+  else if (name == "ParseLCN")         wSetup.ParseLCN             = std::stol(Value) != 0;
   else if (name == "preferred") {
      auto items = SplitStr(Value,';');
      for(size_t i=0; i<std::min(items.size(),wSetup.preferred.size()); i++)
