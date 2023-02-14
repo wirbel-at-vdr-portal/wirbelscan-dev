@@ -4,6 +4,7 @@
  ******************************************************************************/
 #include <string>
 #include <vector>              // std::vector<>
+#include <algorithm>           // std::sort, std::unique
 #include <iostream>
 #include <cmath>               // round()
 #include <vdr/device.h>        // cDevice
@@ -526,6 +527,7 @@ void cNitScanner::Action(void) {
   int nbytes = 0;
   int fd = device->OpenFilter(nit, SI_EXT::TABLE_ID_NIT_ACTUAL, 0xFF);
   unsigned char buffer[4096];
+  size_t items = ChannelListItems.size();
 
   while(Running() && active) {
      if (wait.Wait(10)) {
@@ -542,8 +544,15 @@ void cNitScanner::Action(void) {
         anyBytes = true;
         Process(buffer, nbytes);
         }
-     if (hasNIT)
+     if (hasNIT) {
+        if (ChannelListItems.size() > items) {
+           // new ChannelListItems, remove duplicates.
+           std::sort(ChannelListItems.begin(), ChannelListItems.end());
+           auto first_duplicate = std::unique(ChannelListItems.begin(), ChannelListItems.end());
+           ChannelListItems.erase(first_duplicate, ChannelListItems.end());
+           }
         break;
+        }
      }
   active = false;
   device->CloseFilter(fd);
