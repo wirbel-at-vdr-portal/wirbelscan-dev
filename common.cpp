@@ -299,7 +299,7 @@ TChannel::TChannel() :
      Inversion(999), Modulation(2), Pilot(999), Rolloff(999),
      StreamId(0), SystemId(0), DelSys(0), Transmission(999),
      MISO(0), Hierarchy(999), Symbolrate(0), PCR(0), TPID(0),
-     SID(0), ONID(0), NID(0), TID(0), RID(0), free_CA_mode(0),
+     SID(0), ONID(0), NID(0), TID(0), RID(0), LCN(-1), LCN_minor(-1), free_CA_mode(0),
      service_type(0xFFFF), OrbitalPos(0),
      reported(false), Tunable(false), Tested(false)
 {}

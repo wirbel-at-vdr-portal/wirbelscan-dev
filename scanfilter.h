@@ -100,6 +100,9 @@ struct TChannelListItem {
   bool operator==(const TChannelListItem& rhs);
 };
 
+// returns true, if GetLCN() assigned a new LCN to 'c'.
+bool GetLCN(TChannel* c);
+
 struct TNitData {
   int OrbitalPos;
   bool West;

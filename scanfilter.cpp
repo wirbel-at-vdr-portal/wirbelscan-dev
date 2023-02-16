@@ -615,6 +615,23 @@ bool TChannelListItem::operator == (const TChannelListItem& rhs) {
     ( HD_simulcast        == rhs.HD_simulcast        );
 }
 
+bool GetLCN(TChannel* c) {
+  if (c == nullptr)
+     return false;
+
+  for(auto& it:ChannelListItems) {
+     if ((it.original_network_id == c->ONID) and
+         (it.transport_stream_id == c->TID ) and
+         (it.service_id          == c->SID )) {
+        c->LCN       = it.LCN;
+        c->LCN_minor = it.LCN_minor;
+        return true;
+        }
+     }
+
+  return false;
+}
+
 
 void cNitScanner::ParseCellFrequencyLinks(uint16_t network_id, const unsigned char* Data, TList<TCell>& list) {
   int len = 2 + *(Data + 1);

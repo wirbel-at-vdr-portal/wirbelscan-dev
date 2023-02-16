@@ -166,6 +166,8 @@ public:
   int NID;                 // Network ID
   int TID;                 // Transport stream ID
   int RID;                 // just to mark invalid channels.
+  int LCN;                 // 'Logical Channel Number', usually -1 (invalid)
+  int LCN_minor;           // if used and LCN valid, the LCN part after the dot. -1 otherwise.
   int PMT;
   bool free_CA_mode;
   uint16_t service_type;
