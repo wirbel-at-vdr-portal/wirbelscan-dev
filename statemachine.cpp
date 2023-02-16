@@ -666,6 +666,24 @@ void cStateMachine::Action(void) {
                  }
               }
 
+           for(int i = 0; i < NewChannels.Count(); i++) {
+              if (NewChannels[i]->LCN == -1 and GetLCN(NewChannels[i]) and wSetup.verbosity > 4) {
+                 std::string s;
+
+                 s = "assigned LCN: " + FrontFill(IntToStr(NewChannels[i]->LCN),4);
+
+                 if (NewChannels[i]->LCN_minor > -1)
+                    s += "." + IntToStr(NewChannels[i]->LCN_minor);
+
+                 s += " = (ONID:TID:SID) " +
+                    IntToStr(NewChannels[i]->ONID) + ":" +
+                    IntToStr(NewChannels[i]->TID ) + ":" +
+                    IntToStr(NewChannels[i]->SID );
+
+                 dlog(5, s);
+                 }
+              }
+
            // delete data from current tp
            PatData.network_PID = 0x10;
            PatData.services.Clear();
