@@ -255,16 +255,6 @@ template<class T> inline void DeleteNullptr(T*& aClass) {
   delete temp;
 }
 
-// NOTE: this might go later to librepfunc as well.
-template<class T> void AppendToVector(std::vector<T>& Dest, std::vector<T>& Tail, bool move = false) {
-  if (move and Dest.empty()) {
-     Dest = std::move(Tail);
-     return;
-     }
-  Dest.reserve(Dest.size() + Tail.size());
-  Dest.insert(std::end(Dest), std::begin(Tail), std::end(Tail));
-};
-
 
 cDvbDevice* GetDvbDevice(cDevice* d);
 int dvbc_modulation(int index);
