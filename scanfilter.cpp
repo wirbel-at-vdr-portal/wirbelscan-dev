@@ -620,7 +620,7 @@ bool GetLCN(TChannel* c) {
      return false;
 
   for(auto& it:ChannelListItems) {
-     if ((it.original_network_id == c->ONID) and
+     if (((it.original_network_id == c->ONID) or (it.network_id == c->NID)) and
          (it.transport_stream_id == c->TID ) and
          (it.service_id          == c->SID )) {
         c->LCN       = it.LCN;
@@ -629,6 +629,7 @@ bool GetLCN(TChannel* c) {
         }
      }
 
+  dlog(5, "no LCN for " + IntToStr(c->SID) + ":" + IntToStr(c->ONID) + ":" + IntToStr(c->TID)); 
   return false;
 }
 
@@ -1240,7 +1241,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
 
-                                dlog(5, "logical channel"
+                                dlog(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
@@ -1352,7 +1353,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
 
-                                dlog(5, "logical channel"
+                                dlog(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
@@ -1389,12 +1390,12 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
-                                dlog(5, "logical channel"
+                                dlog(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
                                       ", LID:"  + IntToStr(item.channel_list_id) +
-                                      ", LCN:"  + IntToStr(item.LCN));
+                                      ", LCN:"  + IntToStr(item.LCN) + ",");
                                 }
                              }
                           }
