@@ -675,10 +675,10 @@ void cStateMachine::Action(void) {
                  if (NewChannels[i]->LCN_minor > -1)
                     s += "." + IntToStr(NewChannels[i]->LCN_minor);
 
-                 s += " = (ONID:TID:SID) " +
+                 s += " = (SID:ONID:TID) " +
+                    IntToStr(NewChannels[i]->SID ) + ":" +
                     IntToStr(NewChannels[i]->ONID) + ":" +
-                    IntToStr(NewChannels[i]->TID ) + ":" +
-                    IntToStr(NewChannels[i]->SID );
+                    IntToStr(NewChannels[i]->TID );
 
                  dlog(5, s);
                  }
