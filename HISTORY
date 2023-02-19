@@ -211,6 +211,7 @@ VDR Plugin 'wirbelscan' Revision History
   - 0.0.7 == 0.0.7-pre02
 
 
+
 2016-xx-xx
 -------------------------------------------------------------------------------
 * pvrinput support is removed, as no analog channels available anymore.
@@ -228,12 +229,16 @@ VDR Plugin 'wirbelscan' Revision History
   longer during scan.
 * T2: add scan loop
 
+
+
 2018-11-04
 -------------------------------------------------------------------------------
 * fix possible segfault, if remotely controlled (thanks to Luca Olivetti)
 * allow operation from positioner (thanks to Luca Olivetti)
 * silence a few useless vdr warnings during scan: "ERROR: channel data results in invalid ID!";
   as a channel scanner doesnt have any valid channel IDs at the beginning of its work.
+
+
 
 2020-05-03
 -------------------------------------------------------------------------------
@@ -247,9 +252,13 @@ VDR Plugin 'wirbelscan' Revision History
   Not that bad for an very old dtv scanner inside VDR's jail, using an
   emulated dvb device. :)
 
+
+
 2020-05-03
 -------------------------------------------------------------------------------
 * simplify InitSystems
+
+
 
 2020-12-06/2020-12-13
 -------------------------------------------------------------------------------
@@ -265,13 +274,19 @@ VDR Plugin 'wirbelscan' Revision History
 * fix bug introduced by wrong packaging
   Thanks to MarkusE @ vdr-portal.de
 
+
+
 2020-12-17
 -------------------------------------------------------------------------------
 * dynamite support broke satip support :(, fixed by removing dvb dev check.
 
+
+
 2020-12-22
 -------------------------------------------------------------------------------
 * add PMT Pid to TChannel - no change if used as a VDR Plugin.
+
+
 
 2021-02-18
 -------------------------------------------------------------------------------
@@ -288,6 +303,8 @@ VDR Plugin 'wirbelscan' Revision History
   - remove commented code in statemachine.c
 * increase version to 2021.02.18
 
+
+
 2021-03-07
 -------------------------------------------------------------------------------
 * countries.c:
@@ -300,10 +317,14 @@ VDR Plugin 'wirbelscan' Revision History
 * increase version to 2021.03.07
 * feed several files tru dos2unix - fixing line end. Why did it happen..?
 
+
+
 2021-07-14
 -------------------------------------------------------------------------------
 * common.c:
   - hexdump to stderr instead of stdout
+
+
 
 2021-10-09
 -------------------------------------------------------------------------------
@@ -358,6 +379,8 @@ VDR Plugin 'wirbelscan' Revision History
   - convert as much as possible to std::string, std::stringstream
   - bump version
 
+
+
 2021-11-28
 -------------------------------------------------------------------------------
 * wirbelscan.cpp
@@ -400,7 +423,80 @@ VDR Plugin 'wirbelscan' Revision History
 * New: preferred device per scan type, ie. sat, cable,..
 * bump version.
 
+
+
 2021-12-11
 -------------------------------------------------------------------------------
 * scanner.cpp
   - satellite fix: ValidSatIf() needs source to be set
+
+
+
+2022-01-05
+-------------------------------------------------------------------------------
+* scanner.cpp
+  - modify preferred device search messages
+* countries.cpp
+  - revise countries
+* scanner.cpp
+  - fix terr device search
+* scanner.cpp
+  - fix DVB-T only loop for non T2 devices
+
+
+
+2022-10-15
+-------------------------------------------------------------------------------
+* fix typos
+* Update README.md
+* remove unused func/variable 
+
+
+
+2022-10-16
+-------------------------------------------------------------------------------
+* fix typos
+
+
+
+2022-12-31
+-------------------------------------------------------------------------------
+* countries.{h,cpp}
+  - provide currently selected Alpha-3
+  - add Alpha-3 to cCountry
+* countries.cpp
+  - restore DVB-T* for France
+* si_ext.h
+  - add private_data_specifier values
+
+
+
+2022-01-21
+-------------------------------------------------------------------------------
+* prepare for private descriptors, outside of 300468 v1.15
+* use more distinct initialisation
+* Add notice about private descriptors
+* add parts of logical channel numbering
+* LogicalChannel doesnt need pure virtual
+* store current status: V2 to be modified
+* renamed loop member
+* add LCNs to TNitData
+* now we need #include <vector>
+* v2023.01.21
+
+
+
+2023-02-19
+-------------------------------------------------------------------------------
+* new setup option ParseLCN
+* preserve current state
+* debug, add unknown descriptors id
+* convert lcn list to global
+* add comparison operators
+* add new setup option parsing
+* remove duplicate LCNs
+* LCN assignment function
+* assign LCN to TChannel
+* ease LCN to service match
+* improve debug output
+* bump version
