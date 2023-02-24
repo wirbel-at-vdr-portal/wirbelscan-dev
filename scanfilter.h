@@ -181,6 +181,7 @@ public:
  * class cNitScanner
  ******************************************************************************/
 class cNitScanner : public ThreadBase {
+friend class cBatScanner;
 private:
   bool active;
   cDevice* device;
@@ -200,9 +201,22 @@ protected:
   virtual void Action(void);
 public:
   cNitScanner(cDevice* Parent, uint16_t network_PID, TNitData& Data, int Type);
-  ~cNitScanner();
+  virtual ~cNitScanner();
   bool Active(void) { return (active); };
   bool HasNIT(void) { return hasNIT; };
+};
+
+
+/*******************************************************************************
+ * class cBatScanner
+ ******************************************************************************/
+class cBatScanner : public cNitScanner {
+private:
+  cNitScanner* NIT;
+public:
+  cBatScanner(cNitScanner* Parent);
+  ~cBatScanner();
+  bool HasBAT(void) { return hasNIT; };
 };
 
 

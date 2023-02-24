@@ -502,6 +502,24 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
 
 
 /*******************************************************************************
+ * cBatScanner
+ ******************************************************************************/
+
+cBatScanner::cBatScanner(cNitScanner* Parent) :
+   cNitScanner(Parent->device, 0x11, Parent->data, Parent->type)
+{
+}
+
+cBatScanner::~cBatScanner() {
+
+}
+
+
+
+
+
+
+/*******************************************************************************
  * cNitScanner
  * basically this is cNitFilter from older vdr/nit.{h,c} with some changes
  ******************************************************************************/
