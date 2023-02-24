@@ -506,12 +506,11 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
  ******************************************************************************/
 
 cBatScanner::cBatScanner(cNitScanner* Parent) :
-   cNitScanner(Parent->device, 0x11, Parent->data, Parent->type)
+   cNitScanner(Parent->device, 0x11, Parent->data, Parent->type), NIT(Parent)
 {
 }
 
 cBatScanner::~cBatScanner() {
-
 }
 
 

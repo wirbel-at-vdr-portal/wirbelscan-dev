@@ -116,6 +116,7 @@ void cStateMachine::Action(void) {
   cScanReceiver* aReceiver = nullptr;
   cPatScanner* PatScanner = nullptr;
   cNitScanner* NitScanner = nullptr;
+  cBatScanner* BatScanner = nullptr;
   cSdtScanner* SdtScanner = nullptr;
   eState newState = state;
   cScanner* scanner = (cScanner*)parent;
@@ -326,10 +327,11 @@ void cStateMachine::Action(void) {
               NitData.OrbitalPos = initial->OrbitalPos;
               NitData.West       = initial->West;
               NitScanner = new cNitScanner(dev, PatData.network_PID, NitData, dvbtype);
+              BatScanner = new cBatScanner(NitScanner);
               SdtScanner = new cSdtScanner(dev, SdtData);
               }
            else {
-              if (!NitScanner->Active() and !SdtScanner->Active()) {
+              if (!NitScanner->Active() and !BatScanner->Active() and !SdtScanner->Active()) {
                  if (stop)
                     newState = eDetachReceiver;
                  else
