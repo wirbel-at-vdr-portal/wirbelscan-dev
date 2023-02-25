@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>              // std::vector<>
 #include <algorithm>           // std::sort, std::unique
+#include <mutex>               // std::mutex, std::lock_guard
 #include <iostream>
 #include <cmath>               // round()
 #include <vdr/device.h>        // cDevice
@@ -29,6 +30,7 @@ TChannels NewChannels;
 TChannels NewTransponders;
 TChannels ScannedTransponders;
 std::vector<TChannelListItem> ChannelListItems;
+std::mutex LCN_mutex;
 
 int nextTransponders;
 
@@ -506,7 +508,8 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
  ******************************************************************************/
 
 cBatScanner::cBatScanner(cNitScanner* Parent) :
-   cNitScanner(Parent->device, 0x11, Parent->data, Parent->type), NIT(Parent)
+   cNitScanner(Parent->device, 0x11, Parent->data, Parent->type,
+               "BAT", SI_EXT::TABLE_ID_BAT)
 {
 }
 
@@ -514,18 +517,15 @@ cBatScanner::~cBatScanner() {
 }
 
 
-
-
-
-
 /*******************************************************************************
  * cNitScanner
  * basically this is cNitFilter from older vdr/nit.{h,c} with some changes
  ******************************************************************************/
 
-cNitScanner::cNitScanner(cDevice* Parent, uint16_t network_PID, TNitData& Data, int Type) :
+cNitScanner::cNitScanner(cDevice* Parent, uint16_t network_PID, TNitData& Data, int Type,
+  const char* Name, int Id) :
   active(true), device(Parent), nit(network_PID), data(Data), type(Type), hasNIT(false),
-  anyBytes(false)
+  anyBytes(false), TableName(Name), TableID(Id)
 {
   first_crc32 = 0;
 
@@ -541,17 +541,21 @@ cNitScanner::~cNitScanner() {
 
 void cNitScanner::Action(void) {
   int count = 0;
+  int stop = 4000; // 4000 x 10msec = 40sec
   int nbytes = 0;
-  int fd = device->OpenFilter(nit, SI_EXT::TABLE_ID_NIT_ACTUAL, 0xFF);
+  int fd = device->OpenFilter(nit, TableID, 0xFF);
   unsigned char buffer[4096];
   size_t items = ChannelListItems.size();
+
+  if (TableID == SI_EXT::TABLE_ID_BAT)
+     stop = 1200; // 12 sec
 
   while(Running() && active) {
      if (wait.Wait(10)) {
         break;
         }
-     if (count++ > 4000) {   // 4000 x 10msec = 40sec
-        dlog(2, "NIT timeout");
+     if (count++ > stop) {
+        dlog(2, TableName + " timeout");
         break;
         }
      else if ((count > 1800) and not(anyBytes))
@@ -698,6 +702,7 @@ void cNitScanner::ParseCellFrequencyLinks(uint16_t network_id, const unsigned ch
      } 
 }
 
+
 void cNitScanner::Process(const unsigned char* Data, int Length) {
   SI::NIT nit(Data, false);
 
@@ -705,8 +710,13 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
      return;
 
   if (Data[0] != SI_EXT::TABLE_ID_NIT_ACTUAL and
-      Data[0] != SI_EXT::TABLE_ID_NIT_OTHER)
+      Data[0] != SI_EXT::TABLE_ID_NIT_OTHER and
+      Data[0] != SI_EXT::TABLE_ID_BAT)
      return;
+
+  std::string fctname(__PRETTY_FUNCTION__);
+  bool isBAT = (Data[0] == SI_EXT::TABLE_ID_BAT);
+  if (isBAT) ReplaceAll(fctname, "Nit","Bat");
 
   int len = nit.getLength();
   uint32_t crc32 = Data[len-4] << 24 | Data[len-3] << 16 | Data[len-2] << 8 | Data[len-1];
@@ -720,10 +730,9 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
      first_crc32 = crc32;
 
   if (wSetup.verbosity > 5)
-     hexdump(__PRETTY_FUNCTION__, Data, Length);
+     hexdump(fctname, Data, Length);
 
   uint32_t PrivateDataSpecifier = SI_EXT::private_data_specifier_Reserved;
-
   SI::NIT::TransportStream ts;
   for(SI::Loop::Iterator it; nit.transportStreamLoop.getNext(ts, it);) {
      SI::Descriptor* d;
@@ -792,6 +801,20 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
     // end dirty hack
 
      for(SI::Loop::Iterator it2; (d = ts.transportStreamDescriptors.getNext(it2));) {
+        if (isBAT)
+           switch((unsigned) d->getDescriptorTag()) {
+              case SI::BouquetNameDescriptorTag:
+                 break;
+              case SI::CountryAvailabilityDescriptorTag:
+                 break;
+              case SI::PrivateDataSpecifierDescriptorTag:
+                 break;
+              case 0x80 ... 0xFE:
+                 break;
+              default:
+                 continue; // skip NIT descriptors.
+              }
+
         switch((unsigned) d->getDescriptorTag()) {
            case SI::SatelliteDeliverySystemDescriptorTag: {
               if (type != SCAN_SATELLITE)
@@ -805,7 +828,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
               if ((west_flag != west) or ( abs(BCDtoDecimal(sd->getOrbitalPosition()) - orbital) > 2 )) {
                  char c = west_flag?'W':'E';
-                 dlog(4, "Skipping transportStreamDescriptor for S" +
+                 dlog2(4, "Skipping transportStreamDescriptor for S" +
                           FloatToStr(BCDtoDecimal(sd->getOrbitalPosition())/10.0, 1, 1, false) + c);
                  continue;
                  }
@@ -1209,7 +1232,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               if (type != SCAN_TERRESTRIAL)
                  continue;
 
-              dlog(0, "SI::CellListDescriptorTag in second loop.");
+              dlog2(0, "SI::CellListDescriptorTag in second loop.");
               break;
            case SI::FrequencyListDescriptorTag:
               break; // already handled
@@ -1218,12 +1241,12 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               uint32_t pdsv = (uint32_t) pds->getPrivateDataSpecifier();
 
               if (pdsv != PrivateDataSpecifier)
-                 dlog(5, "Second NIT loop: New private data specifier " + IntToHex(pdsv,2));
+                 dlog2(5, "Second " + TableName + " loop: New private data specifier " + IntToHex(pdsv,2));
 
               PrivateDataSpecifier = pdsv;
               } // PrivateDataSpecifierDescriptorTag
               break;
-           case 0x80 ... 0xFE:
+           case 0x80 ... 0xFE: {
               /* Private Descriptors 0x80 ... 0xFE.
                * Descriptors 0x80 ... 0xFE are not part of the DVB SI specs (for any SI table, not only NIT).
                * Each of them is defined *only* in the context of it's preceeding private data specifier.
@@ -1234,6 +1257,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
 
               if (not wSetup.ParseLCN)
                  break;
+
+              /* NIT and BAT may write into ChannelListItems in parallel.
+               * The mutex goes out of scope at the end of the block automatically.
+               */
+              const std::lock_guard<std::mutex> LockChannelListItems(LCN_mutex);
 
               switch(PrivateDataSpecifier) {
                  case SI_EXT::private_data_specifier_Singapore: {
@@ -1258,7 +1286,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
 
-                                dlog(6, "logical channel"
+                                dlog2(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
@@ -1285,7 +1313,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 channel_list_name.reserve(1 + channel_list_name_length);
                                 for(int i=0; i<channel_list_name_length; i++)
                                    channel_list_name += *C++;
-                                dlog(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
+                                dlog2(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
                                 }
                              else
                                 C += channel_list_name_length;
@@ -1302,7 +1330,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 // We found a neighboring countries logical channel list.
                                 len -= descriptor_length;
                                 C   += descriptor_length;
-                                dlog(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
+                                dlog2(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
                                 continue;
                                 }
 
@@ -1321,7 +1349,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN                 = ((u8 & 0x3) << 8) | *C++;
                                 item.LCN_minor           = -1; /* invalid */
                                 if (visible) {
-                                   dlog(5, "logical channel"
+                                   dlog2(5, "logical channel"
                                          ", ONID:" + IntToStr(item.original_network_id) +
                                          ", TSID:" + IntToStr(item.transport_stream_id) +
                                          ", SID:"  + IntToStr(item.service_id) +
@@ -1370,7 +1398,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
 
-                                dlog(6, "logical channel"
+                                dlog2(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
@@ -1386,8 +1414,11 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                        }
                     }
                     break;
-                 case SI_EXT::private_data_specifier_NorDig: {
-                    /* 0x29: NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland) */
+                 case SI_EXT::private_data_specifier_NorDig:
+                 case SI_EXT::private_data_specifier_ORS_1: {
+                    /* 0x29: NorDig Unified Requirements ver. 3.2 (Denmark, Finland, Iceland, Norway, Sweden, Irland)
+                     * 0x1B0: simpliTV (Austria)
+                     */
                     switch((unsigned) d->getDescriptorTag()) {
                        case SI_NORDIG::LogicalChannelDescriptorTag: {
                           hexdump("SI_NORDIG::LogicalChannelDescriptor", d->getData().getData(), d->getLength());
@@ -1407,7 +1438,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN                 = LogicalChannel.LCN();
                                 item.LCN_minor           = -1; /* invalid */
                                 ChannelListItems.push_back(item);
-                                dlog(6, "logical channel"
+                                dlog2(6, "logical channel"
                                       ", ONID:" + IntToStr(item.original_network_id) +
                                       ", TSID:" + IntToStr(item.transport_stream_id) +
                                       ", SID:"  + IntToStr(item.service_id) +
@@ -1434,7 +1465,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 channel_list_name.reserve(1 + channel_list_name_length);
                                 for(int i=0; i<channel_list_name_length; i++)
                                    channel_list_name += *C++;
-                                dlog(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
+                                dlog2(5, "*** new logical channel list (V2) '" + channel_list_name + "' ***");
                                 }
                              else
                                 C += channel_list_name_length;
@@ -1451,7 +1482,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 // We found a neighboring countries logical channel list.
                                 len -= descriptor_length;
                                 C   += descriptor_length;
-                                dlog(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
+                                dlog2(5, "Ignoring logical channel list: wrong country '" + country_code + "'");
                                 continue;
                                 }
 
@@ -1470,7 +1501,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                                 item.LCN                 = ((u8 & 0x3) << 8) | *C++;
                                 item.LCN_minor           = -1; /* invalid */
                                 if (visible) {
-                                   dlog(5, "logical channel"
+                                   dlog2(5, "logical channel"
                                          ", ONID:" + IntToStr(item.original_network_id) +
                                          ", TSID:" + IntToStr(item.transport_stream_id) +
                                          ", SID:"  + IntToStr(item.service_id) +
@@ -1490,10 +1521,10 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
                     break;
                  default:;
                  } // switch(PrivateDataSpecifier)
-
+              }
               break; // 0x80 ... 0xFE, user defined
            default:
-              dlog(5, "   NIT: unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
+              dlog2(5, "   " + TableName + ": unknown descriptor tag " + IntToHex(d->getDescriptorTag(),2));
            }
         DeleteNullptr(d);
         } // end TS descriptor loop

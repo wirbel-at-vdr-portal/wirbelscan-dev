@@ -195,12 +195,15 @@ private:
   bool west;
   uint16_t orbital;
   bool anyBytes;
+  std::string TableName;
+  uint8_t TableID;
   void ParseCellFrequencyLinks(uint16_t network_id, const unsigned char* Data, TList<TCell>& list);
 protected:
   virtual void Process(const unsigned char* Data, int Length);
   virtual void Action(void);
 public:
-  cNitScanner(cDevice* Parent, uint16_t network_PID, TNitData& Data, int Type);
+  cNitScanner(cDevice* Parent, uint16_t network_PID, TNitData& Data, int Type,
+              const char* Name = "NIT", int Id = 0x40);
   virtual ~cNitScanner();
   bool Active(void) { return (active); };
   bool HasNIT(void) { return hasNIT; };
@@ -212,7 +215,6 @@ public:
  ******************************************************************************/
 class cBatScanner : public cNitScanner {
 private:
-  cNitScanner* NIT;
 public:
   cBatScanner(cNitScanner* Parent);
   ~cBatScanner();

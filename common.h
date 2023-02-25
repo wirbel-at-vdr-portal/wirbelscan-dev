@@ -45,6 +45,7 @@
 
 
 #define dlog(level, str) do { _log(__PRETTY_FUNCTION__,__LINE__, level, str); } while(0)
+#define dlog2(level, str) do { _log(fctname.c_str()    ,__LINE__, level, str); } while(0)
 
 void _log(const char* function, int line, const int level, std::string);
 
