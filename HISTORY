@@ -500,3 +500,9 @@ VDR Plugin 'wirbelscan' Revision History
 * ease LCN to service match
 * improve debug output
 * bump version
+
+
+
+2023-06-03
+-------------------------------------------------------------------------------
+* add cstdint.h to countries.h
