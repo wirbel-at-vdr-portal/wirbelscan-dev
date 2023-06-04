@@ -503,6 +503,7 @@ VDR Plugin 'wirbelscan' Revision History
 
 
 
-2023-06-03
+2023-06-04
 -------------------------------------------------------------------------------
-* add cstdint.h to countries.h
+* add <cstdint> to countries.h, thanks to Manuel Reimer for pinging me
+* bump version
