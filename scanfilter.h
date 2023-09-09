@@ -5,6 +5,7 @@
 #pragma once
 #include <string>
 #include <cstdint>        // uint{8.16,32}_t
+#include <atomic>         // std::atomic<bool>
 #include <vdr/thread.h>   // cCondWait
 #include <vdr/sections.h> // cSectionSyncer
 #include "tlist.h"        // TList<T>
@@ -137,12 +138,12 @@ class cPatScanner : public ThreadBase {
 private:
   cDevice* device;
   struct TPatData& PatData;
-  bool isActive;
+  std::atomic<bool> isActive;
   cSectionSyncer Sync;
   std::string s;
   cCondWait wait;
   TChannel channel;
-  bool hasPAT;
+  std::atomic<bool> hasPAT;
   bool anyBytes;
 protected:
   virtual void Process(const unsigned char* Data, int Length);
