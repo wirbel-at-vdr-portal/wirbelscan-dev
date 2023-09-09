@@ -183,7 +183,7 @@ public:
  ******************************************************************************/
 class cNitScanner : public ThreadBase {
 private:
-  bool active;
+  std::atomic<bool> active;
   cDevice* device;
   uint16_t nit;
   std::string s;
@@ -191,7 +191,7 @@ private:
   TNitData& data;
   uint32_t first_crc32;
   int type;
-  bool hasNIT;
+  std::atomic<bool> hasNIT;
   bool west;
   uint16_t orbital;
   bool anyBytes;
