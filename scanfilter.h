@@ -163,8 +163,8 @@ class cPmtScanner : public ThreadBase {
 private:
   cDevice* device;
   TPmtData* data;
-  bool isActive;
-  bool jobDone;
+  std::atomic<bool> isActive;
+  std::atomic<bool> jobDone;
   std::string s;
   cCondWait wait;
 protected:
