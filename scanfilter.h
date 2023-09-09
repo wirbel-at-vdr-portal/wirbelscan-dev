@@ -212,13 +212,13 @@ public:
  ******************************************************************************/
 class cSdtScanner : public ThreadBase {
 private:
-  bool active;
+  std::atomic<bool> active;
   cDevice* device;
   TSdtData& data;
   std::string s;
   cCondWait wait;
   uint32_t first_crc32;
-  bool hasSDT;
+  std::atomic<bool> hasSDT;
   bool anyBytes;
 protected:
   virtual void Process(const unsigned char* Data, int Length);
