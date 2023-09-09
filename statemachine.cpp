@@ -176,6 +176,7 @@ void cStateMachine::Action(void) {
            Transponder->NID = nid;
            Transponder->SID = sid;
 
+           DeleteNullptr(aReceiver);
            aReceiver = new cScanReceiver();
            dev->AttachReceiver(aReceiver);
 
