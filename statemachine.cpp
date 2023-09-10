@@ -331,6 +331,9 @@ void cStateMachine::Action(void) {
               }
            else {
               if (!NitScanner->Active() and !SdtScanner->Active()) {
+                 DeleteNullptr(NitScanner);
+                 DeleteNullptr(SdtScanner);
+
                  if (stop)
                     newState = eDetachReceiver;
                  else
