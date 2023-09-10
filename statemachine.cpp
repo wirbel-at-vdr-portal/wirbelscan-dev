@@ -254,8 +254,9 @@ void cStateMachine::Action(void) {
               }
            else if (!PatScanner->Active()) {
               pmtstart = true;
-              if (stop or !PatScanner->HasPAT() or !PatData.services.Count()) {
-                 PatScanner = nullptr;
+              bool hasPAT = PatScanner->HasPAT();
+              DeleteNullptr(PatScanner);
+              if (stop or !hasPAT or !PatData.services.Count()) {
                  PmtScanners.Clear();
                  PmtData.Clear();
                  newState = eDetachReceiver;

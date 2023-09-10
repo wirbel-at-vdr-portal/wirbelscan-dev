@@ -248,9 +248,9 @@ void cPatScanner::Action(void) {
         break;
      }
 
-  isActive = false;
   device->CloseFilter(fd);
   fd = -1;
+  isActive = false;
 }
 
 
