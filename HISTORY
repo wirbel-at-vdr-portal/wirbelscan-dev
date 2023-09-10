@@ -507,3 +507,14 @@ VDR Plugin 'wirbelscan' Revision History
 -------------------------------------------------------------------------------
 * add <cstdint> to countries.h, thanks to Manuel Reimer for pinging me
 * bump version
+
+
+
+2023-xx-xx
+-------------------------------------------------------------------------------
+* use std::atomic<bool> for scanfilters instead of bool
+* move {active,isActive} to end of scanfilters Action()
+* early delete and set to nullptr any of the scanfilters
+  in statemachine.cpp (less memory required)
+* detach aReceiver from dev, before deleting it
+* bump version
