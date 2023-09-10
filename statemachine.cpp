@@ -176,7 +176,6 @@ void cStateMachine::Action(void) {
            Transponder->NID = nid;
            Transponder->SID = sid;
 
-           DeleteNullptr(aReceiver);
            aReceiver = new cScanReceiver();
            dev->AttachReceiver(aReceiver);
 
@@ -193,6 +192,7 @@ void cStateMachine::Action(void) {
               newState = eScanPat;
               }
            else {
+              dev->Detach(aReceiver);
               DeleteNullptr(aReceiver);
               tp->Tunable = false;
               newState = eNextTransponder;
