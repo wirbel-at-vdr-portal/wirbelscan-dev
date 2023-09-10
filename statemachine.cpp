@@ -271,7 +271,6 @@ void cStateMachine::Action(void) {
 
         case eScanPmt:
            if (pmtstart) {
-              PatScanner = nullptr;
               pmtstart = false;
               PmtScanners.Clear();
               PmtData.Clear();
