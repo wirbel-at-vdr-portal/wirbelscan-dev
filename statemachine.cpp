@@ -256,11 +256,8 @@ void cStateMachine::Action(void) {
               pmtstart = true;
               bool hasPAT = PatScanner->HasPAT();
               DeleteNullptr(PatScanner);
-              if (stop or !hasPAT or !PatData.services.Count()) {
-                 PmtScanners.Clear();
-                 PmtData.Clear();
+              if (stop or !hasPAT or !PatData.services.Count())
                  newState = eDetachReceiver;
-                 }
               else {
                  dlog(4, "searching " + IntToStr(PatData.services.Count()) + " services");
                  newState = eScanPmt;
@@ -306,7 +303,10 @@ void cStateMachine::Action(void) {
               if (finished < PmtScanners.Count())
                  break;
 
+              for(int i=0; i<PmtScanners.Count(); i++)
+                 DeleteNullptr(PmtScanners[i]);
               PmtScanners.Clear();
+
               tblstart = true;
               if (stop)
                  newState = eDetachReceiver;
