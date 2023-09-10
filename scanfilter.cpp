@@ -332,10 +332,10 @@ void cPmtScanner::Action(void) {
         Process(buffer, nbytes);
      }
 
-  jobDone = true;
-  isActive = false;
   device->CloseFilter(fd);
   fd = -1;
+  jobDone = true;
+  isActive = false;
 }
 
 void cPmtScanner::Process(const unsigned char* Data, int Length) {
