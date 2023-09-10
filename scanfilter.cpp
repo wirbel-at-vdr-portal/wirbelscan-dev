@@ -248,9 +248,9 @@ void cPatScanner::Action(void) {
         break;
      }
 
-  isActive = false;
   device->CloseFilter(fd);
   fd = -1;
+  isActive = false;
 }
 
 
@@ -332,10 +332,10 @@ void cPmtScanner::Action(void) {
         Process(buffer, nbytes);
      }
 
-  jobDone = true;
-  isActive = false;
   device->CloseFilter(fd);
   fd = -1;
+  jobDone = true;
+  isActive = false;
 }
 
 void cPmtScanner::Process(const unsigned char* Data, int Length) {
@@ -554,9 +554,9 @@ void cNitScanner::Action(void) {
         break;
         }
      }
-  active = false;
   device->CloseFilter(fd);
   Cancel();
+  active = false;
 }
 
 /* std::sort */
@@ -1556,9 +1556,9 @@ void cSdtScanner::Action(void) {
         break;
      }
 
-  active = false;
   device->CloseFilter(fd);
   fd = -1;
+  active = false;
 }
 
 void cSdtScanner::Process(const unsigned char* Data, int Length) {

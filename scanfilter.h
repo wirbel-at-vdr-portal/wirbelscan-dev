@@ -5,6 +5,7 @@
 #pragma once
 #include <string>
 #include <cstdint>        // uint{8.16,32}_t
+#include <atomic>         // std::atomic<bool>
 #include <vdr/thread.h>   // cCondWait
 #include <vdr/sections.h> // cSectionSyncer
 #include "tlist.h"        // TList<T>
@@ -137,12 +138,12 @@ class cPatScanner : public ThreadBase {
 private:
   cDevice* device;
   struct TPatData& PatData;
-  bool isActive;
+  std::atomic<bool> isActive;
   cSectionSyncer Sync;
   std::string s;
   cCondWait wait;
   TChannel channel;
-  bool hasPAT;
+  std::atomic<bool> hasPAT;
   bool anyBytes;
 protected:
   virtual void Process(const unsigned char* Data, int Length);
@@ -162,8 +163,8 @@ class cPmtScanner : public ThreadBase {
 private:
   cDevice* device;
   TPmtData* data;
-  bool isActive;
-  bool jobDone;
+  std::atomic<bool> isActive;
+  std::atomic<bool> jobDone;
   std::string s;
   cCondWait wait;
 protected:
@@ -182,7 +183,7 @@ public:
  ******************************************************************************/
 class cNitScanner : public ThreadBase {
 private:
-  bool active;
+  std::atomic<bool> active;
   cDevice* device;
   uint16_t nit;
   std::string s;
@@ -190,7 +191,7 @@ private:
   TNitData& data;
   uint32_t first_crc32;
   int type;
-  bool hasNIT;
+  std::atomic<bool> hasNIT;
   bool west;
   uint16_t orbital;
   bool anyBytes;
@@ -211,13 +212,13 @@ public:
  ******************************************************************************/
 class cSdtScanner : public ThreadBase {
 private:
-  bool active;
+  std::atomic<bool> active;
   cDevice* device;
   TSdtData& data;
   std::string s;
   cCondWait wait;
   uint32_t first_crc32;
-  bool hasSDT;
+  std::atomic<bool> hasSDT;
   bool anyBytes;
 protected:
   virtual void Process(const unsigned char* Data, int Length);

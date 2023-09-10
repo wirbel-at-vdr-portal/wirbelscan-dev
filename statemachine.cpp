@@ -192,6 +192,7 @@ void cStateMachine::Action(void) {
               newState = eScanPat;
               }
            else {
+              dev->Detach(aReceiver);
               DeleteNullptr(aReceiver);
               tp->Tunable = false;
               newState = eNextTransponder;
@@ -253,12 +254,10 @@ void cStateMachine::Action(void) {
               }
            else if (!PatScanner->Active()) {
               pmtstart = true;
-              if (stop or !PatScanner->HasPAT() or !PatData.services.Count()) {
-                 PatScanner = nullptr;
-                 PmtScanners.Clear();
-                 PmtData.Clear();
+              bool hasPAT = PatScanner->HasPAT();
+              DeleteNullptr(PatScanner);
+              if (stop or !hasPAT or !PatData.services.Count())
                  newState = eDetachReceiver;
-                 }
               else {
                  dlog(4, "searching " + IntToStr(PatData.services.Count()) + " services");
                  newState = eScanPmt;
@@ -269,7 +268,6 @@ void cStateMachine::Action(void) {
 
         case eScanPmt:
            if (pmtstart) {
-              PatScanner = nullptr;
               pmtstart = false;
               PmtScanners.Clear();
               PmtData.Clear();
@@ -305,7 +303,10 @@ void cStateMachine::Action(void) {
               if (finished < PmtScanners.Count())
                  break;
 
+              for(int i=0; i<PmtScanners.Count(); i++)
+                 DeleteNullptr(PmtScanners[i]);
               PmtScanners.Clear();
+
               tblstart = true;
               if (stop)
                  newState = eDetachReceiver;
@@ -330,6 +331,9 @@ void cStateMachine::Action(void) {
               }
            else {
               if (!NitScanner->Active() and !SdtScanner->Active()) {
+                 DeleteNullptr(NitScanner);
+                 DeleteNullptr(SdtScanner);
+
                  if (stop)
                     newState = eDetachReceiver;
                  else

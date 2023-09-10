@@ -37,3 +37,10 @@
 # not part of package.
 README.md
 *.pot
+
+# texts, logs, patches
+*.diff
+*.patch
+*.txt
+*.text
+*.log
