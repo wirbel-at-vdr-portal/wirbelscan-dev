@@ -510,7 +510,7 @@ VDR Plugin 'wirbelscan' Revision History
 
 
 
-2023-xx-xx
+2023-10-15
 -------------------------------------------------------------------------------
 * use std::atomic<bool> for scanfilters instead of bool
 * move {active,isActive} to end of scanfilters Action()
