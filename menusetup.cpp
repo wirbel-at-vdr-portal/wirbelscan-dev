@@ -15,6 +15,7 @@
 #include "wirbelscan.h"
 #include "scanner.h"
 #include "common.h"
+#include "wirbelscan_services.h"
 
 using namespace COUNTRY;
 extern cScanner* Scanner;
@@ -564,7 +565,14 @@ bool DoScan(int DVB_Type) {
      return false;
      }
   wSetup.InitSystems();
-  if (DVB_Type == SCAN_NO_DEVICE || ! wSetup.systems[DVB_Type]) {
+  if (DVB_Type == SCAN_TRANSPONDER) {
+     WIRBELSCAN_SERVICE::cUserTransponder t(&wSetup.user[0]);
+     if (! wSetup.systems[t.Type()]) {
+        dlog(0, "ERROR: no device found");
+        return false;
+        }
+     }
+  else if (DVB_Type == SCAN_NO_DEVICE || ! wSetup.systems[DVB_Type]) {
      dlog(0, "ERROR: no device found");
      return false;
      }
