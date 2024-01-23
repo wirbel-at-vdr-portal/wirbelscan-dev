@@ -518,3 +518,18 @@ VDR Plugin 'wirbelscan' Revision History
   in statemachine.cpp (less memory required)
 * detach aReceiver from dev, before deleting it
 * bump version
+
+
+
+2024-0x-xx
+-------------------------------------------------------------------------------
+* added configuration for signal wait time and lock timeout.
+* bumped service version for get/set setup, GetSetup#XXXX/SetSetup#XXXX;
+  plugins using the wirbelscan service interface member 'setup' should be
+  recompiled with the current version of wirbelscan_services.h.
+  Otherwise, any call to
+     bool cPluginWirbelscan::Service(const char* id, void* Data)
+  with id = GetSetup or SetSetup will fail.
+  Ideally, their sources should be also touched, such that the new members of
+  cWirbelscanScanSetup named SignalWaitTime and LockTimeout are available in the
+  controlling plugin.

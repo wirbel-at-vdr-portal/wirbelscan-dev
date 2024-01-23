@@ -973,9 +973,9 @@ void cScanner::Action(void) {
           if (MenuScanning)
              MenuScanning->SetStr(0, false);
 
-          mSleep(1000);
+          mSleep(wSetup.SignalWaitTime * 1000);
           if (isSatip or GetFrontendStatus(dev) & FE_HAS_SIGNAL) 
-             lock = dev->HasLock(3000);
+             lock = dev->HasLock(wSetup.LockTimeout * 1000);
           else
              lock = false;
 

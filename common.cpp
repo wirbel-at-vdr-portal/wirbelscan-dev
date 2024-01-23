@@ -48,6 +48,8 @@ cMySetup::cMySetup(void) {
   scan_update_existing = false;
   scan_append_new      = true;
   ParseLCN             = false;
+  SignalWaitTime       = 1;
+  LockTimeout          = 3;
 }
 
 void cMySetup::InitSystems(void) {

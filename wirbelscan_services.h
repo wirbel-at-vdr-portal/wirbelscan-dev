@@ -25,7 +25,7 @@ namespace WIRBELSCAN_SERVICE {
 #define SInfo    "GetVersion"      // plugin version and service api
 #define SCommand "DoCmd#0001"      // command api 0001
 #define SStatus  "Status#0003"     // query status
-#define SSetup   "Setup#0002"      // get/set setup, GetSetup#XXXX/SetSetup#XXXX
+#define SSetup   "Setup#0003"      // get/set setup, GetSetup#XXXX/SetSetup#XXXX
 #define SCountry "Country#0001"    // get list of country IDs and Names
 #define SSat     "Sat#0001"        // get list of satellite IDs and Names
 #define SUser    "User#0002"       // get/set single user transponder, GetUser#XXXX/SetUser#XXXX
@@ -102,7 +102,9 @@ typedef struct {
   uint16_t SatId;                                // the id according to satellite, found in list,         see wirbelscan_GetSat
   uint32_t scanflags;                            // bitwise flag of wanted channels: TV = (1 << 0), RADIO = (1 << 1), FTA = (1 << 2), SCRAMBLED = (1 << 4), HDTV = (1 << 5)
   uint16_t ATSC_type;                            // VSB = 0, QAM = 1, both VSB+QAM = 2
-  uint16_t stuffing[6];                          // do not use.
+  uint16_t SignalWaitTime;                       // 0 = default, 1..5 time to expect some signal after tune in seconds, > 5 invalid.
+  uint16_t LockTimeout;                          // 0 = default, 1..10 time to expect full lock after signal was reported in seconds, > 10 invalid.
+  uint16_t stuffing[4];                          // do not use.
 } cWirbelscanScanSetup;
 
 /* --- wirbelscan_GetCountry, wirbelscan_GetSat ------------------------------

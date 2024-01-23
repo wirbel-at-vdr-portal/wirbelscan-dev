@@ -184,8 +184,8 @@ void cStateMachine::Action(void) {
            tp->Tested = true;
            tp->PrintTransponder(s);
 
-           mSleep(1000);
-           if (dev->HasLock(3000)) {
+           mSleep(wSetup.SignalWaitTime * 1000);
+           if (dev->HasLock(wSetup.LockTimeout * 1000)) {
               dev->SetOccupied(90);
               dlog(4, "lock.");
               tp->Tunable = true;

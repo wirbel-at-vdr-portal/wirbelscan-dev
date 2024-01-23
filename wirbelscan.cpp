@@ -119,6 +119,8 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   else if (name == "ue")               wSetup.scan_update_existing = constrain(std::stoi(Value), 0, 1);
   else if (name == "an")               wSetup.scan_append_new      = constrain(std::stoi(Value), 0, 1);
   else if (name == "ParseLCN")         wSetup.ParseLCN             = std::stol(Value) != 0;
+  else if (name == "SignalWaitTime")   wSetup.SignalWaitTime       = constrain(std::stoi(Value), 1, 5);
+  else if (name == "LockTimeout")      wSetup.LockTimeout          = constrain(std::stoi(Value), 1, 10);
   else if (name == "preferred") {
      auto items = SplitStr(Value,';');
      for(size_t i=0; i<std::min(items.size(),wSetup.preferred.size()); i++)
@@ -157,6 +159,8 @@ void cPluginWirbelscan::StoreSetup(void) {
   SetupStore("ri",              wSetup.scan_remove_invalid);
   SetupStore("ue",              wSetup.scan_update_existing);
   SetupStore("an",              wSetup.scan_append_new);
+  SetupStore("SignalWaitTime",  wSetup.SignalWaitTime);
+  SetupStore("LockTimeout",     wSetup.LockTimeout);
   SetupStore("preferred",       preferred.c_str());
   Setup.Save();
 }
@@ -258,11 +262,20 @@ bool cPluginWirbelscan::Service(const char* id, void* Data) {
         d->SatId           = wSetup.SatIndex;
         d->scanflags       = wSetup.scanflags;
         d->ATSC_type       = wSetup.ATSC_type;
+        d->SignalWaitTime  = wSetup.SignalWaitTime;
+        d->LockTimeout     = wSetup.LockTimeout;
         return true;
         }
      case 4: { // set setup
         if (! Data) return true; // check for support.
         cWirbelscanScanSetup* d = (cWirbelscanScanSetup*) Data;
+
+        if (d->SignalWaitTime < 1 or d->SignalWaitTime > 5)
+           d->SignalWaitTime = 1;
+
+        if (d->LockTimeout < 1 or d->LockTimeout > 10)
+           d->LockTimeout = 3;
+
         wSetup.verbosity       = d->verbosity;
         wSetup.logFile         = d->logFile;
         wSetup.DVB_Type        = (int) d->DVB_Type;
@@ -274,6 +287,8 @@ bool cPluginWirbelscan::Service(const char* id, void* Data) {
         wSetup.SatIndex        = d->SatId;
         wSetup.scanflags       = d->scanflags;
         wSetup.ATSC_type       = d->ATSC_type;
+        wSetup.SignalWaitTime  = d->SignalWaitTime;
+        wSetup.LockTimeout     = d->LockTimeout;
         return true;
         }
      case 5: { // get sat

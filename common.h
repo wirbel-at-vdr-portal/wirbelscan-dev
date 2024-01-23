@@ -236,6 +236,8 @@ public:
   int scan_append_new;
   bool ParseLCN;
   std::array<std::string,5> preferred;
+  int SignalWaitTime;
+  int LockTimeout;
 public:
   cMySetup(void);
   void InitSystems(void);

@@ -156,6 +156,8 @@ cMenuSettings::cMenuSettings(void) {
   SetSection(tr("Setup"));
   AddCategory(tr("General"));
   Add(new cMenuEditStraItem(tr("Source Type"),        &wSetup.DVB_Type,  DVB_Types.size()-1, DVB_Types.data()));
+  Add(new cMenuEditIntItem (tr("Signal Wait Time"),   &wSetup.SignalWaitTime, 1, 5));
+  Add(new cMenuEditIntItem (tr("Lock Timeout"),       &wSetup.LockTimeout, 1, 10));
   Add(new cMenuEditIntItem (tr("verbosity"),          &wSetup.verbosity, 0, 6));
   Add(new cMenuEditStraItem(tr("logfile"),            &wSetup.logFile,   logfiles.size(), logfiles.data()));
 
