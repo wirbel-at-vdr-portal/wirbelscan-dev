@@ -533,3 +533,4 @@ VDR Plugin 'wirbelscan' Revision History
   Ideally, their sources should be also touched, such that the new members of
   cWirbelscanScanSetup named SignalWaitTime and LockTimeout are available in the
   controlling plugin.
+* TP update on S19E2
