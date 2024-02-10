@@ -376,8 +376,9 @@ void cStateMachine::Action(void) {
                  NitData.transport_streams[i]->reported = true;
                  NitData.transport_streams[i]->PrintTransponder(s);
                  std::string is_wrong;
-                 if (abs(NitData.transport_streams[i]->OrbitalPos - initial->OrbitalPos) > 5)
-                    is_wrong = "WRONG SATELLITE: ";
+                 if ( (abs(NitData.transport_streams[i]->OrbitalPos - initial->OrbitalPos) > 5) &&
+                      (NitData.transport_streams[i]->OrbitalPos != -(initial->OrbitalPos)) )
+                    is_wrong = "WRONG SATELLITE ( " + IntToStr(initial->OrbitalPos) + " | " + IntToStr(NitData.transport_streams[i]->OrbitalPos) + " ): ";
                  dlog(0, "NIT: " + is_wrong + "'" + s + "'" + 
                          ", NID = "  + IntToStr(NitData.transport_streams[i]->NID)  +
                          ", ONID = " + IntToStr(NitData.transport_streams[i]->ONID) +
