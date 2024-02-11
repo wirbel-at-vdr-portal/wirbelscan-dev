@@ -385,6 +385,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
                     SI::ISO639LanguageDescriptor* ld = (SI::ISO639LanguageDescriptor*) d;
                     SI::ISO639LanguageDescriptor::Language l;
                     char b[16], *s = b;
+                    b[0] = '\0'; // Warning: Initialize as empty string!
                     int n = 0;
                     for(SI::Loop::Iterator it; ld->languageLoop.getNext(l, it);) {
                        if (*ld->languageCode != '-') {
@@ -426,6 +427,7 @@ void cPmtScanner::Process(const unsigned char* Data, int Length) {
                     break;
                  case SI::SubtitlingDescriptorTag: {
                     char b[16], *s = b;
+                    b[0] = '\0'; // Warning: Initialize as empty string!
                     TPid spid;
                     spid.PID = stream.getPid();
                     SI::SubtitlingDescriptor* sd = (SI::SubtitlingDescriptor*) d;
