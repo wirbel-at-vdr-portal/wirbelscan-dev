@@ -534,3 +534,4 @@ VDR Plugin 'wirbelscan' Revision History
   cWirbelscanScanSetup named SignalWaitTime and LockTimeout are available in the
   controlling plugin.
 * TP update on S19E2
+* fixed the case when a language descriptor is empty (random incorrect lang)
