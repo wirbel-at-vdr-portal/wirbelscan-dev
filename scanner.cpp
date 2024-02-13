@@ -447,12 +447,14 @@ void cScanner::Action(void) {
            }
         if (t2Support)
            dlog(5, "DVB-T2 supported");
-        else
+        else {
+           wSetup.enable_s2 = false;
            dlog(0, "WARN: you are using an outdated DVB device: no DVB-T2 support.");
+           }
 
         // use mod as system T/T2 to avoid a further loop.
         // min = T2, max = T
-        modulation_min = t2Support ? 0 : 1;
+        modulation_min = (t2Support && wSetup.enable_s2) ? 0 : 1;
         modulation_max = 1;
         sys_parm = 0;
         // use srate as plp 0/1 to avoid a further loop.

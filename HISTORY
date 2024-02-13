@@ -535,3 +535,4 @@ VDR Plugin 'wirbelscan' Revision History
   controlling plugin.
 * TP update on S19E2
 * fixed the case when a language descriptor is empty (random incorrect lang)
+* add support for configuring the use of gen2 modulations with DVB-T/T2 tuners
