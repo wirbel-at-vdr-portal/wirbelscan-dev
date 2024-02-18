@@ -38,7 +38,6 @@ cMySetup::cMySetup(void) {
   DVBC_Network_PID     = 0x10;           /* as 300486                     */
   CountryIndex         = COUNTRY::txt_to_country("DE");
   SatIndex             = txt_to_satellite("S19E2");
-  enable_s2            = 1;
   ATSC_type            = 0;              /* VSB                           */
   logFile              = STDOUT;         /* log errors/messages to stdout */
   scanflags            = SCAN_TV | SCAN_RADIO | SCAN_FTA | SCAN_SCRAMBLED;

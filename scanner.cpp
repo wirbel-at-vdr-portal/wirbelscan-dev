@@ -606,7 +606,7 @@ void cScanner::Action(void) {
            caps_s2 = 1;
            }
         else
-           wSetup.enable_s2 = false;
+           caps_s2 = 0;
 
         // channel means here: transponder,
         // last channel == (item_count - 1) since we're counting from 0
@@ -875,7 +875,7 @@ void cScanner::Action(void) {
                 ///orbital_position = sat_list[this_channellist].orbital_position;
                 ///west_east_flag   = sat_list[this_channellist].west_east_flag;
                 if (sat_list[this_channellist].items[channel].modulation_system == 6) {
-                   if (!(caps_s2) || (wSetup.enable_s2 == 0)) {
+                   if (not(caps_s2)) {
                       dlog(4, IntToStr(sat_list[this_channellist].items[channel].intermediate_frequency) +
                               ": skipped (no S2 support)");
                       thisChannel++;

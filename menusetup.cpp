@@ -191,7 +191,6 @@ cMenuSettings::cMenuSettings(void) {
      AddCategory(tr("Satellite"));
      Add(new cMenuEditStraItem(tr("Sat Device"),       &map[dmap['S']].index, map[dmap['S']].names.size(), map[dmap['S']].names.data()));
      Add(new cMenuEditStraItem(tr("Satellite"),        &wSetup.SatIndex, SatNames.size(), SatNames.data()));
-     Add(new cMenuEditBoolItem(tr("DVB-S2"),           &wSetup.enable_s2));
      }
 
   AddCategory(tr("Scan Mode"));

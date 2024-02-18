@@ -109,7 +109,7 @@ bool cPluginWirbelscan::SetupParse(const char* Name, const char* Value) {
   else if (name == "DVBC_QAM")         wSetup.DVBC_QAM             = constrain(std::stoi(Value), 0, 4);
   else if (name == "CountryIndex")     wSetup.CountryIndex         = constrain(std::stoi(Value), 0, (int)COUNTRY::country_count()-1);
   else if (name == "SatIndex")         wSetup.SatIndex             = constrain(std::stoi(Value), 0, (int)sat_count()-1);
-  else if (name == "enable_s2")        wSetup.enable_s2            = constrain(std::stoi(Value), 0, 1);
+  else if (name == "enable_s2")        ;
   else if (name == "ATSC_type")        wSetup.ATSC_type            = constrain(std::stoi(Value), 0, 2);
   else if (name == "scanflags")        wSetup.scanflags            = constrain(std::stoi(Value), 0, 255);
   else if (name == "user0")            wSetup.user[0]              = std::stol(Value);
@@ -150,7 +150,6 @@ void cPluginWirbelscan::StoreSetup(void) {
   SetupStore("DVBC_Network_PID",wSetup.DVBC_Network_PID);
   SetupStore("CountryIndex",    wSetup.CountryIndex);
   SetupStore("SatIndex",        wSetup.SatIndex);
-  SetupStore("enable_s2",       wSetup.enable_s2);
   SetupStore("ATSC_type",       wSetup.ATSC_type);
   SetupStore("scanflags",       wSetup.scanflags);
   SetupStore("user0",           wSetup.user[0]);
@@ -433,7 +432,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
      wSetup.DVBC_QAM         = std::stol(items[6]);
      wSetup.CountryIndex     = std::stol(items[7]);
      wSetup.SatIndex         = std::stol(items[8]);
-     wSetup.enable_s2        = std::stol(items[9]);
+   //removed:enable_s2                   items[9]
      wSetup.ATSC_type        = std::stol(items[10]);
      wSetup.scanflags        = std::stol(items[11]);
 
@@ -447,7 +446,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
          IntToStr(wSetup.DVBC_QAM)        + ':' +
          IntToStr(wSetup.CountryIndex)    + ':' +
          IntToStr(wSetup.SatIndex)        + ':' +
-         IntToStr(wSetup.enable_s2)       + ':' +
+         "1"                              + ':' +
          IntToStr(wSetup.ATSC_type)       + ':' +
          IntToStr(wSetup.scanflags);
      return s.c_str();
@@ -467,7 +466,7 @@ cString cPluginWirbelscan::SVDRPCommand(const char* Command, const char* Option,
          IntToStr(wSetup.DVBC_QAM)        + ':' +
          IntToStr(wSetup.CountryIndex)    + ':' +
          IntToStr(wSetup.SatIndex)        + ':' +
-         IntToStr(wSetup.enable_s2)       + ':' +
+         "1"                              + ':' +
          IntToStr(wSetup.ATSC_type)       + ':' +
          IntToStr(wSetup.scanflags)       + '\n' +
          "commands api:   " + std::string(SCommand) + "\n"

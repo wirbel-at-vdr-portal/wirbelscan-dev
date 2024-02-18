@@ -224,7 +224,6 @@ public:
   int DVBC_Network_PID;
   int CountryIndex;
   int SatIndex;
-  int enable_s2;
   int ATSC_type;
   uint32_t scanflags;
   bool update;
