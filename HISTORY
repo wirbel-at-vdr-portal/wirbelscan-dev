@@ -535,3 +535,4 @@ VDR Plugin 'wirbelscan' Revision History
   controlling plugin.
 * TP update on S19E2
 * fixed the case when a language descriptor is empty (random incorrect lang)
+* improve wrong satellite miss detection with some NIT tables

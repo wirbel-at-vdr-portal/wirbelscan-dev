@@ -837,8 +837,7 @@ void cNitScanner::Process(const unsigned char* Data, int Length) {
               transponder->DelSys = System;
               transponder->Rolloff = RollOff;
               transponder->OrbitalPos = BCDtoDecimal(sd->getOrbitalPosition());
-              if (!sd->getWestEastFlag())
-                 transponder->OrbitalPos *= -1;
+              transponder->West = west_flag;
 
               bool found = false;
               for(int i = 0; !found and i < data.transport_streams.Count(); i++) {
