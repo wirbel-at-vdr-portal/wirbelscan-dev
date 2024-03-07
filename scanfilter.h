@@ -97,8 +97,8 @@ struct TChannelListItem {
   bool HD_simulcast;
   int LCN;
   int LCN_minor;
-  bool operator <(const TChannelListItem& rhs);
-  bool operator==(const TChannelListItem& rhs);
+  bool operator <(const TChannelListItem& rhs) const;
+  bool operator==(const TChannelListItem& rhs) const;
 };
 
 // returns true, if GetLCN() assigned a new LCN to 'c'.
