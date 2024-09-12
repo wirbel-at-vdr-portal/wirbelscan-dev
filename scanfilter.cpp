@@ -261,7 +261,12 @@ void cPatScanner::Process(const unsigned char* Data, int Length) {
      return;
      }
 
-  if (!Sync.Sync(tsPAT.getVersionNumber(), tsPAT.getSectionNumber(), tsPAT.getLastSectionNumber())) {
+  /* Call cSectionSyncer::Check() to see whether a given section needs processing.
+   * Once the section has been processed, call cSectionSyncer::Processed() to mark it as such. If,
+   * for any reason, processing is not completed after calling Check(), don't call Processed() and
+   * restart by Check() again later.
+   */
+  if (!Sync.Check(tsPAT.getVersionNumber(), tsPAT.getSectionNumber())) {
      dlog(4, "cPatScanner: wait for PAT Sync");
      return;
      }
@@ -284,8 +289,8 @@ void cPatScanner::Process(const unsigned char* Data, int Length) {
      PatData.services.Add(s);
      }
 
-  // all parts of PAT seen.
-  if (tsPAT.getSectionNumber() == tsPAT.getLastSectionNumber())
+  // all PAT sections done?
+  if (Sync.Processed(tsPAT.getSectionNumber(), tsPAT.getLastSectionNumber()))
      hasPAT = true;
 }
 

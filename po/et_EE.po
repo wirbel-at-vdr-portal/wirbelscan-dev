@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: VDR 1.5.7\n"
 "Report-Msgid-Bugs-To: <see README>\n"
-"POT-Creation-Date: 2021-11-17 14:39+0100\n"
+"POT-Creation-Date: 2024-09-11 10:46+0200\n"
 "PO-Revision-Date: 2007-09-10 19:43+0100\n"
 "Last-Translator: wk\n"
 "Language-Team:  <vdr@linuxtv.org>\n"
@@ -36,6 +36,12 @@ msgstr "General"
 
 msgid "Source Type"
 msgstr "Source Type"
+
+msgid "Signal Wait Time"
+msgstr ""
+
+msgid "Lock Timeout"
+msgstr ""
 
 msgid "verbosity"
 msgstr "verbosity"
@@ -97,9 +103,6 @@ msgstr "Satellite"
 msgid "Sat Device"
 msgstr ""
 
-msgid "DVB-S2"
-msgstr "DVB-S2"
-
 msgid "Scan Mode"
 msgstr ""
 
@@ -131,6 +134,9 @@ msgstr "Log Messages"
 
 msgid "CANNOT SCAN - No device!"
 msgstr "CANNOT SCAN - No device!"
+
+#~ msgid "DVB-S2"
+#~ msgstr "DVB-S2"
 
 #~ msgid "Off"
 #~ msgstr "Off"
