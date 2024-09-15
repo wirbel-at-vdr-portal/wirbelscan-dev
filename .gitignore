@@ -3,15 +3,10 @@
 .dependencies
 
 # Compiled Object files
-*.slo
 *.lo
 *.o
 *.obj
 *.mo
-
-# Precompiled Headers
-*.gch
-*.pch
 
 # Compiled Dynamic libraries
 *.so
@@ -19,20 +14,14 @@
 *.dylib
 *.dll
 
-# Fortran module files
-*.mod
-*.smod
 
 # Compiled Static libraries
-*.lai
 *.la
 *.a
 *.lib
 
 # Executables
-*.exe
 *.out
-*.app
 
 # not part of package.
 README.md
@@ -44,3 +33,14 @@ README.md
 *.txt
 *.text
 *.log
+
+#/******************************************************************************
+# * Packages
+# *****************************************************************************/
+
+*.7z
+*.tgz
+*.tar.gz
+*.tar.bz2
+*.tar.xz
+*.zip
