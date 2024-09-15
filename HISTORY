@@ -521,7 +521,7 @@ VDR Plugin 'wirbelscan' Revision History
 
 
 
-2024-0x-xx
+2024-09-15
 -------------------------------------------------------------------------------
 * added configuration for signal wait time and lock timeout.
 * bumped service version for get/set setup, GetSetup#XXXX/SetSetup#XXXX;
@@ -537,3 +537,11 @@ VDR Plugin 'wirbelscan' Revision History
 * fixed the case when a language descriptor is empty (random incorrect lang)
 * removed cSectionSyncer::Sync(), the plugin needs now at least vdr-2.5.2
 
+
+
+2024-xx-xx
+-------------------------------------------------------------------------------
+* update .gitignore
+* get rid of VDR-2.5.2 requirement by VDR-2.7.1 deprecating features, by adding
+  a local copy of the old cSectionSyncer, the new class cPatScanner::PatSync.
+  The plugin requires now 2.3.1+ only again, instead of 2.5.2+.

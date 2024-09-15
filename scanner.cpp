@@ -15,8 +15,7 @@
 #include "statemachine.h"
 #include "countries.h"
 #include "wirbelscan_services.h"
-#if VDRVERSNUM < 20502
-   /* cSectionSyncer::Sync() deprecated */
+#if VDRVERSNUM < 20301
    #error "Your VDR version is too old - STOP."
 #endif
 

@@ -136,10 +136,48 @@ struct TSdtData {
  ******************************************************************************/
 class cPatScanner : public ThreadBase {
 private:
+  class PatSync {
+  private:
+  /* PatSync is the old & down stripped version of cSectionSyncer */
+    int currentVersion;
+    bool synced;
+    uint8_t sections[32];
+    void SetSectionFlag(uint8_t Section, bool On) {
+       if (On)
+          sections[Section / 8] |=  (1 << (Section % 8));
+       else
+          sections[Section / 8] &= ~(1 << (Section % 8));
+       }
+    bool GetSectionFlag(uint8_t Section) {
+       return sections[Section / 8] & (1 << (Section % 8));
+       }
+  public:
+    PatSync(void) { Reset(); }
+    void Reset(void) {
+       currentVersion = -1;
+       synced = false;
+       memset(sections, 0, sizeof(sections));
+       }
+    bool Sync(uint8_t Version, int Number, int LastNumber) {
+       if (Version != currentVersion) {
+          Reset();
+          currentVersion = Version;
+          }
+       if (!synced) {
+          if (Number != 0)
+             return false;
+          else
+             synced = true;
+          }
+       bool Result = !GetSectionFlag(Number);
+       SetSectionFlag(Number, true);
+       return Result;
+       }
+  };
   cDevice* device;
   struct TPatData& PatData;
   std::atomic<bool> isActive;
-  cSectionSyncer Sync;
+  PatSync Sync;
   std::string s;
   cCondWait wait;
   TChannel channel;
