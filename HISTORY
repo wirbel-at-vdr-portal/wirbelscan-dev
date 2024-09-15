@@ -535,5 +535,5 @@ VDR Plugin 'wirbelscan' Revision History
   controlling plugin.
 * TP update on S19E2
 * fixed the case when a language descriptor is empty (random incorrect lang)
-* removed cSectionSyncer::Sync(), the plugin needs now at least vdr-1.5.2
+* removed cSectionSyncer::Sync(), the plugin needs now at least vdr-2.5.2
 

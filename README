@@ -30,7 +30,8 @@ This plugin performs channel scans for digital tv cards.
 
 Requirements:
 ------------------------------------------------------------------------
- - VDR Version >= 1.7.x (choose latest, if unshure)
+ - VDR Version >= 1.7.x for wirbelscan <= 2023.10.15
+ - VDR Version >= 2.5.2 for wirbelscan > 2023.10.15
  - developer versions of plugin: vdr >= 2.3.1
  - librepfunc >= 1.0.0 (https://github.com/wirbel-at-vdr-portal/librepfunc)
 
