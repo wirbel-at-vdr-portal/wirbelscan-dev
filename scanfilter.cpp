@@ -586,7 +586,7 @@ void swap(TFrequencyListItem& a, TFrequencyListItem& b) {
 }
 
 /* std::sort */
-bool TChannelListItem::operator < (const TChannelListItem& rhs) {
+bool TChannelListItem::operator < (const TChannelListItem& rhs) const {
   if (channel_list_id != rhs.channel_list_id)
      return channel_list_id < rhs.channel_list_id;
 
@@ -606,7 +606,7 @@ bool TChannelListItem::operator < (const TChannelListItem& rhs) {
 }
 
 /* std::unique */
-bool TChannelListItem::operator == (const TChannelListItem& rhs) {
+bool TChannelListItem::operator == (const TChannelListItem& rhs) const {
   return
     ( channel_list_id     == rhs.channel_list_id     ) and
     ( original_network_id == rhs.original_network_id ) and
