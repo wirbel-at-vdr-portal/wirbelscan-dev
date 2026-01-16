@@ -8,8 +8,10 @@
 #/******************************************************************************
 # * if you prefer verbose non-coloured build messages, remove the '@' here:
 # *****************************************************************************/
-CC  = @gcc
-CXX = @g++
+Q = @
+
+CC  ?= gcc
+CXX ?= g++
 
           
 PWD = $(shell pwd)
@@ -94,16 +96,16 @@ GN=\e[1;32m
 # *****************************************************************************/
 
 %.o: %.c
-ifeq ($(CXX),@g++)
+ifeq ($(Q),@)
 	@echo -e "${CY} CXX $@${RST}"
 endif
-	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
+	$(Q)$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 %.o: %.cpp
-ifeq ($(CXX),@g++)
+ifeq ($(Q),@)
 	@echo -e "${BL} CXX $@${RST}"
 endif
-	$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
+	$(Q)$(CXX) $(CXXFLAGS) -c $(DEFINES) $(INCLUDES) -o $@ $<
 
 
 
@@ -144,10 +146,10 @@ install-i18n: $(I18Nmsgs)
 ### Targets:
 
 $(SOFILE): $(OBJS)
-ifeq ($(CXX),@g++)
+ifeq ($(Q),@)
 	@echo -e "${GN} LINK $(SOFILE)${RST}"
 endif
-	$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@ $(LDFLAGS)
+	$(Q)$(CXX) $(CXXFLAGS) -shared $(OBJS) -o $@ $(LDFLAGS)
 
 install-lib: $(SOFILE)
 	install -D $^ $(DESTDIR)$(LIBDIR)/$^.$(APIVERSION)
